@@ -1,0 +1,10 @@
+---
+description: Prettier formatting
+globs: .prettierrc,**/*.{ts,tsx,js,jsx,json,css,md,yml,yaml}
+alwaysApply: false
+---
+
+# Prettier
+
+- Config: `.prettierrc` (printWidth 100, double quotes, trailing commas all).
+- Do not hand-fight formatting — run `pnpm format`.

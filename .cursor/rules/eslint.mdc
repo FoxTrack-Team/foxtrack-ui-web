@@ -1,0 +1,25 @@
+---
+description: Enhanced ESLint conventions (import order, func-style, jsx-sort-props)
+globs: eslint.config.mjs,src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# ESLint
+
+- Import order (`simple-import-sort`):
+  1. react / next
+  2. external packages
+  3. `@/app`
+  4. `@/providers`
+  5. `@/endpoints`
+  6. `@/components`
+  7. `@/features`
+  8. `@/hooks`
+  9. `@/lib`
+  10. `@/db`
+  11. other `@/`
+  12. relative (`../` and `./`)
+  13. styles (`*.css`)
+- `function Name()` declarations (not `const Name = () =>` for components/helpers covered by `func-style`).
+- JSX props: shorthand first, multiline last, callbacks last (`react/jsx-sort-props`).
+- Scripts: `pnpm lint` · `pnpm lint:fix`.

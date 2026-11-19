@@ -1,0 +1,53 @@
+---
+description: Folder-per-component placement, reuse shared UI, forms hierarchy
+globs: src/app/**/*.tsx,src/components/**/*.tsx,!src/components/ui/**,!src/app/**/page.tsx,!src/app/**/layout.tsx,!src/app/**/not-found.tsx,!src/app/**/error.tsx
+alwaysApply: false
+---
+
+# Components
+
+## Reuse before redesign (mandatory)
+
+Before writing new markup for a page/feature:
+
+1. **Search** `src/components/`, `src/components/ui/`, `src/app/_components/`, and nearby `_components/` for an existing piece that already does the job (button, field, card, dialog, empty state, page header, …).
+2. **Reuse** that component as-is when it fits.
+3. **Extend** it with optional props / variants / slots when the page needs a small difference — do **not** copy-paste and redesign a parallel version.
+4. **Extract** only when the same UI appears (or will appear) in 2+ places and no shared component exists yet — then put it in the correct placement table below.
+
+### Don't
+
+- Rebuild buttons, inputs, cards, headers, dialogs, or layout chrome from scratch on each page while a shared/UI component already exists.
+- Fork a component into `PageXFoo` / `PageYFoo` that differ only by copy, className, or one optional section — add a prop instead.
+- Hand-roll primitives that shared UI wrappers already cover.
+
+### Do
+
+- Prefer composition: page = shared building blocks + thin route glue.
+- Add props for labels, icons, density, `className`, children/slots, and optional sections.
+- If a change would break other callers, extend with a new optional prop or a focused variant — keep one source of truth.
+
+## Folder-per-component
+
+- Every component: `<name>/index.tsx` (never flat `components/foo.tsx`).
+- Private children: `<name>/_components/<child>/index.tsx` (or nested folders).
+- Named export `function ComponentName()` — no default (except Next route files).
+- Icons: always use `@tabler/icons-react` (never `lucide-react`).
+- Colocated tests: `<name>.test.tsx` next to `index.tsx`.
+
+## Size & responsibility
+
+- One job per component. Prefer extract over grow.
+- Soft cap ≈ **150 lines** for UI components; split earlier if it mixes multiple responsibilities.
+- Providers stay thin (compose only) — heavy logic belongs in hooks/`lib`.
+
+## Placement
+
+| Scope | Path |
+|-------|------|
+| One route only | `src/app/<route>/_components/<name>/index.tsx` |
+| Layout / homepage only | `src/app/_components/<name>/index.tsx` |
+| Shared across 2+ routes | `src/components/<name>/index.tsx` |
+| Shared forms | `src/components/forms/<name>/index.tsx` |
+| Route-only forms | `src/app/<route>/_components/forms/<name>/index.tsx` |
+| UI primitives | `src/components/ui/*` (flat) |

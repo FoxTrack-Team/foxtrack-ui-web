@@ -1,0 +1,18 @@
+---
+description: Core App Router + layer conventions (slim)
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Core
+
+- App Router only. Routes orchestrate; keep `page`/`layout` thin.
+- Placement: route → `app/<route>/_components/<name>/index.tsx`; home/layout → `app/_components/<name>/index.tsx`; shared ≥2 routes → `components/<name>/index.tsx` (`ui/` flat).
+- Reuse before redesign: existing shared/UI/`_components` first — extend with props; do not rebuild chrome per page (see `components.mdc`).
+- Folder-per-component: `<name>/index.tsx` — never `_components/foo.tsx`.
+- `lib/` = env/helpers/date; `db/` = database; `features/` = feature modules; `providers/` / `hooks/` / `types/` as needed.
+- Server Components by default; `"use client"` only for interactivity.
+- Direction: `useDirection()` from `@/hooks/use-direction` — do not set `dir` ad hoc on random nodes. Use logical CSS properties (`margin-inline`, `padding-inline`).
+- Named exports `function Name()`; default exports only for Next route files.
+- One `<main>` in root layout only.
+- If you change these conventions, update this rule + `AGENTS.md` together.

@@ -1,0 +1,12 @@
+---
+description: Text direction (LTR / RTL) and logical CSS
+globs: src/providers/direction-provider.tsx,src/hooks/use-direction.ts,src/**/*.{ts,tsx,css}
+alwaysApply: false
+---
+
+# Direction
+
+- Hook: `useDirection()` from `@/hooks/use-direction`.
+- Direction is managed via `DirectionProvider` on the document root.
+- Prefer logical CSS (`margin-inline`, `padding-inline`, `start`, `end`) over raw left/right when supporting bidirectional layouts.
+- Do not set `dir` ad hoc on random nodes; wire via `DirectionProvider`.

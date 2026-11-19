@@ -1,0 +1,15 @@
+---
+description: Forms hierarchy, validation with Zod, accessible controls
+globs: src/**/*form*/**,src/**/*-form*/**,src/**/*.form.tsx,src/components/forms/**
+alwaysApply: false
+---
+
+# Forms
+
+- `"use client"` + named exports `function FormName()`.
+- Placement: shared → `src/components/forms/<name>/index.tsx`; one route → `src/app/<route>/_components/forms/<name>/index.tsx`.
+- Zod schema validation for inputs and DB operations.
+- Reuse shared controls — no ad-hoc inputs. Extend with props; do not redesign a parallel form control per page.
+- Required: derive from schema (no handmade `*` / "(optional)" text).
+- Invalid: `data-invalid`, `aria-invalid`.
+- Never duplicate the same form state/submit logic across pages.

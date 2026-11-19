@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+build
+dist
+android
+pnpm-lock.yaml
+public/sw.js
+*.log

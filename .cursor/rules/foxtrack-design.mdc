@@ -1,0 +1,15 @@
+---
+description: FoxTrack design principles, visual quality, and anti-AI-slop rules
+globs: src/app/**/*.tsx,src/components/**/*.tsx,src/app/globals.css
+alwaysApply: false
+---
+
+# FoxTrack Design & Anti-Slop Guidelines
+
+See full specification in `.agents/rules/foxtrack-design.md`.
+
+- **Philosophy:** Usability first, quiet productivity feel (Things 3 / Linear). Task list is the primary interface.
+- **Anti-AI-Slop:** No decorative gradients, no oversized `rounded-3xl` pills, no nested cards, no fake metric grids, no heavy shadows.
+- **Color:** Neutral dark/light canvas; Fox Orange (`#f97316`) is an **accent** only.
+- **Typography & Radii:** 8–12px max radius on cards, 6–8px on controls; 14–15px body typography.
+- **UX:** Fast keyboard task creation (Enter), smooth completion checkmark, accessible touch targets (min 44px).
