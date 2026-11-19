@@ -44,6 +44,17 @@ function getCompatibleJavaHome() {
     "/Library/Java/JavaVirtualMachines/openjdk-21.jdk/Contents/Home",
   ];
 
+  // First pass: prefer JDK >= 21 (required by modern Capacitor)
+  for (const candidate of candidatePaths) {
+    if (candidate && fs.existsSync(candidate)) {
+      const version = getJavaMajorVersion(candidate);
+      if (version >= 21) {
+        return { path: candidate, version };
+      }
+    }
+  }
+
+  // Second pass: fallback to JDK >= 17
   for (const candidate of candidatePaths) {
     if (candidate && fs.existsSync(candidate)) {
       const version = getJavaMajorVersion(candidate);
