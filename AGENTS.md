@@ -26,6 +26,7 @@ App Router · TS strict · Tailwind CSS · pnpm · Dexie.js (IndexedDB) · Capac
 - Text direction: use `useDirection()` from `@/hooks/use-direction` and logical CSS (`margin-inline`, `padding-inline`) — do not hardcode `dir` ad hoc.
 - Icons: always and strictly use `@tabler/icons-react` (never `lucide-react`).
 - Colocated tests: `<name>.test.tsx` next to `index.tsx`.
+- Database backward-compatibility: migrations must strictly preserve user data using Dexie versioning (`db.version(n).stores(...).upgrade(...)`). Never drop or overwrite existing tables or fields without migration; offline user data must persist across app updates.
 
 ## Don't
 
@@ -33,4 +34,5 @@ App Router · TS strict · Tailwind CSS · pnpm · Dexie.js (IndexedDB) · Capac
 - Park single-route UI in `src/components/`.
 - Flat files in `_components/` (use `<name>/index.tsx`).
 - Dump unrelated UI/state/fetch into one component file.
+- Break database schemas or wipe user data in updates — offline-first data must never be lost.
 - Auto `git commit` / `git push` — leave that to the developer.

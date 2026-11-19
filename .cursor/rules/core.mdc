@@ -15,4 +15,5 @@ alwaysApply: false
 - Direction: `useDirection()` from `@/hooks/use-direction` — do not set `dir` ad hoc on random nodes. Use logical CSS properties (`margin-inline`, `padding-inline`).
 - Named exports `function Name()`; default exports only for Next route files.
 - One `<main>` in root layout only.
+- Database migrations: strictly backward-compatible with Dexie versioning (`.version(n).stores(...).upgrade(...)`). Never drop or wipe user data; offline IndexedDB records must seamlessly persist across app updates.
 - If you change these conventions, update this rule + `AGENTS.md` together.

@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
+import fs from "node:fs";
 import os from "node:os";
+
+const pkg = JSON.parse(fs.readFileSync(new URL("./package.json", import.meta.url), "utf8"));
 
 function getLocalDevOrigins(): string[] {
   const origins = new Set<string>(["localhost", "127.0.0.1"]);
@@ -29,6 +32,9 @@ function getLocalDevOrigins(): string[] {
 }
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_APP_VERSION: pkg.version,
+  },
   output: "export",
   trailingSlash: true,
   images: {

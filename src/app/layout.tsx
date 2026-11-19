@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { DirectionProvider } from "@/providers/direction-provider";
 
 import { BottomNav } from "@/components/bottom-nav";
+import { UpdateChecker } from "@/components/update-checker";
 
 import "./globals.css";
 
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </main>
           <BottomNav />
+          <UpdateChecker />
         </DirectionProvider>
         <script
           dangerouslySetInnerHTML={{
