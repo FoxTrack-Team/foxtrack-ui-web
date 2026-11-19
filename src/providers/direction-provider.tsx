@@ -1,99 +1,42 @@
 "use client";
 
-import {
-  createContext,
-  type ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useSyncExternalStore,
-} from "react";
+import { type ReactNode, useCallback } from "react";
 
-export type TextDirection = "ltr" | "rtl";
+import { SettingsProvider, useSettings } from "@/providers/settings-provider";
 
-type DirectionContextValue = {
+import { TextDirection } from "@/lib/i18n";
+
+export type { TextDirection };
+
+export type DirectionContextValue = {
   direction: TextDirection;
   isRtl: boolean;
   setDirection: (next: TextDirection) => void;
   toggleDirection: () => void;
 };
 
-const DirectionContext = createContext<DirectionContextValue | null>(null);
-
-const STORAGE_KEY = "foxtrack-direction";
-const DIRECTION_CHANGE = "foxtrack:direction";
-const DEFAULT_DIRECTION: TextDirection = "ltr";
-
-function readStored(): TextDirection {
-  if (typeof window === "undefined") return DEFAULT_DIRECTION;
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw === "ltr" || raw === "rtl") return raw;
-  } catch {
-    /* ignore */
-  }
-  return DEFAULT_DIRECTION;
-}
-
-function applyDomDirection(direction: TextDirection) {
-  document.documentElement.dir = direction;
-}
-
-function subscribe(onStoreChange: () => void) {
-  function onStorage(event: StorageEvent) {
-    if (event.key === STORAGE_KEY || event.key === null) onStoreChange();
-  }
-  function onLocal() {
-    onStoreChange();
-  }
-
-  window.addEventListener("storage", onStorage);
-  window.addEventListener(DIRECTION_CHANGE, onLocal);
-  return () => {
-    window.removeEventListener("storage", onStorage);
-    window.removeEventListener(DIRECTION_CHANGE, onLocal);
-  };
-}
-
 export function DirectionProvider({ children }: { children: ReactNode }) {
-  const direction = useSyncExternalStore(subscribe, readStored, () => DEFAULT_DIRECTION);
-
-  useEffect(() => {
-    applyDomDirection(direction);
-  }, [direction]);
-
-  const setDirection = useCallback((next: TextDirection) => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, next);
-    } catch {
-      /* ignore */
-    }
-    applyDomDirection(next);
-    window.dispatchEvent(new Event(DIRECTION_CHANGE));
-  }, []);
-
-  const toggleDirection = useCallback(() => {
-    setDirection(direction === "rtl" ? "ltr" : "rtl");
-  }, [direction, setDirection]);
-
-  const value = useMemo<DirectionContextValue>(
-    () => ({
-      direction,
-      isRtl: direction === "rtl",
-      setDirection,
-      toggleDirection,
-    }),
-    [direction, setDirection, toggleDirection],
-  );
-
-  return <DirectionContext.Provider value={value}>{children}</DirectionContext.Provider>;
+  return <SettingsProvider>{children}</SettingsProvider>;
 }
 
 export function useDirection(): DirectionContextValue {
-  const ctx = useContext(DirectionContext);
-  if (!ctx) {
-    throw new Error("useDirection must be used within DirectionProvider");
-  }
-  return ctx;
+  const { direction, isRtl, setLanguage } = useSettings();
+
+  const setDirection = useCallback(
+    (next: TextDirection) => {
+      setLanguage(next === "rtl" ? "fa" : "en");
+    },
+    [setLanguage],
+  );
+
+  const toggleDirection = useCallback(() => {
+    setLanguage(direction === "rtl" ? "en" : "fa");
+  }, [direction, setLanguage]);
+
+  return {
+    direction,
+    isRtl,
+    setDirection,
+    toggleDirection,
+  };
 }

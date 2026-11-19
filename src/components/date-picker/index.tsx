@@ -18,6 +18,8 @@ import {
   subMonths,
 } from "date-fns";
 
+import { useTranslation } from "@/providers/settings-provider";
+
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
 
@@ -42,6 +44,7 @@ export function DatePicker({ className, disabled, onChange, trigger, value }: Da
   const [isOpen, setIsOpen] = useState(false);
   const selectedDate = value ? new Date(value) : null;
   const [currentMonth, setCurrentMonth] = useState<Date>(() => selectedDate ?? new Date());
+  const { language, t } = useTranslation();
 
   function handleOpen() {
     if (disabled) return;
@@ -71,7 +74,7 @@ export function DatePicker({ className, disabled, onChange, trigger, value }: Da
   const monthEnd = endOfMonth(monthStart);
   const calendarStart = startOfWeek(monthStart);
   const calendarEnd = endOfWeek(monthEnd);
-  const daysInView = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
+  const daysInView = eachDayOfInterval({ end: calendarEnd, start: calendarStart });
 
   return (
     <>
@@ -103,10 +106,10 @@ export function DatePicker({ className, disabled, onChange, trigger, value }: Da
             onClick={handleOpen}
           >
             <IconCalendar size={13} stroke={2} />
-            <span>{formatFriendlyDate(value)}</span>
+            <span>{formatFriendlyDate(value, language)}</span>
           </button>
           <button
-            aria-label="Clear date"
+            aria-label={t.datePicker.clear}
             className="rounded p-0.5 text-orange-500 hover:bg-orange-100 hover:text-orange-700 dark:text-orange-400 dark:hover:bg-orange-900/50"
             disabled={disabled}
             type="button"
@@ -126,15 +129,15 @@ export function DatePicker({ className, disabled, onChange, trigger, value }: Da
           onClick={handleOpen}
         >
           <IconCalendar size={13} stroke={1.75} />
-          <span>Due Date</span>
+          <span>{t.datePicker.selectDueDate}</span>
         </button>
       )}
 
       <Modal
-        ariaLabel="Select Due Date"
+        ariaLabel={t.datePicker.selectDueDate}
         isOpen={isOpen}
         maxWidth="sm"
-        title="Due Date"
+        title={t.datePicker.title}
         onClose={() => setIsOpen(false)}
       >
         {/* Quick Presets */}
@@ -144,21 +147,21 @@ export function DatePicker({ className, disabled, onChange, trigger, value }: Da
             type="button"
             onClick={() => handleQuickPreset(0)}
           >
-            Today
+            {t.datePicker.today}
           </button>
           <button
             className="rounded-lg border border-neutral-200 px-2.5 py-1 font-medium text-[11px] text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
             type="button"
             onClick={() => handleQuickPreset(1)}
           >
-            Tomorrow
+            {t.datePicker.tomorrow}
           </button>
           <button
             className="rounded-lg border border-neutral-200 px-2.5 py-1 font-medium text-[11px] text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
             type="button"
             onClick={() => handleQuickPreset(7)}
           >
-            Next Week
+            {t.datePicker.nextWeek}
           </button>
         </div>
 
@@ -172,6 +175,7 @@ export function DatePicker({ className, disabled, onChange, trigger, value }: Da
               aria-label="Previous month"
               className="h-6 w-6 rounded-md"
               size="icon"
+              type="button"
               variant="ghost"
               onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
             >
@@ -181,6 +185,7 @@ export function DatePicker({ className, disabled, onChange, trigger, value }: Da
               aria-label="Next month"
               className="h-6 w-6 rounded-md"
               size="icon"
+              type="button"
               variant="ghost"
               onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
             >
@@ -217,7 +222,7 @@ export function DatePicker({ className, disabled, onChange, trigger, value }: Da
                   className={cn(
                     "flex h-7 w-full items-center justify-center rounded-md text-xs transition-colors",
                     isSelected
-                      ? "bg-orange-500 font-semibold text-white shadow-sm"
+                      ? "bg-orange-500 font-semibold text-white shadow-xs"
                       : isCurrentDay
                         ? "border border-orange-500/40 font-semibold text-orange-600 dark:text-orange-400"
                         : isCurrentMonth

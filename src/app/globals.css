@@ -173,4 +173,47 @@
   .animate-dialog-out {
     animation: dialog-zoom-out 0.18s ease-in forwards;
   }
+
+  .animate-page-enter {
+    animation: page-enter 0.15s ease-out;
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0.85;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Persian & Arabic typography with Vazir font, default system font for Latin/English */
+@font-face {
+  font-family: "FoxTrackVazir";
+  src:
+    local("Vazirmatn"), local("Vazir"), local("Vazir FD"), local("Vazirmatn UI"),
+    local("Vazirmatn-Regular");
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFC;
+  font-display: swap;
+}
+
+:root,
+body,
+input,
+textarea,
+select,
+button {
+  font-family:
+    FoxTrackVazir,
+    var(--font-vazir),
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
 }

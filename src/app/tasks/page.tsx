@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import { Header } from "@/components/header";
 import { TaskFab } from "@/components/task-fab";
 import { TaskFilters } from "@/components/task-filters";
 import { TaskList } from "@/components/task-list";
@@ -15,11 +14,10 @@ export default function TasksPage() {
   const { counts, isLoading, tasks } = useTasks(filter);
 
   return (
-    <div className="mx-auto max-w-xl px-4 py-6 sm:py-10">
-      <Header />
+    <>
       <TaskFilters counts={counts} currentFilter={filter} onFilterChange={setFilter} />
       <TaskList filter={filter} isLoading={isLoading} tasks={tasks} />
       <TaskFab />
-    </div>
+    </>
   );
 }

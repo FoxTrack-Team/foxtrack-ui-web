@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 
 import { IconDownload, IconSparkles } from "@tabler/icons-react";
 
+import { useTranslation } from "@/providers/settings-provider";
+
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
 
@@ -22,6 +24,7 @@ const DISMISSED_KEY = "foxtrack_dismissed_update_version";
 export function UpdateChecker() {
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation();
 
   const currentVersion = process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0";
 
@@ -57,10 +60,10 @@ export function UpdateChecker() {
 
           if (isMounted) {
             setUpdateInfo({
-              latestVersion: latestTag,
-              releaseUrl: data.html_url || `https://github.com/${GITHUB_REPO}/releases`,
               downloadUrl: apkAsset?.browser_download_url,
+              latestVersion: latestTag,
               releaseNotes: data.body,
+              releaseUrl: data.html_url || `https://github.com/${GITHUB_REPO}/releases`,
             });
             setIsOpen(true);
           }
@@ -112,21 +115,22 @@ export function UpdateChecker() {
             className="font-semibold text-base text-neutral-900 dark:text-neutral-100"
             id="update-dialog-title"
           >
-            نسخه جدید در دسترس است
+            {t.update.dialogTitle}
           </h2>
           <div className="mt-0.5 flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
             <span className="font-medium text-orange-600 dark:text-orange-400">
               {updateInfo.latestVersion}
             </span>
             <span>•</span>
-            <span>نسخه فعلی: v{currentVersion.replace(/^v/i, "")}</span>
+            <span>
+              {t.update.currentVersion}: v{currentVersion.replace(/^v/i, "")}
+            </span>
           </div>
         </div>
       </div>
 
       <p className="mt-3 text-neutral-600 text-xs leading-relaxed dark:text-neutral-300">
-        نسخه جدیدتر برنامه فاکس‌ترک منتشر شده است. برای دسترسی به جدیدترین تغییرات و بهبودهای
-        عملکردی، می‌توانید آن را دریافت کنید.
+        {t.update.message}
       </p>
 
       <div className="mt-5 flex items-center justify-end gap-2">
@@ -137,7 +141,7 @@ export function UpdateChecker() {
           variant="ghost"
           onClick={handleDismiss}
         >
-          بعداً
+          {t.update.laterButton}
         </Button>
 
         <Button
@@ -147,7 +151,7 @@ export function UpdateChecker() {
           onClick={handleDownload}
         >
           <IconDownload size={14} stroke={2.5} />
-          <span>دانلود نسخه جدید</span>
+          <span>{t.update.downloadButton}</span>
         </Button>
       </div>
     </Modal>

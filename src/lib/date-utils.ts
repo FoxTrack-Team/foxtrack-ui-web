@@ -3,19 +3,20 @@ import { format, isBefore, isToday, isTomorrow, isYesterday, startOfDay } from "
 /**
  * Formats a Unix timestamp (ms) into a human-friendly string.
  */
-export function formatFriendlyDate(timestamp: number | null): string {
+export function formatFriendlyDate(timestamp: number | null, lang: string = "en"): string {
   if (!timestamp) return "";
 
   const date = new Date(timestamp);
+  const isFa = lang === "fa";
 
   if (isToday(date)) {
-    return "Today";
+    return isFa ? "امروز" : "Today";
   }
   if (isTomorrow(date)) {
-    return "Tomorrow";
+    return isFa ? "فردا" : "Tomorrow";
   }
   if (isYesterday(date)) {
-    return "Yesterday";
+    return isFa ? "دیروز" : "Yesterday";
   }
 
   const currentYear = new Date().getFullYear();
@@ -50,15 +51,18 @@ export function toHtmlDateValue(timestamp: number | null): string {
 }
 
 /**
- * Parses a YYYY-MM-DD string from an HTML date input into a local timezone timestamp.
- * Sets the time to 23:59:59.999 (end of due day).
+ * Parses a YYYY-MM-DD string from an HTML date input into an end-of-day timestamp in local timezone.
  */
-export function fromHtmlDateValue(dateString: string): number | null {
-  if (!dateString) return null;
-  const [yearStr, monthStr, dayStr] = dateString.split("-");
-  const year = parseInt(yearStr, 10);
-  const month = parseInt(monthStr, 10) - 1;
-  const day = parseInt(dayStr, 10);
+export function fromHtmlDateValue(value: string): number | null {
+  if (!value) return null;
+  const parts = value.split("-");
+  if (parts.length !== 3) return null;
+
+  const year = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10) - 1;
+  const day = parseInt(parts[2], 10);
+
+  if (isNaN(year) || isNaN(month) || isNaN(day)) return null;
 
   const date = new Date(year, month, day, 23, 59, 59, 999);
   return date.getTime();

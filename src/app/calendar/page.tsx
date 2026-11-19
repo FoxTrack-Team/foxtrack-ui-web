@@ -1,25 +1,27 @@
+"use client";
+
 import Link from "next/link";
 
 import { IconCalendar } from "@tabler/icons-react";
 
+import { useTranslation } from "@/providers/settings-provider";
+
 import { EmptyState } from "@/components/empty-state";
-import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 
 export default function CalendarPage() {
+  const { t } = useTranslation();
+
   return (
-    <div className="mx-auto max-w-xl px-4 py-6 sm:py-10">
-      <Header />
-      <EmptyState
-        description="Schedule and time-blocking views will be available in Phase 2."
-        icon={IconCalendar}
-        title="Calendar view coming soon"
-        action={
-          <Button asChild size="sm" variant="outline">
-            <Link href="/tasks">Back to Tasks</Link>
-          </Button>
-        }
-      />
-    </div>
+    <EmptyState
+      description={t.emptyStates.calendarDesc}
+      icon={IconCalendar}
+      title={t.emptyStates.calendarTitle}
+      action={
+        <Button asChild size="sm" variant="outline">
+          <Link href="/tasks">{t.common.back}</Link>
+        </Button>
+      }
+    />
   );
 }
