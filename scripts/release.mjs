@@ -125,7 +125,8 @@ async function main() {
     console.log("\n=========================================");
     console.log(`🎉 Release ${tagName} successfully tagged and pushed!`);
     console.log("🤖 GitHub Actions CI will now build the Android APK");
-    console.log("   and attach it to the GitHub Release for download.");
+    console.log("   and create a DRAFT release on GitHub.");
+    console.log("   You can review and click 'Publish release' manually whenever ready!");
     console.log("=========================================\n");
   } catch (error) {
     console.error("\n❌ Git operation failed:", error.message || error);

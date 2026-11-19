@@ -82,7 +82,7 @@ jobs:
           path: dist-apk/*.apk
           retention-days: 30
 
-      - name: Create GitHub Release
+      - name: Create Draft GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
@@ -90,7 +90,7 @@ jobs:
           name: "FoxTrack ${{ github.ref_name }}"
           tag_name: ${{ github.ref_name }}
           generate_release_notes: true
-          draft: false
+          draft: true
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
