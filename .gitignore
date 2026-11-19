@@ -26,6 +26,9 @@ coverage/
 next-env.d.ts
 
 # Android build outputs
+dist-apk/
+*.apk
+*.aab
 android/app/build/
 android/build/
 android/.gradle/
