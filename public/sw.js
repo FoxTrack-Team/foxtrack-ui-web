@@ -1,9 +1,14 @@
-const CACHE_NAME = "foxtrack-cache-v1";
+const CACHE_NAME = "foxtrack-cache-v2";
 
 const PRECACHE_ASSETS = [
   "/",
   "/index.html",
   "/manifest.json",
+  "/favicon.ico",
+  "/favicon.svg",
+  "/apple-touch-icon.png",
+  "/android-chrome-192.png",
+  "/android-chrome-512.png",
   "/icons/icon-192x192.png",
   "/icons/icon-512x512.png",
 ];

@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 import { Header } from "@/components/header";
+import { TaskFab } from "@/components/task-fab";
 import { TaskFilters } from "@/components/task-filters";
-import { TaskInput } from "@/components/task-input";
 import { TaskList } from "@/components/task-list";
 
 import { useTasks } from "@/features/tasks/hooks/use-tasks";
@@ -17,9 +17,9 @@ export default function TasksPage() {
   return (
     <div className="mx-auto max-w-xl px-4 py-6 sm:py-10">
       <Header />
-      <TaskInput />
       <TaskFilters counts={counts} currentFilter={filter} onFilterChange={setFilter} />
       <TaskList filter={filter} isLoading={isLoading} tasks={tasks} />
+      <TaskFab />
     </div>
   );
 }
