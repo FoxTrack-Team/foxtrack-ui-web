@@ -37,8 +37,10 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Setup Android SDK & Accept Licenses
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0" || true
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -58,6 +60,7 @@ jobs:
 
       - name: Build Android APK via Gradle
         run: |
+          echo "sdk.dir=$ANDROID_HOME" > android/local.properties
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
