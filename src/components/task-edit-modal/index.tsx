@@ -6,6 +6,7 @@ import { IconDeviceFloppy, IconFlag, IconTrash } from "@tabler/icons-react";
 
 import { useTranslation } from "@/providers/settings-provider";
 
+import { CategoryPicker } from "@/components/category-picker";
 import { DatePicker } from "@/components/date-picker";
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,8 @@ export function TaskEditModal({ isOpen, onClose, task }: TaskEditModalProps) {
   const [prevTask, setPrevTask] = useState(task);
 
   const [title, setTitle] = useState(task.title);
+  const [description, setDescription] = useState(task.description || "");
+  const [categoryId, setCategoryId] = useState<string | null>(task.categoryId ?? null);
   const [priority, setPriority] = useState<TaskPriority>(task.priority);
   const [dueDate, setDueDate] = useState<number | null>(task.dueDate);
   const [isSaving, setIsSaving] = useState(false);
@@ -41,6 +44,8 @@ export function TaskEditModal({ isOpen, onClose, task }: TaskEditModalProps) {
   if (isOpen && !prevIsOpen) {
     setPrevIsOpen(true);
     setTitle(task.title);
+    setDescription(task.description || "");
+    setCategoryId(task.categoryId ?? null);
     setPriority(task.priority);
     setDueDate(task.dueDate);
   } else if (!isOpen && prevIsOpen) {
@@ -50,6 +55,8 @@ export function TaskEditModal({ isOpen, onClose, task }: TaskEditModalProps) {
   if (task.id !== prevTask.id || task.updatedAt !== prevTask.updatedAt) {
     setPrevTask(task);
     setTitle(task.title);
+    setDescription(task.description || "");
+    setCategoryId(task.categoryId ?? null);
     setPriority(task.priority);
     setDueDate(task.dueDate);
   }
@@ -68,6 +75,8 @@ export function TaskEditModal({ isOpen, onClose, task }: TaskEditModalProps) {
     try {
       setIsSaving(true);
       await taskRepository.update(task.id, {
+        categoryId,
+        description: description.trim() || undefined,
         dueDate,
         priority,
         title: trimmed,
@@ -102,19 +111,35 @@ export function TaskEditModal({ isOpen, onClose, task }: TaskEditModalProps) {
 
   return (
     <Modal isOpen={isOpen} maxWidth="lg" title={t.tasks.editTaskTitle} onClose={onClose}>
-      <div className="space-y-4">
-        <input
-          className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-neutral-900 text-sm placeholder:text-neutral-400 focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-orange-500 dark:focus:bg-neutral-800"
-          disabled={isSaving}
-          placeholder={t.tasks.placeholderEdit}
-          ref={inputRef}
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          onKeyDown={handleInputKeyDown}
-        />
+      <div className="space-y-3.5">
+        <div className="rounded-xl border border-neutral-200/80 bg-neutral-50/70 p-3 transition-colors focus-within:border-neutral-300 focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/10 dark:border-neutral-800/80 dark:bg-neutral-900/60 dark:focus-within:border-neutral-700 dark:focus-within:bg-neutral-900">
+          <input
+            className="w-full bg-transparent font-medium text-neutral-900 text-sm placeholder:text-neutral-400 focus:outline-none dark:text-neutral-100 dark:placeholder:text-neutral-500"
+            disabled={isSaving}
+            placeholder={t.tasks.placeholderEdit}
+            ref={inputRef}
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            onKeyDown={handleInputKeyDown}
+          />
 
-        <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+          <textarea
+            className="mt-2 w-full resize-none bg-transparent text-neutral-600 text-xs placeholder:text-neutral-400 focus:outline-none dark:text-neutral-300 dark:placeholder:text-neutral-500"
+            disabled={isSaving}
+            placeholder={t.tasks.placeholderDesc}
+            rows={2}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+
+        {/* Category Picker (Replaces Tags) */}
+        <div>
+          <CategoryPicker value={categoryId} onChange={setCategoryId} />
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-2 border-neutral-100 border-t pt-2.5 text-xs dark:border-neutral-800/60">
           <div className="flex items-center gap-1">
             <span className="mr-0.5 text-neutral-400 dark:text-neutral-500">
               <IconFlag size={14} stroke={2} />
@@ -127,9 +152,9 @@ export function TaskEditModal({ isOpen, onClose, task }: TaskEditModalProps) {
                   key={p.value}
                   type="button"
                   className={cn(
-                    "flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium text-xs transition-colors",
+                    "flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium text-xs transition-colors",
                     isSelected
-                      ? "bg-neutral-100 text-neutral-900 ring-1 ring-neutral-300 dark:bg-neutral-800 dark:text-neutral-100 dark:ring-neutral-700"
+                      ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
                       : "text-neutral-500 hover:bg-neutral-100/50 dark:text-neutral-400 dark:hover:bg-neutral-800/40",
                   )}
                   onClick={() => setPriority(p.value)}
@@ -149,30 +174,37 @@ export function TaskEditModal({ isOpen, onClose, task }: TaskEditModalProps) {
         <div className="flex items-center justify-between border-neutral-100 border-t pt-3 dark:border-neutral-800/80">
           <Button
             aria-label={t.tasks.deleteTask}
-            className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950/40"
+            className="gap-1 text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-950/40 rounded-full"
             disabled={isSaving}
             size="sm"
             type="button"
             variant="ghost"
             onClick={handleDelete}
           >
-            <IconTrash className="mr-1.5" size={15} stroke={1.75} />
+            <IconTrash size={14} stroke={1.75} />
             <span>{t.common.delete}</span>
           </Button>
 
           <div className="flex items-center gap-2">
-            <Button disabled={isSaving} size="sm" type="button" variant="ghost" onClick={onClose}>
+            <Button
+              className="rounded-full"
+              disabled={isSaving}
+              size="sm"
+              type="button"
+              variant="outline"
+              onClick={onClose}
+            >
               {t.common.cancel}
             </Button>
             <Button
-              className="gap-1.5"
+              className="gap-1.5 rounded-full"
               disabled={!title.trim() || isSaving}
               size="sm"
               type="button"
               onClick={handleSave}
             >
-              <IconDeviceFloppy size={15} stroke={2} />
-              <span>{t.tasks.saveTask}</span>
+              <IconDeviceFloppy size={14} stroke={2} />
+              <span>{t.common.save}</span>
             </Button>
           </div>
         </div>

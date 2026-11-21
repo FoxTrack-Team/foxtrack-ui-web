@@ -23,10 +23,53 @@ export interface Dictionary {
     version: string;
   };
   bottomNav: {
-    calendar: string;
-    projects: string;
-    settings: string;
+    calendar?: string;
+    dashboard: string;
+    habits: string;
+    more: string;
+    projects?: string;
+    settings?: string;
     tasks: string;
+  };
+  categories: {
+    cancel: string;
+    categoryCount: string;
+    colorLabel: string;
+    createCategory: string;
+    defaultBadge: string;
+    deleteCategory: string;
+    deleteConfirmButton: string;
+    deleteConfirmDesc: string;
+    deleteConfirmTitle: string;
+    editCategory: string;
+    emptyDesc: string;
+    emptyTitle: string;
+    iconLabel: string;
+    itemsCount: string;
+    loadDefaults: string;
+    nameLabel: string;
+    namePlaceholder: string;
+    newCategory: string;
+    preview: string;
+    saveCategory: string;
+    subtitle: string;
+    title: string;
+  };
+  dashboard: {
+    addTaskForDay: string;
+    allDone: string;
+    completedCount: string;
+    highPriority: string;
+    noTasksForDay: string;
+    noTasksForDayDesc: string;
+    overdueWarning: string;
+    pendingCount: string;
+    progress: string;
+    tasksCount: string;
+    title: string;
+    today: string;
+    tomorrow: string;
+    yesterday: string;
   };
   common: {
     back: string;
@@ -41,6 +84,7 @@ export interface Dictionary {
     save: string;
   };
   datePicker: {
+    calendar: string;
     clear: string;
     customDate: string;
     nextWeek: string;
@@ -54,6 +98,8 @@ export interface Dictionary {
   emptyStates: {
     calendarDesc: string;
     calendarTitle: string;
+    habitsDesc: string;
+    habitsTitle: string;
     projectsDesc: string;
     projectsTitle: string;
   };
@@ -61,6 +107,19 @@ export interface Dictionary {
     subtitle: string;
     title: string;
     toggleTheme: string;
+  };
+  more: {
+    featuresSubtitle: string;
+    featuresTitle: string;
+    subtitle: string;
+    tagsSubtitle: string;
+    tagsTitle: string;
+    title: string;
+    upcomingAnalyticsDesc: string;
+    upcomingAnalyticsTitle: string;
+    upcomingProjectsDesc: string;
+    upcomingProjectsTitle: string;
+    upcomingSoon: string;
   };
   settings: {
     appearance: {
@@ -96,19 +155,46 @@ export interface Dictionary {
       title: string;
     };
     subtitle: string;
+    tags: {
+      description: string;
+      title: string;
+    };
+    title: string;
+  };
+  tags: {
+    cancel: string;
+    colorLabel: string;
+    createTag: string;
+    deleteConfirmButton: string;
+    deleteConfirmDesc: string;
+    deleteConfirmTitle: string;
+    deleteTag: string;
+    editTag: string;
+    emptyDesc: string;
+    emptyTitle: string;
+    nameLabel: string;
+    namePlaceholder: string;
+    newTag: string;
+    saveTag: string;
+    tagCount: string;
     title: string;
   };
   tasks: {
     active: string;
     activeCount: string;
     addNewTask: string;
+    addTag: string;
     addTask: string;
     all: string;
+    categoryLabel: string;
     completed: string;
+    createTagPrompt: string;
     deleteConfirm: string;
     deleteTask: string;
+    description: string;
     dueDate: string;
     editTask: string;
+    editTaskSubtitle: string;
     editTaskTitle: string;
     emptyActiveDesc: string;
     emptyActiveTitle: string;
@@ -119,14 +205,21 @@ export interface Dictionary {
     markActive: string;
     markCompleted: string;
     newTask: string;
+    newTaskSubtitle: string;
+    noCategory: string;
+    noTags: string;
     overdue: string;
     placeholder: string;
+    placeholderDesc: string;
     placeholderEdit: string;
     priorityHigh: string;
     priorityLabel: string;
     priorityLow: string;
     priorityMed: string;
     saveTask: string;
+    searchTags: string;
+    selectCategory: string;
+    tags: string;
     title: string;
     today: string;
     tomorrow: string;

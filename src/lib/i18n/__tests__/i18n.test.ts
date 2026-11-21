@@ -19,6 +19,25 @@ describe("i18n system", () => {
     const en = getDictionary("en");
     const fa = getDictionary("fa");
 
+    function getAllKeys(obj: Record<string, unknown>, prefix = ""): string[] {
+      let keys: string[] = [];
+      for (const k of Object.keys(obj)) {
+        const full = prefix ? `${prefix}.${k}` : k;
+        const val = obj[k];
+        if (typeof val === "object" && val !== null && !Array.isArray(val)) {
+          keys = keys.concat(getAllKeys(val as Record<string, unknown>, full));
+        } else {
+          keys.push(full);
+        }
+      }
+      return keys;
+    }
+
+    const enKeys = getAllKeys(en as unknown as Record<string, unknown>).sort();
+    const faKeys = getAllKeys(fa as unknown as Record<string, unknown>).sort();
+
+    expect(enKeys).toEqual(faKeys);
+
     expect(en.common.save).toBe("Save");
     expect(fa.common.save).toBe("ذخیره");
 

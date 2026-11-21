@@ -5,6 +5,7 @@ import { DirectionProvider } from "@/providers/direction-provider";
 
 import { BottomNav } from "@/components/bottom-nav";
 import { Header } from "@/components/header";
+import { SplashScreen } from "@/components/splash-screen";
 import { UpdateChecker } from "@/components/update-checker";
 
 import "./globals.css";
@@ -77,6 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen antialiased">
         <DirectionProvider>
+          <SplashScreen />
           <main className="min-h-screen bg-neutral-50 pb-32 text-neutral-900 transition-colors sm:pb-36 dark:bg-neutral-950 dark:text-neutral-100">
             <div className="mx-auto max-w-xl px-4 pt-[calc(env(safe-area-inset-top)+1rem)] pb-6 sm:pt-10 sm:pb-10">
               <Header />

@@ -30,6 +30,8 @@ interface DatePickerProps {
   className?: string;
   disabled?: boolean;
   onChange: (timestamp: number | null) => void;
+  showQuickPresets?: boolean;
+  title?: string;
   trigger?: React.ReactNode;
   value: number | null;
 }
@@ -40,7 +42,15 @@ function toEndOfDayTimestamp(date: Date): number {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999).getTime();
 }
 
-export function DatePicker({ className, disabled, onChange, trigger, value }: DatePickerProps) {
+export function DatePicker({
+  className,
+  disabled,
+  onChange,
+  showQuickPresets = true,
+  title,
+  trigger,
+  value,
+}: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selectedDate = value ? new Date(value) : null;
   const [currentMonth, setCurrentMonth] = useState<Date>(() => selectedDate ?? new Date());
@@ -134,39 +144,41 @@ export function DatePicker({ className, disabled, onChange, trigger, value }: Da
       )}
 
       <Modal
-        ariaLabel={t.datePicker.selectDueDate}
+        ariaLabel={title ?? t.datePicker.selectDueDate}
         isOpen={isOpen}
         maxWidth="sm"
-        title={t.datePicker.title}
+        title={title ?? t.datePicker.title}
         onClose={() => setIsOpen(false)}
       >
         {/* Quick Presets */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-          <button
-            className="rounded-lg border border-neutral-200 px-2.5 py-1 font-medium text-[11px] text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
-            type="button"
-            onClick={() => handleQuickPreset(0)}
-          >
-            {t.datePicker.today}
-          </button>
-          <button
-            className="rounded-lg border border-neutral-200 px-2.5 py-1 font-medium text-[11px] text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
-            type="button"
-            onClick={() => handleQuickPreset(1)}
-          >
-            {t.datePicker.tomorrow}
-          </button>
-          <button
-            className="rounded-lg border border-neutral-200 px-2.5 py-1 font-medium text-[11px] text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
-            type="button"
-            onClick={() => handleQuickPreset(7)}
-          >
-            {t.datePicker.nextWeek}
-          </button>
-        </div>
+        {showQuickPresets && (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+            <button
+              className="rounded-lg border border-neutral-200 px-2.5 py-1 font-medium text-[11px] text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
+              type="button"
+              onClick={() => handleQuickPreset(0)}
+            >
+              {t.datePicker.today}
+            </button>
+            <button
+              className="rounded-lg border border-neutral-200 px-2.5 py-1 font-medium text-[11px] text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
+              type="button"
+              onClick={() => handleQuickPreset(1)}
+            >
+              {t.datePicker.tomorrow}
+            </button>
+            <button
+              className="rounded-lg border border-neutral-200 px-2.5 py-1 font-medium text-[11px] text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
+              type="button"
+              onClick={() => handleQuickPreset(7)}
+            >
+              {t.datePicker.nextWeek}
+            </button>
+          </div>
+        )}
 
         {/* Month Navigation Header */}
-        <div className="mt-3 flex items-center justify-between">
+        <div className={cn("flex items-center justify-between", showQuickPresets && "mt-3")}>
           <span className="font-medium text-neutral-800 text-xs dark:text-neutral-200">
             {format(currentMonth, "MMMM yyyy")}
           </span>

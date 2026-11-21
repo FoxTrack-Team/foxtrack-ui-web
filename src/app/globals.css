@@ -37,19 +37,19 @@
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 37.7 92.1% 50.2%; /* Amber Accent */
+    --primary: 24.6 95% 53.1%; /* FoxTrack Orange (matching bottom nav) */
     --primary-foreground: 0 0% 100%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 38 92% 95%;
-    --accent-foreground: 38 92% 35%;
+    --accent: 24.6 95% 95%;
+    --accent-foreground: 24.6 95% 35%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 37.7 92.1% 50.2%;
+    --ring: 24.6 95% 53.1%;
     --radius: 0.5rem;
   }
 
@@ -60,19 +60,19 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 37.7 92.1% 50.2%;
-    --primary-foreground: 240 10% 3.9%;
+    --primary: 24.6 95% 53.1%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 38 92% 15%;
-    --accent-foreground: 38 92% 65%;
+    --accent: 24.6 95% 15%;
+    --accent-foreground: 24.6 95% 65%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 37.7 92.1% 50.2%;
+    --ring: 24.6 95% 53.1%;
   }
 
   * {
@@ -177,6 +177,73 @@
   .animate-page-enter {
     animation: page-enter 0.15s ease-out;
   }
+
+  .animate-settings-forward {
+    animation: settings-slide-in-ltr 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [dir="rtl"] .animate-settings-forward {
+    animation-name: settings-slide-in-rtl;
+  }
+
+  .animate-settings-backward {
+    animation: settings-slide-back-ltr 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [dir="rtl"] .animate-settings-backward {
+    animation-name: settings-slide-back-rtl;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-settings-forward,
+    .animate-settings-backward {
+      animation: none;
+    }
+  }
+}
+
+@keyframes settings-slide-in-ltr {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes settings-slide-in-rtl {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes settings-slide-back-ltr {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes settings-slide-back-rtl {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes page-enter {
@@ -185,6 +252,18 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes splash-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(20%);
+  }
+  100% {
+    transform: translateX(100%);
   }
 }
 
@@ -216,4 +295,15 @@ button {
     Helvetica,
     Arial,
     sans-serif;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }

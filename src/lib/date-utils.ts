@@ -1,4 +1,4 @@
-import { format, isBefore, isToday, isTomorrow, isYesterday, startOfDay } from "date-fns";
+import { endOfDay, format, isBefore, isToday, isTomorrow, isYesterday, startOfDay } from "date-fns";
 
 /**
  * Formats a Unix timestamp (ms) into a human-friendly string.
@@ -66,4 +66,64 @@ export function fromHtmlDateValue(value: string): number | null {
 
   const date = new Date(year, month, day, 23, 59, 59, 999);
   return date.getTime();
+}
+
+/**
+ * Returns the start (00:00:00.000) and end (23:59:59.999) timestamps for a date.
+ */
+export function toDayInterval(date: Date): { end: number; start: number } {
+  return {
+    end: endOfDay(date).getTime(),
+    start: startOfDay(date).getTime(),
+  };
+}
+
+/**
+ * Formats a date for the day header (e.g., "جمعه ۲۹ آبان" or "Friday, Nov 20").
+ */
+export function formatDayHeader(date: Date, lang: string = "en"): string {
+  try {
+    if (lang === "fa") {
+      return new Intl.DateTimeFormat("fa-IR", {
+        day: "numeric",
+        month: "long",
+        weekday: "long",
+      }).format(date);
+    }
+    return new Intl.DateTimeFormat("en-US", {
+      day: "numeric",
+      month: "short",
+      weekday: "long",
+    }).format(date);
+  } catch {
+    return format(date, "EEE, MMM d");
+  }
+}
+
+/**
+ * Formats a short weekday (e.g., "جمعه" or "Fri").
+ */
+export function formatShortWeekday(date: Date, lang: string = "en"): string {
+  try {
+    if (lang === "fa") {
+      return new Intl.DateTimeFormat("fa-IR", { weekday: "short" }).format(date);
+    }
+    return new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date);
+  } catch {
+    return format(date, "EEE");
+  }
+}
+
+/**
+ * Formats a day number (e.g., "۲۹" or "20").
+ */
+export function formatDayNumber(date: Date, lang: string = "en"): string {
+  try {
+    if (lang === "fa") {
+      return new Intl.DateTimeFormat("fa-IR", { day: "numeric" }).format(date);
+    }
+    return new Intl.DateTimeFormat("en-US", { day: "numeric" }).format(date);
+  } catch {
+    return String(date.getDate());
+  }
 }

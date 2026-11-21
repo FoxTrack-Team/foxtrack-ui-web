@@ -40,11 +40,13 @@ export function EmptyState({
 
   return (
     <div className="my-8 flex flex-col items-center justify-center py-10 text-center">
-      <div className="mb-2.5 flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
-        <IconComponent size={18} stroke={1.75} />
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-100 text-neutral-400 ring-1 ring-neutral-200/50 dark:bg-neutral-850 dark:text-neutral-500 dark:ring-neutral-800">
+        <IconComponent size={20} stroke={1.75} />
       </div>
-      <h3 className="font-medium text-neutral-800 text-sm dark:text-neutral-200">{title}</h3>
-      <p className="mt-0.5 max-w-xs text-neutral-400 text-xs dark:text-neutral-500">
+      <h3 className="font-semibold text-neutral-800 text-sm tracking-tight dark:text-neutral-200">
+        {title}
+      </h3>
+      <p className="mt-1 max-w-xs text-neutral-400 text-xs leading-relaxed dark:text-neutral-500">
         {description}
       </p>
       {action ? <div className="mt-4">{action}</div> : null}

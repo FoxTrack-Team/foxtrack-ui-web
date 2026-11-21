@@ -1,23 +1,16 @@
 "use client";
 
-import { useMemo } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-import { IconCalendar } from "@tabler/icons-react";
+import { IconSettings } from "@tabler/icons-react";
 
-import { useSettings } from "@/providers/settings-provider";
+import { useTranslation } from "@/providers/settings-provider";
 
 export function Header() {
-  const { language } = useSettings();
-
-  const formattedDate = useMemo(() => {
-    const now = new Date();
-    const locale = language === "fa" ? "fa-IR" : "en-US";
-    return new Intl.DateTimeFormat(locale, {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    }).format(now);
-  }, [language]);
+  const { t } = useTranslation();
+  const pathname = usePathname();
+  const isSettingsPage = Boolean(pathname?.startsWith("/settings"));
 
   return (
     <header className="mb-4 flex items-center justify-between py-1 select-none">
@@ -39,19 +32,15 @@ export function Header() {
         </div>
       </div>
 
-      <div
-        aria-label="Today's date"
-        className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200/80 bg-white/80 px-2.5 py-1 text-xs font-medium text-neutral-600 shadow-2xs backdrop-blur-xs transition-colors dark:border-neutral-800/80 dark:bg-neutral-900/80 dark:text-neutral-400"
-      >
-        <IconCalendar
-          aria-hidden="true"
-          className="h-3.5 w-3.5 text-neutral-400 dark:text-neutral-500"
-          stroke={2}
-        />
-        <span suppressHydrationWarning className="tabular-nums">
-          {formattedDate}
-        </span>
-      </div>
+      {!isSettingsPage && (
+        <Link
+          aria-label={t.bottomNav.settings}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+          href="/settings"
+        >
+          <IconSettings aria-hidden="true" className="h-5 w-5" stroke={1.8} />
+        </Link>
+      )}
     </header>
   );
 }

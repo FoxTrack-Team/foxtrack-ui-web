@@ -11,6 +11,8 @@ import {
   useSyncExternalStore,
 } from "react";
 
+import { categoryRepository } from "@/features/categories/services/dexie-category-repository";
+
 import {
   DEFAULT_LANGUAGE,
   Dictionary,
@@ -167,6 +169,13 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       active = false;
     };
   }, []);
+
+  // Ensure default Habitica categories are created on system startup
+  useEffect(() => {
+    categoryRepository.ensureDefaults(language).catch((err) => {
+      console.error("Failed to seed default categories on startup", err);
+    });
+  }, [language]);
 
   // Update DOM when theme or language changes
   useEffect(() => {

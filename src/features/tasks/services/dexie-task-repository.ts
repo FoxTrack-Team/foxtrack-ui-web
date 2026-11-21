@@ -43,6 +43,9 @@ export class DexieTaskRepository implements TaskRepository {
     const task: Task = {
       id: generateId(),
       title: validatedInput.title,
+      description: validatedInput.description ? validatedInput.description.trim() : undefined,
+      categoryId: validatedInput.categoryId ?? null,
+      tagIds: validatedInput.tagIds ?? [],
       completed: false,
       priority: validatedInput.priority,
       dueDate: validatedInput.dueDate,
@@ -68,6 +71,15 @@ export class DexieTaskRepository implements TaskRepository {
     const updatedTask: Task = {
       ...existing,
       ...validatedInput,
+      description:
+        validatedInput.description !== undefined
+          ? validatedInput.description.trim() || undefined
+          : existing.description,
+      categoryId:
+        validatedInput.categoryId !== undefined
+          ? validatedInput.categoryId
+          : (existing.categoryId ?? null),
+      tagIds: validatedInput.tagIds !== undefined ? validatedInput.tagIds : (existing.tagIds ?? []),
       updatedAt: Date.now(),
     };
 

@@ -5,14 +5,13 @@ import { type ChangeEvent, useRef, useState } from "react";
 import {
   IconAlertTriangle,
   IconCheck,
-  IconDatabase,
   IconDownload,
   IconTrash,
   IconUpload,
 } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 
-import { useTranslation } from "@/providers/settings-provider";
+import { useSettings, useTranslation } from "@/providers/settings-provider";
 
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
@@ -23,6 +22,7 @@ import { db } from "@/db/database";
 
 export function DataSection() {
   const { t } = useTranslation();
+  const { language } = useSettings();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -49,31 +49,53 @@ export function DataSection() {
       a.click();
       URL.revokeObjectURL(url);
       setStatusMessage(t.settings.data.exportSuccess);
-    } catch {
-      /* ignore */
+    } catch (err) {
+      console.error("Export failed", err);
     }
   }
 
-  async function handleFileSelect(e: ChangeEvent<HTMLInputElement>) {
+  function handleFileSelect(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    try {
-      const text = await file.text();
-      const parsed = JSON.parse(text);
-      const incoming: Task[] = Array.isArray(parsed) ? parsed : parsed.tasks;
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const text = event.target?.result as string;
+        const parsed = JSON.parse(text);
 
-      if (!Array.isArray(incoming) || incoming.length === 0) {
-        throw new Error("Invalid structure");
+        const tasksToImport: Task[] = Array.isArray(parsed)
+          ? parsed
+          : Array.isArray(parsed.tasks)
+            ? parsed.tasks
+            : [];
+
+        if (tasksToImport.length === 0) {
+          alert(t.settings.data.importError);
+          return;
+        }
+
+        const validTasks = tasksToImport.filter((item) => item && typeof item.title === "string");
+
+        await db.transaction("rw", db.tasks, async () => {
+          for (const item of validTasks) {
+            await db.tasks.put(item);
+          }
+        });
+
+        setStatusMessage(
+          t.settings.data.importSuccess.replace("{count}", String(validTasks.length)),
+        );
+      } catch (err) {
+        console.error("Import failed", err);
+        alert(t.settings.data.importError);
+      } finally {
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
       }
-
-      await db.tasks.bulkPut(incoming);
-      setStatusMessage(t.settings.data.importSuccess);
-    } catch {
-      setStatusMessage(t.settings.data.importError);
-    } finally {
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
+    };
+    reader.readAsText(file);
   }
 
   async function handleConfirmReset() {
@@ -87,50 +109,52 @@ export function DataSection() {
   }
 
   return (
-    <>
+    <div className="space-y-4">
+      {/* Title & Description directly on canvas */}
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="font-bold text-base text-neutral-900 tracking-tight dark:text-neutral-100">
+            {t.settings.data.title}
+          </h1>
+          <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">
+            {t.settings.data.description}
+          </p>
+        </div>
+
+        <span className="rounded-md bg-neutral-100/90 px-2 py-0.5 font-medium text-[10px] text-neutral-500 dark:bg-neutral-800/90 dark:text-neutral-400">
+          {totalCount} {language === "fa" ? "تسک" : "tasks"}
+        </span>
+      </div>
+
+      {/* Real-time stats */}
+      <div className="flex flex-wrap items-center gap-2 rounded-xl bg-neutral-100/70 p-2.5 text-xs dark:bg-neutral-800/40">
+        <span className="font-medium text-neutral-600 text-xs dark:text-neutral-300">
+          {t.settings.data.statsTotal}:
+        </span>
+        <span className="rounded-md bg-white px-2 py-0.5 font-semibold text-neutral-900 text-xs shadow-2xs dark:bg-neutral-700 dark:text-neutral-100">
+          {totalCount}
+        </span>
+        <span className="text-neutral-300 dark:text-neutral-700">•</span>
+        <span className="text-neutral-500 dark:text-neutral-400">
+          {activeCount} {t.settings.data.statsActive}
+        </span>
+        <span className="text-neutral-300 dark:text-neutral-700">•</span>
+        <span className="text-neutral-500 dark:text-neutral-400">
+          {completedCount} {t.settings.data.statsCompleted}
+        </span>
+      </div>
+
+      {/* Feedback message */}
+      {statusMessage && (
+        <div className="flex items-center gap-1.5 rounded-lg bg-orange-50 px-3 py-1.5 text-orange-800 text-xs dark:bg-orange-950/30 dark:text-orange-300">
+          <IconCheck size={14} stroke={2} />
+          <span>{statusMessage}</span>
+        </div>
+      )}
+
+      {/* Operations Card */}
       <section className="rounded-xl border border-neutral-200/80 bg-white p-3.5 shadow-2xs dark:border-neutral-800/80 dark:bg-neutral-900/60">
-        <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-50 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400">
-            <IconDatabase size={15} stroke={2} />
-          </div>
-          <div>
-            <h2 className="font-semibold text-neutral-900 text-xs dark:text-neutral-100">
-              {t.settings.data.title}
-            </h2>
-            <p className="text-[10px] text-neutral-400 dark:text-neutral-500">
-              {t.settings.data.description}
-            </p>
-          </div>
-        </div>
-
-        {/* Real-time stats */}
-        <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl bg-neutral-50 p-2.5 text-xs dark:bg-neutral-800/40">
-          <span className="font-medium text-neutral-600 text-xs dark:text-neutral-300">
-            {t.settings.data.statsTotal}:
-          </span>
-          <span className="rounded-md bg-white px-2 py-0.5 font-semibold text-neutral-900 text-xs shadow-2xs dark:bg-neutral-700 dark:text-neutral-100">
-            {totalCount}
-          </span>
-          <span className="text-neutral-300 dark:text-neutral-700">•</span>
-          <span className="text-neutral-500 dark:text-neutral-400">
-            {activeCount} {t.settings.data.statsActive}
-          </span>
-          <span className="text-neutral-300 dark:text-neutral-700">•</span>
-          <span className="text-neutral-500 dark:text-neutral-400">
-            {completedCount} {t.settings.data.statsCompleted}
-          </span>
-        </div>
-
-        {/* Feedback message */}
-        {statusMessage && (
-          <div className="mt-2.5 flex items-center gap-1.5 rounded-lg bg-orange-50 px-3 py-1.5 text-orange-800 text-xs dark:bg-orange-950/30 dark:text-orange-300">
-            <IconCheck size={14} stroke={2} />
-            <span>{statusMessage}</span>
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="mt-3 space-y-2 border-neutral-100 border-t pt-3 dark:border-neutral-800/60">
+        <div className="space-y-3">
           {/* Export */}
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 flex-1">
@@ -154,7 +178,7 @@ export function DataSection() {
           </div>
 
           {/* Import */}
-          <div className="flex items-center justify-between gap-3 border-neutral-50 border-t pt-2 dark:border-neutral-800/40">
+          <div className="flex items-center justify-between gap-3 border-neutral-100 border-t pt-3 dark:border-neutral-800/40">
             <div className="min-w-0 flex-1">
               <p className="font-medium text-neutral-800 text-xs dark:text-neutral-200">
                 {t.settings.data.importBackup}
@@ -183,7 +207,7 @@ export function DataSection() {
           </div>
 
           {/* Reset / Danger Zone */}
-          <div className="flex items-center justify-between gap-3 border-neutral-50 border-t pt-2 dark:border-neutral-800/40">
+          <div className="flex items-center justify-between gap-3 border-neutral-100 border-t pt-3 dark:border-neutral-800/40">
             <div className="min-w-0 flex-1">
               <p className="font-medium text-red-600 text-xs dark:text-red-400">
                 {t.settings.data.resetData}
@@ -243,6 +267,6 @@ export function DataSection() {
           </div>
         </div>
       </Modal>
-    </>
+    </div>
   );
 }

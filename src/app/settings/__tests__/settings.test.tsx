@@ -1,99 +1,152 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SettingsProvider } from "@/providers/settings-provider";
 
+import { db } from "@/db/database";
+
+import AboutSettingsPage from "../about/page";
+import AppearanceSettingsPage from "../appearance/page";
+import DataSettingsPage from "../data/page";
 import SettingsPage from "../page";
+import TagsSettingsPage from "../tags/page";
+import SettingsTemplate from "../template";
 
-describe("SettingsPage", () => {
-  beforeEach(() => {
+const mockUsePathname = vi.fn(() => "/settings");
+const mockRedirect = vi.fn();
+
+vi.mock("next/navigation", () => ({
+  redirect: (url: string) => mockRedirect(url),
+  usePathname: () => mockUsePathname(),
+}));
+
+describe("Settings Routes & Subpages", () => {
+  beforeEach(async () => {
     localStorage.clear();
+    await db.tags.clear();
   });
 
-  it("renders all settings sections in the overview hub", () => {
-    render(
-      <SettingsProvider>
-        <SettingsPage />
-      </SettingsProvider>,
-    );
+  describe("SettingsPage (Overview)", () => {
+    it("renders all settings sections as navigation links", () => {
+      render(
+        <SettingsProvider>
+          <SettingsPage />
+        </SettingsProvider>,
+      );
 
-    expect(screen.getByRole("heading", { name: "Settings" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Appearance & Language" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Data & Storage" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "About FoxTrack" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Settings" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Appearance & Language" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Data & Storage" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "About FoxTrack" })).toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Tags" })).not.toBeInTheDocument();
+
+      expect(screen.getByRole("link", { name: /Appearance & Language/i })).toHaveAttribute(
+        "href",
+        "/settings/appearance",
+      );
+      expect(screen.queryByRole("link", { name: /^Tags/i })).not.toBeInTheDocument();
+      expect(screen.getByRole("link", { name: /Data & Storage/i })).toHaveAttribute(
+        "href",
+        "/settings/data",
+      );
+      expect(screen.getByRole("link", { name: /About FoxTrack/i })).toHaveAttribute(
+        "href",
+        "/settings/about",
+      );
+    });
   });
 
-  it("drills down into Appearance subpage and changes language", () => {
-    render(
-      <SettingsProvider>
-        <SettingsPage />
-      </SettingsProvider>,
-    );
+  describe("AppearanceSettingsPage (/settings/appearance)", () => {
+    it("renders back button to /settings and changes language", () => {
+      render(
+        <SettingsProvider>
+          <AppearanceSettingsPage />
+        </SettingsProvider>,
+      );
 
-    // Click Appearance row
-    const appearanceRow = screen.getByRole("button", { name: /Appearance & Language/i });
-    fireEvent.click(appearanceRow);
+      const backLink = screen.getByRole("link", { name: /Settings/i });
+      expect(backLink).toBeInTheDocument();
+      expect(backLink).toHaveAttribute("href", "/settings");
 
-    // Verify subpage content is visible
-    const farsiBtn = screen.getByRole("button", { name: "فارسی" });
-    expect(farsiBtn).toBeInTheDocument();
-    fireEvent.click(farsiBtn);
+      const farsiBtn = screen.getByRole("button", { name: "فارسی" });
+      fireEvent.click(farsiBtn);
 
-    expect(document.documentElement.dir).toBe("rtl");
-    expect(document.documentElement.lang).toBe("fa");
+      expect(document.documentElement.dir).toBe("rtl");
+      expect(document.documentElement.lang).toBe("fa");
+    });
+
+    it("changes theme to dark", () => {
+      render(
+        <SettingsProvider>
+          <AppearanceSettingsPage />
+        </SettingsProvider>,
+      );
+
+      const darkBtn = screen.getByRole("button", { name: "Dark" });
+      fireEvent.click(darkBtn);
+
+      expect(document.documentElement.classList.contains("dark")).toBe(true);
+      expect(localStorage.getItem("foxtrack-theme")).toBe("dark");
+    });
   });
 
-  it("drills down into Appearance subpage and changes theme", () => {
-    render(
-      <SettingsProvider>
-        <SettingsPage />
-      </SettingsProvider>,
-    );
-
-    const appearanceRow = screen.getByRole("button", { name: /Appearance & Language/i });
-    fireEvent.click(appearanceRow);
-
-    const darkBtn = screen.getByRole("button", { name: "Dark" });
-    fireEvent.click(darkBtn);
-
-    expect(document.documentElement.classList.contains("dark")).toBe(true);
-    expect(localStorage.getItem("foxtrack-theme")).toBe("dark");
+  describe("TagsSettingsPage (/settings/tags)", () => {
+    it("redirects to /more/tags", () => {
+      TagsSettingsPage();
+      expect(mockRedirect).toHaveBeenCalledWith("/more/tags");
+    });
   });
 
-  it("navigates back to the settings overview when clicking the back button", () => {
-    render(
-      <SettingsProvider>
-        <SettingsPage />
-      </SettingsProvider>,
-    );
+  describe("DataSettingsPage (/settings/data)", () => {
+    it("renders back link and storage controls", () => {
+      render(
+        <SettingsProvider>
+          <DataSettingsPage />
+        </SettingsProvider>,
+      );
 
-    const dataRow = screen.getByRole("button", { name: /Data & Storage/i });
-    fireEvent.click(dataRow);
-
-    // Back button is rendered
-    const backBtn = screen.getByRole("button", { name: /Settings/i });
-    expect(backBtn).toBeInTheDocument();
-    fireEvent.click(backBtn);
-
-    // Back in overview
-    expect(screen.getByRole("button", { name: /Appearance & Language/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Data & Storage/i })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: /Settings/i })).toHaveAttribute("href", "/settings");
+      expect(screen.getByText("Total Tasks:")).toBeInTheDocument();
+    });
   });
 
-  it("navigates back to the overview when Escape key is pressed", () => {
-    render(
-      <SettingsProvider>
-        <SettingsPage />
-      </SettingsProvider>,
-    );
+  describe("AboutSettingsPage (/settings/about)", () => {
+    it("renders back link and about information", () => {
+      render(
+        <SettingsProvider>
+          <AboutSettingsPage />
+        </SettingsProvider>,
+      );
 
-    const aboutRow = screen.getByRole("button", { name: /About FoxTrack/i });
-    fireEvent.click(aboutRow);
+      expect(screen.getByRole("link", { name: /Settings/i })).toHaveAttribute("href", "/settings");
+      expect(screen.getByRole("button", { name: /Check for Updates/i })).toBeInTheDocument();
+      expect(screen.getByText("GitHub Repository")).toBeInTheDocument();
+    });
+  });
 
-    expect(screen.getByRole("button", { name: /Settings/i })).toBeInTheDocument();
+  describe("SettingsTemplate", () => {
+    it("applies backward transition on root /settings page", () => {
+      mockUsePathname.mockReturnValue("/settings");
+      const { container } = render(
+        <SettingsTemplate>
+          <div>Settings Content</div>
+        </SettingsTemplate>,
+      );
 
-    fireEvent.keyDown(window, { key: "Escape" });
+      const wrapper = container.firstChild as HTMLElement;
+      expect(wrapper.className).toContain("animate-settings-backward");
+    });
 
-    expect(screen.getByRole("button", { name: /Appearance & Language/i })).toBeInTheDocument();
+    it("applies forward transition on subpages", () => {
+      mockUsePathname.mockReturnValue("/settings/appearance");
+      const { container } = render(
+        <SettingsTemplate>
+          <div>Appearance Content</div>
+        </SettingsTemplate>,
+      );
+
+      const wrapper = container.firstChild as HTMLElement;
+      expect(wrapper.className).toContain("animate-settings-forward");
+    });
   });
 });

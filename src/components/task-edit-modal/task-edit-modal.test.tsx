@@ -42,11 +42,14 @@ describe("TaskEditModal", () => {
     fireEvent.click(saveBtn);
 
     await waitFor(() => {
-      expect(updateSpy).toHaveBeenCalledWith("task-101", {
-        dueDate: null,
-        priority: "high",
-        title: "Draft weekly report",
-      });
+      expect(updateSpy).toHaveBeenCalledWith(
+        "task-101",
+        expect.objectContaining({
+          dueDate: null,
+          priority: "high",
+          title: "Draft weekly report",
+        }),
+      );
       expect(handleClose).toHaveBeenCalled();
     });
   });
@@ -76,11 +79,40 @@ describe("TaskEditModal", () => {
     fireEvent.keyDown(input, { key: "Enter" });
 
     await waitFor(() => {
-      expect(updateSpy).toHaveBeenCalledWith("task-101", {
-        dueDate: null,
-        priority: "low",
-        title: "Draft weekly update",
-      });
+      expect(updateSpy).toHaveBeenCalledWith(
+        "task-101",
+        expect.objectContaining({
+          dueDate: null,
+          priority: "low",
+          title: "Draft weekly update",
+        }),
+      );
+      expect(handleClose).toHaveBeenCalled();
+    });
+  });
+
+  it("updates task description", async () => {
+    const updateSpy = vi.spyOn(taskRepository, "update").mockResolvedValue({
+      ...mockTask,
+      description: "Updated notes",
+    });
+    const handleClose = vi.fn();
+
+    render(<TaskEditModal isOpen={true} task={mockTask} onClose={handleClose} />);
+
+    const textarea = screen.getByPlaceholderText(/Add notes or description/i);
+    fireEvent.change(textarea, { target: { value: "Updated notes" } });
+
+    const saveBtn = screen.getByRole("button", { name: /save/i });
+    fireEvent.click(saveBtn);
+
+    await waitFor(() => {
+      expect(updateSpy).toHaveBeenCalledWith(
+        "task-101",
+        expect.objectContaining({
+          description: "Updated notes",
+        }),
+      );
       expect(handleClose).toHaveBeenCalled();
     });
   });

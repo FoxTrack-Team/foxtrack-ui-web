@@ -6,7 +6,6 @@ import {
   IconBrandGithub,
   IconCheck,
   IconExternalLink,
-  IconInfoCircle,
   IconRefresh,
   IconSparkles,
 } from "@tabler/icons-react";
@@ -61,103 +60,108 @@ export function AboutSection() {
     ).Capacitor?.isNativePlatform?.();
 
   return (
-    <section className="rounded-xl border border-neutral-200/80 bg-white p-3.5 shadow-2xs dark:border-neutral-800/80 dark:bg-neutral-900/60">
-      <div className="flex items-center gap-2">
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-50 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400">
-          <IconInfoCircle size={15} stroke={2} />
-        </div>
+    <div className="space-y-4">
+      {/* Title & Description directly on canvas */}
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="font-semibold text-neutral-900 text-xs dark:text-neutral-100">
+          <h1 className="font-bold text-base text-neutral-900 tracking-tight dark:text-neutral-100">
             {t.about.title}
-          </h2>
-          <p className="text-[10px] text-neutral-400 dark:text-neutral-500">
+          </h1>
+          <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">
             {t.about.description}
           </p>
         </div>
+
+        <span className="rounded-md bg-orange-50 px-2 py-0.5 font-mono font-medium text-[10px] text-orange-600 dark:bg-orange-950/40 dark:text-orange-400">
+          v{currentVersion.replace(/^v/i, "")}
+        </span>
       </div>
 
-      <div className="mt-3 space-y-2.5 border-neutral-100 border-t pt-3 text-xs dark:border-neutral-800/60">
-        {/* Version & Platform */}
-        <div className="flex items-center justify-between py-1">
-          <span className="text-neutral-500 dark:text-neutral-400">{t.about.version}</span>
-          <span className="font-mono font-medium text-neutral-800 text-xs dark:text-neutral-200">
-            v{currentVersion.replace(/^v/i, "")}
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between border-neutral-50 border-t py-1 dark:border-neutral-800/40">
-          <span className="text-neutral-500 dark:text-neutral-400">{t.about.platform}</span>
-          <span className="font-medium text-neutral-800 text-xs dark:text-neutral-200">
-            {isAndroid ? t.about.platformAndroid : t.about.platformWeb}
-          </span>
-        </div>
-
-        {/* Check for updates */}
-        <div className="flex flex-col gap-2 border-neutral-50 border-t pt-2 dark:border-neutral-800/40 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <p className="font-medium text-neutral-800 text-xs dark:text-neutral-200">
-              {t.about.checkForUpdates}
-            </p>
-            {updateResult && (
-              <p className="mt-0.5 text-[11px]">
-                {updateResult.newer ? (
-                  <span className="inline-flex items-center gap-1 font-medium text-orange-600 dark:text-orange-400">
-                    <IconSparkles size={12} stroke={2} />
-                    <span>
-                      {t.about.updateAvailable}: {updateResult.latestTag}
-                    </span>
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
-                    <IconCheck size={12} stroke={2.5} />
-                    <span>{t.about.upToDate}</span>
-                  </span>
-                )}
-              </p>
-            )}
-          </div>
-
-          <div className="flex items-center gap-2">
-            {updateResult?.newer && (
-              <Button asChild size="sm" variant="default">
-                <a href={updateResult.releaseUrl} rel="noopener noreferrer" target="_blank">
-                  {t.update.downloadButton}
-                </a>
-              </Button>
-            )}
-            <Button
-              className="gap-1.5"
-              disabled={isChecking}
-              size="sm"
-              type="button"
-              variant="outline"
-              onClick={handleCheckForUpdates}
-            >
-              <IconRefresh className={isChecking ? "animate-spin" : ""} size={14} stroke={2} />
-              <span>{isChecking ? t.about.checking : t.about.checkForUpdates}</span>
-            </Button>
-          </div>
-        </div>
-
-        {/* GitHub link */}
-        <div className="flex items-center justify-between border-neutral-50 border-t pt-2 dark:border-neutral-800/40">
-          <div className="flex items-center gap-2">
-            <IconBrandGithub className="text-neutral-500 dark:text-neutral-400" size={16} />
-            <span className="font-medium text-neutral-700 text-xs dark:text-neutral-300">
-              {t.about.githubRepo}
+      {/* About Info Card */}
+      <section className="rounded-xl border border-neutral-200/80 bg-white p-3.5 shadow-2xs dark:border-neutral-800/80 dark:bg-neutral-900/60">
+        <div className="space-y-2.5 text-xs">
+          {/* Version & Platform */}
+          <div className="flex items-center justify-between py-1">
+            <span className="text-neutral-500 dark:text-neutral-400">{t.about.version}</span>
+            <span className="font-mono font-medium text-neutral-800 text-xs dark:text-neutral-200">
+              v{currentVersion.replace(/^v/i, "")}
             </span>
           </div>
-          <a
-            className="flex items-center gap-1 font-medium text-orange-600 text-xs hover:underline dark:text-orange-400"
-            href={`https://github.com/${GITHUB_REPO}`}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <span>GitHub</span>
-            <IconExternalLink size={13} stroke={2} />
-          </a>
+
+          <div className="flex items-center justify-between border-neutral-100 border-t py-1 dark:border-neutral-800/40">
+            <span className="text-neutral-500 dark:text-neutral-400">{t.about.platform}</span>
+            <span className="font-medium text-neutral-800 text-xs dark:text-neutral-200">
+              {isAndroid ? t.about.platformAndroid : t.about.platformWeb}
+            </span>
+          </div>
+
+          {/* Check for updates */}
+          <div className="flex flex-col gap-2 border-neutral-100 border-t pt-2 dark:border-neutral-800/40 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <p className="font-medium text-neutral-800 text-xs dark:text-neutral-200">
+                {t.about.checkForUpdates}
+              </p>
+              {updateResult && (
+                <p className="mt-0.5 text-[11px]">
+                  {updateResult.newer ? (
+                    <span className="inline-flex items-center gap-1 font-medium text-orange-600 dark:text-orange-400">
+                      <IconSparkles size={12} stroke={2} />
+                      <span>
+                        {t.about.updateAvailable}: {updateResult.latestTag}
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                      <IconCheck size={12} stroke={2.5} />
+                      <span>{t.about.upToDate}</span>
+                    </span>
+                  )}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2">
+              {updateResult?.newer && (
+                <Button asChild size="sm" variant="default">
+                  <a href={updateResult.releaseUrl} rel="noopener noreferrer" target="_blank">
+                    {t.update.downloadButton}
+                  </a>
+                </Button>
+              )}
+              <Button
+                className="gap-1.5"
+                disabled={isChecking}
+                size="sm"
+                type="button"
+                variant="outline"
+                onClick={handleCheckForUpdates}
+              >
+                <IconRefresh className={isChecking ? "animate-spin" : ""} size={14} stroke={2} />
+                <span>{isChecking ? t.about.checking : t.about.checkForUpdates}</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* GitHub link */}
+          <div className="flex items-center justify-between border-neutral-100 border-t pt-2 dark:border-neutral-800/40">
+            <div className="flex items-center gap-2">
+              <IconBrandGithub className="text-neutral-500 dark:text-neutral-400" size={16} />
+              <span className="font-medium text-neutral-700 text-xs dark:text-neutral-300">
+                {t.about.githubRepo}
+              </span>
+            </div>
+            <a
+              className="flex items-center gap-1 font-medium text-orange-600 text-xs hover:underline dark:text-orange-400"
+              href={`https://github.com/${GITHUB_REPO}`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <span>GitHub</span>
+              <IconExternalLink size={13} stroke={2} />
+            </a>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }

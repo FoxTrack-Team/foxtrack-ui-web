@@ -85,4 +85,23 @@ describe("DatePicker", () => {
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
+
+  it("supports custom title and disables quick presets when showQuickPresets is false", () => {
+    render(
+      <DatePicker
+        showQuickPresets={false}
+        title="Custom Calendar"
+        value={null}
+        onChange={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /due date/i }));
+
+    expect(screen.getByRole("dialog", { name: /custom calendar/i })).toBeInTheDocument();
+    expect(screen.getByText("Custom Calendar")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^today$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^tomorrow$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^next week$/i })).not.toBeInTheDocument();
+  });
 });

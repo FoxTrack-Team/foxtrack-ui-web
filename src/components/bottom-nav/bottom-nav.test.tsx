@@ -15,30 +15,30 @@ describe("BottomNav", () => {
   });
 
   it("renders all navigation items", () => {
-    mockUsePathname.mockReturnValue("/tasks");
+    mockUsePathname.mockReturnValue("/dashboard");
     render(<BottomNav />);
 
-    const tasksLink = screen.getByRole("link", { name: /^tasks$/i });
-    expect(tasksLink).toBeInTheDocument();
-    expect(tasksLink).toHaveAttribute("href", "/tasks");
-    expect(tasksLink).toHaveAttribute("aria-current", "page");
+    const dashboardLink = screen.getByRole("link", { name: /^dashboard$/i });
+    expect(dashboardLink).toBeInTheDocument();
+    expect(dashboardLink).toHaveAttribute("href", "/dashboard");
+    expect(dashboardLink).toHaveAttribute("aria-current", "page");
 
-    expect(screen.getByRole("link", { name: /^calendar$/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /^projects$/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /^settings$/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /^tasks$/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /^habits$/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /^more$/i })).toBeInTheDocument();
   });
 
   it("marks current route with aria-current='page'", () => {
-    mockUsePathname.mockReturnValue("/calendar");
+    mockUsePathname.mockReturnValue("/habits");
     render(<BottomNav />);
 
-    const calendarLink = screen.getByRole("link", { name: /^calendar$/i });
-    expect(calendarLink).toHaveAttribute("aria-current", "page");
-    expect(calendarLink.className).toContain("bg-orange-500");
+    const habitsLink = screen.getByRole("link", { name: /^habits$/i });
+    expect(habitsLink).toHaveAttribute("aria-current", "page");
+    expect(habitsLink.className).toContain("bg-orange-500");
 
-    const tasksLink = screen.getByRole("link", { name: /^tasks$/i });
-    expect(tasksLink).not.toHaveAttribute("aria-current");
-    expect(tasksLink.className).not.toContain("bg-orange-500");
+    const dashboardLink = screen.getByRole("link", { name: /^dashboard$/i });
+    expect(dashboardLink).not.toHaveAttribute("aria-current");
+    expect(dashboardLink.className).not.toContain("bg-orange-500");
   });
 
   it("does not render any Soon badges on the navigation items", () => {
@@ -49,14 +49,25 @@ describe("BottomNav", () => {
   });
 
   it("correctly identifies active route with trailing slash", () => {
-    mockUsePathname.mockReturnValue("/projects/");
+    mockUsePathname.mockReturnValue("/dashboard/");
     render(<BottomNav />);
 
-    const projectsLink = screen.getByRole("link", { name: /^projects$/i });
-    expect(projectsLink).toHaveAttribute("aria-current", "page");
-    expect(projectsLink.className).toContain("bg-orange-500");
+    const dashboardLink = screen.getByRole("link", { name: /^dashboard$/i });
+    expect(dashboardLink).toHaveAttribute("aria-current", "page");
+    expect(dashboardLink.className).toContain("bg-orange-500");
 
     const tasksLink = screen.getByRole("link", { name: /^tasks$/i });
     expect(tasksLink).not.toHaveAttribute("aria-current");
+  });
+
+  it("does not select any item when on /settings route", () => {
+    mockUsePathname.mockReturnValue("/settings");
+    render(<BottomNav />);
+
+    const links = screen.getAllByRole("link");
+    for (const link of links) {
+      expect(link).not.toHaveAttribute("aria-current");
+      expect(link.className).not.toContain("text-white");
+    }
   });
 });

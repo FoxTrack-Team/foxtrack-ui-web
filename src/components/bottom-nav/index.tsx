@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import type { Icon } from "@tabler/icons-react";
-import { IconCalendar, IconChecklist, IconFolders, IconSettings } from "@tabler/icons-react";
+import { IconChecklist, IconGridDots, IconLayoutDashboard, IconRepeat } from "@tabler/icons-react";
 
 import { useTranslation } from "@/providers/settings-provider";
 
@@ -14,29 +14,29 @@ import { cn } from "@/lib/utils";
 interface NavItemConfig {
   href: string;
   icon: Icon;
-  key: "tasks" | "calendar" | "projects" | "settings";
+  key: "dashboard" | "tasks" | "habits" | "more";
 }
 
 const NAV_CONFIG: readonly NavItemConfig[] = [
+  {
+    href: "/dashboard",
+    icon: IconLayoutDashboard,
+    key: "dashboard",
+  },
   {
     href: "/tasks",
     icon: IconChecklist,
     key: "tasks",
   },
   {
-    href: "/calendar",
-    icon: IconCalendar,
-    key: "calendar",
+    href: "/habits",
+    icon: IconRepeat,
+    key: "habits",
   },
   {
-    href: "/projects",
-    icon: IconFolders,
-    key: "projects",
-  },
-  {
-    href: "/settings",
-    icon: IconSettings,
-    key: "settings",
+    href: "/more",
+    icon: IconGridDots,
+    key: "more",
   },
 ];
 
@@ -79,6 +79,9 @@ export function BottomNav() {
           });
           setHasMeasured(true);
         }
+      } else {
+        setIndicatorStyle(null);
+        setHasMeasured(false);
       }
     }
 
@@ -112,7 +115,9 @@ export function BottomNav() {
 
         {NAV_CONFIG.map((item) => {
           const isActive =
-            currentPath === item.href || (item.href === "/tasks" && currentPath === "");
+            currentPath === item.href ||
+            (item.href === "/dashboard" && (currentPath === "" || currentPath === "/")) ||
+            (item.href !== "/" && currentPath.startsWith(item.href + "/"));
           const IconComponent = item.icon;
           const label = t.bottomNav[item.key];
 
