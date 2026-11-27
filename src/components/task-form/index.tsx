@@ -2,7 +2,7 @@
 
 import { type FormEvent, useState } from "react";
 
-import { IconFlag, IconTrash } from "@tabler/icons-react";
+import { IconCheck, IconFlag, IconTrash } from "@tabler/icons-react";
 
 import { useTranslation } from "@/providers/settings-provider";
 
@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 
 export interface TaskFormValues {
   categoryId?: string | null;
+  completed?: boolean;
   description?: string;
   dueDate: number | null;
   priority: TaskPriority;
@@ -46,6 +47,7 @@ export function TaskForm({
   const [taskTitle, setTaskTitle] = useState(initialValues?.title ?? "");
   const [description, setDescription] = useState(initialValues?.description ?? "");
   const [categoryId, setCategoryId] = useState<string | null>(initialValues?.categoryId ?? null);
+  const [completed, setCompleted] = useState(initialValues?.completed ?? false);
   const [priority, setPriority] = useState<TaskPriority>(initialValues?.priority ?? "medium");
   const [dueDate, setDueDate] = useState<number | null>(initialValues?.dueDate ?? null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,6 +68,7 @@ export function TaskForm({
       setIsSubmitting(true);
       await onSubmit({
         categoryId,
+        ...(isEdit ? { completed } : {}),
         description: description.trim() || undefined,
         dueDate,
         priority,
@@ -98,6 +101,36 @@ export function TaskForm({
           <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">{subtitle}</p>
         )}
       </div>
+
+      {/* Completion Toggle (Edit Mode) */}
+      {isEdit && (
+        <button
+          aria-checked={completed}
+          role="checkbox"
+          type="button"
+          className={cn(
+            "flex w-full items-center justify-between rounded-xl border px-3.5 py-2.5 text-xs transition-colors",
+            completed
+              ? "border-orange-200/80 bg-orange-50/70 text-orange-700 dark:border-orange-900/50 dark:bg-orange-950/30 dark:text-orange-300"
+              : "border-neutral-200 bg-neutral-50 text-neutral-700 hover:bg-neutral-100/80 dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700/60",
+          )}
+          onClick={() => setCompleted((prev) => !prev)}
+        >
+          <span className="flex items-center gap-2.5 font-medium">
+            <span
+              className={cn(
+                "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-colors",
+                completed
+                  ? "border-orange-500 bg-orange-500 text-white"
+                  : "border-neutral-300 bg-white dark:border-neutral-600 dark:bg-neutral-900",
+              )}
+            >
+              {completed && <IconCheck size={11} stroke={3} />}
+            </span>
+            <span>{completed ? t.tasks.completed : t.tasks.markCompleted}</span>
+          </span>
+        </button>
+      )}
 
       {/* Task Title Input */}
       <div>

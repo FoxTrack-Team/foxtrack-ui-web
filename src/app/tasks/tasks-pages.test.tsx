@@ -98,6 +98,10 @@ describe("New & Edit Task Pages", () => {
     const input = screen.getByDisplayValue("Initial Title");
     fireEvent.change(input, { target: { value: "Updated Task Title" } });
 
+    const doneToggle = screen.getByRole("checkbox", { name: /Mark as completed/i });
+    fireEvent.click(doneToggle);
+    expect(doneToggle).toHaveAttribute("aria-checked", "true");
+
     const submitBtn = screen.getByRole("button", { name: /Save/i });
     fireEvent.click(submitBtn);
 
@@ -107,5 +111,6 @@ describe("New & Edit Task Pages", () => {
 
     const updated = await db.tasks.get(taskId);
     expect(updated?.title).toBe("Updated Task Title");
+    expect(updated?.completed).toBe(true);
   });
 });

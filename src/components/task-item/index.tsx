@@ -1,6 +1,6 @@
 "use client";
 
-import { type MouseEvent } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { IconAlertCircle, IconCalendar, IconEdit, IconFlag, IconTrash } from "@tabler/icons-react";
@@ -34,6 +34,20 @@ const PRIORITY_FLAG_COLORS: Record<TaskPriority, string> = {
 export function TaskItem({ task }: TaskItemProps) {
   const router = useRouter();
   const { language, t } = useTranslation();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [confirmingUndo, setConfirmingUndo] = useState(false);
+
+  useEffect(() => {
+    if (!confirmingDelete) return;
+    const timer = setTimeout(() => setConfirmingDelete(false), 3000);
+    return () => clearTimeout(timer);
+  }, [confirmingDelete]);
+
+  useEffect(() => {
+    if (!confirmingUndo) return;
+    const timer = setTimeout(() => setConfirmingUndo(false), 3000);
+    return () => clearTimeout(timer);
+  }, [confirmingUndo]);
 
   const category = useLiveQuery(
     () => (task.categoryId ? db.categories.get(task.categoryId) : undefined),
@@ -50,19 +64,31 @@ export function TaskItem({ task }: TaskItemProps) {
         : t.tasks.priorityLow;
 
   async function handleToggleComplete() {
+    if (task.completed && !confirmingUndo) {
+      setConfirmingUndo(true);
+      return;
+    }
     try {
       await taskRepository.toggleComplete(task.id);
     } catch (err) {
       console.error("Failed to toggle completion", err);
+    } finally {
+      setConfirmingUndo(false);
     }
   }
 
   async function handleDelete(e: MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
+    if (!confirmingDelete) {
+      setConfirmingDelete(true);
+      return;
+    }
     try {
       await taskRepository.delete(task.id);
     } catch (err) {
       console.error("Failed to delete task", err);
+    } finally {
+      setConfirmingDelete(false);
     }
   }
 
@@ -81,11 +107,16 @@ export function TaskItem({ task }: TaskItemProps) {
       )}
       onClick={handleNavigateEdit}
     >
-      <div className="flex min-w-0 flex-1 items-start gap-2.5">
-        <div className="pt-0.5" onClick={(e) => e.stopPropagation()}>
+      <div className="flex min-w-0 flex-1 items-center gap-2.5">
+        <div className="flex shrink-0 items-center" onClick={(e) => e.stopPropagation()}>
           <Checkbox
             aria-label={task.completed ? t.tasks.markActive : t.tasks.markCompleted}
             checked={task.completed}
+            className={cn(
+              confirmingUndo &&
+                "ring-2 ring-red-500/20 data-[state=checked]:border-red-500 data-[state=checked]:bg-red-500",
+            )}
+            onBlur={() => setConfirmingUndo(false)}
             onCheckedChange={handleToggleComplete}
           />
         </div>
@@ -162,7 +193,12 @@ export function TaskItem({ task }: TaskItemProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-0.5 opacity-90 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
+      <div
+        className={cn(
+          "flex items-center gap-0.5 transition-opacity",
+          confirmingDelete ? "opacity-100" : "opacity-90 sm:opacity-0 sm:group-hover:opacity-100",
+        )}
+      >
         <Button
           aria-label={t.tasks.editTask}
           className="h-7 w-7 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200"
@@ -175,10 +211,18 @@ export function TaskItem({ task }: TaskItemProps) {
         </Button>
         <Button
           aria-label={t.tasks.deleteTask}
-          className="h-7 w-7 text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40 dark:hover:text-red-400"
+          aria-pressed={confirmingDelete}
           size="icon"
+          title={confirmingDelete ? t.tasks.deleteConfirm : t.tasks.deleteTask}
           type="button"
           variant="ghost"
+          className={cn(
+            "h-7 w-7 transition-colors",
+            confirmingDelete
+              ? "bg-red-500 text-white hover:bg-red-600 hover:text-white dark:bg-red-600 dark:text-white dark:hover:bg-red-500"
+              : "text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40 dark:hover:text-red-400",
+          )}
+          onBlur={() => setConfirmingDelete(false)}
           onClick={handleDelete}
         >
           <IconTrash size={14} stroke={1.75} />

@@ -1,7 +1,6 @@
 import Dexie, { type EntityTable } from "dexie";
 
 import { Category } from "@/features/categories/types";
-import { Tag } from "@/features/tags/types";
 import { Task } from "@/features/tasks/types";
 
 export interface AppSetting {
@@ -12,7 +11,6 @@ export interface AppSetting {
 export class FoxTrackDatabase extends Dexie {
   tasks!: EntityTable<Task, "id">;
   settings!: EntityTable<AppSetting, "key">;
-  tags!: EntityTable<Tag, "id">;
   categories!: EntityTable<Category, "id">;
 
   constructor(dbName = "FoxTrackDB") {

@@ -3,27 +3,21 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SettingsProvider } from "@/providers/settings-provider";
 
-import { db } from "@/db/database";
-
 import AboutSettingsPage from "../about/page";
 import AppearanceSettingsPage from "../appearance/page";
 import DataSettingsPage from "../data/page";
 import SettingsPage from "../page";
-import TagsSettingsPage from "../tags/page";
 import SettingsTemplate from "../template";
 
 const mockUsePathname = vi.fn(() => "/settings");
-const mockRedirect = vi.fn();
 
 vi.mock("next/navigation", () => ({
-  redirect: (url: string) => mockRedirect(url),
   usePathname: () => mockUsePathname(),
 }));
 
 describe("Settings Routes & Subpages", () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     localStorage.clear();
-    await db.tags.clear();
   });
 
   describe("SettingsPage (Overview)", () => {
@@ -87,13 +81,6 @@ describe("Settings Routes & Subpages", () => {
 
       expect(document.documentElement.classList.contains("dark")).toBe(true);
       expect(localStorage.getItem("foxtrack-theme")).toBe("dark");
-    });
-  });
-
-  describe("TagsSettingsPage (/settings/tags)", () => {
-    it("redirects to /more/tags", () => {
-      TagsSettingsPage();
-      expect(mockRedirect).toHaveBeenCalledWith("/more/tags");
     });
   });
 

@@ -8,7 +8,6 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconFolder,
-  IconTags,
 } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 
@@ -21,25 +20,12 @@ import { db } from "@/db/database";
 export default function MorePage() {
   const { isRtl, t } = useSettings();
 
-  const tags = useLiveQuery(() => db.tags.toArray(), []) ?? [];
-  const totalTags = tags.length;
-
   const categories = useLiveQuery(() => db.categories.toArray(), []) ?? [];
   const totalCategories = categories.length;
 
   const ForwardChevron = isRtl ? IconChevronLeft : IconChevronRight;
 
   const sections = [
-    {
-      badge: `${totalTags} ${t.tags.tagCount}`,
-      description: t.more.tagsSubtitle,
-      href: "/more/tags",
-      icon: IconTags,
-      iconContainerClass:
-        "bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400 ring-1 ring-violet-500/15",
-      id: "tags",
-      title: t.more.tagsTitle,
-    },
     {
       badge: `${totalCategories} ${t.categories.categoryCount}`,
       description: t.categories.subtitle,

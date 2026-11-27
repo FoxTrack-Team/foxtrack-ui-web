@@ -1,15 +1,12 @@
 import { render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { SettingsProvider } from "@/providers/settings-provider";
-
-import { db } from "@/db/database";
 
 import MoreAnalyticsPage from "../analytics/page";
 import MoreCategoriesPage from "../categories/page";
 import MorePage from "../page";
 import MoreProjectsPage from "../projects/page";
-import MoreTagsPage from "../tags/page";
 import MoreTemplate from "../template";
 
 const mockUsePathname = vi.fn(() => "/more");
@@ -28,10 +25,6 @@ vi.mock("next/navigation", () => ({
 }));
 
 describe("More Routes & Subpages", () => {
-  beforeEach(async () => {
-    await db.tags.clear();
-  });
-
   describe("MorePage (Overview List)", () => {
     it("renders sections as a list with navigation links", () => {
       render(
@@ -43,10 +36,6 @@ describe("More Routes & Subpages", () => {
       expect(
         screen.getByRole("heading", { name: /Features & Tools|امکانات و ابزارها/i }),
       ).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /Tag Management|مدیریت برچسب‌ها/i })).toHaveAttribute(
-        "href",
-        "/more/tags",
-      );
       expect(screen.getByRole("link", { name: /Categories|دسته‌بندی‌ها/i })).toHaveAttribute(
         "href",
         "/more/categories",
@@ -57,23 +46,6 @@ describe("More Routes & Subpages", () => {
       expect(
         screen.getByRole("link", { name: /Analytics & Reports|آمار و گزارش‌ها/i }),
       ).toHaveAttribute("href", "/more/analytics");
-    });
-  });
-
-  describe("MoreTagsPage (/more/tags)", () => {
-    it("renders back link to /more and tags manager", () => {
-      render(
-        <SettingsProvider>
-          <MoreTagsPage />
-        </SettingsProvider>,
-      );
-
-      const backLink = screen.getByRole("link", {
-        name: /Features & Tools|امکانات و ابزارها/i,
-      });
-      expect(backLink).toBeInTheDocument();
-      expect(backLink).toHaveAttribute("href", "/more");
-      expect(screen.getByText("No tags yet")).toBeInTheDocument();
     });
   });
 
@@ -144,10 +116,10 @@ describe("More Routes & Subpages", () => {
     });
 
     it("applies forward transition on subpages", () => {
-      mockUsePathname.mockReturnValue("/more/tags");
+      mockUsePathname.mockReturnValue("/more/categories");
       const { container } = render(
         <MoreTemplate>
-          <div>Tags Content</div>
+          <div>Categories Content</div>
         </MoreTemplate>,
       );
 

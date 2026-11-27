@@ -112,8 +112,6 @@ export interface Dictionary {
     featuresSubtitle: string;
     featuresTitle: string;
     subtitle: string;
-    tagsSubtitle: string;
-    tagsTitle: string;
     title: string;
     upcomingAnalyticsDesc: string;
     upcomingAnalyticsTitle: string;
@@ -155,40 +153,16 @@ export interface Dictionary {
       title: string;
     };
     subtitle: string;
-    tags: {
-      description: string;
-      title: string;
-    };
-    title: string;
-  };
-  tags: {
-    cancel: string;
-    colorLabel: string;
-    createTag: string;
-    deleteConfirmButton: string;
-    deleteConfirmDesc: string;
-    deleteConfirmTitle: string;
-    deleteTag: string;
-    editTag: string;
-    emptyDesc: string;
-    emptyTitle: string;
-    nameLabel: string;
-    namePlaceholder: string;
-    newTag: string;
-    saveTag: string;
-    tagCount: string;
     title: string;
   };
   tasks: {
     active: string;
     activeCount: string;
     addNewTask: string;
-    addTag: string;
     addTask: string;
     all: string;
     categoryLabel: string;
     completed: string;
-    createTagPrompt: string;
     deleteConfirm: string;
     deleteTask: string;
     description: string;
@@ -207,7 +181,6 @@ export interface Dictionary {
     newTask: string;
     newTaskSubtitle: string;
     noCategory: string;
-    noTags: string;
     overdue: string;
     placeholder: string;
     placeholderDesc: string;
@@ -217,9 +190,7 @@ export interface Dictionary {
     priorityLow: string;
     priorityMed: string;
     saveTask: string;
-    searchTags: string;
     selectCategory: string;
-    tags: string;
     title: string;
     today: string;
     tomorrow: string;

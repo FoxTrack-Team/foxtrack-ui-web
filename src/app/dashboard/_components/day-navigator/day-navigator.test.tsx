@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { DayNavigator } from "./index";
@@ -28,7 +28,8 @@ describe("DayNavigator", () => {
     expect(calendarButton).toBeInTheDocument();
 
     fireEvent.click(calendarButton);
-    expect(screen.getByRole("dialog", { name: /calendar/i })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /^today$/i })).not.toBeInTheDocument();
+    const dialog = screen.getByRole("dialog", { name: /calendar/i });
+    expect(dialog).toBeInTheDocument();
+    expect(within(dialog).queryByRole("button", { name: /^today$/i })).not.toBeInTheDocument();
   });
 });

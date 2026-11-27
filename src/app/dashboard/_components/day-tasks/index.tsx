@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 
-import { IconAlertCircle, IconChecklist, IconPlus } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconChecklist,
+  IconChevronLeft,
+  IconChevronRight,
+  IconPlus,
+} from "@tabler/icons-react";
 
 import { useTranslation } from "@/providers/settings-provider";
 
@@ -10,6 +16,8 @@ import { TaskItem } from "@/components/task-item";
 import { Button } from "@/components/ui/button";
 
 import { Task, TaskPriority } from "@/features/tasks/types";
+
+import { useDirection } from "@/hooks/use-direction";
 
 interface DayTasksProps {
   isTodaySelected: boolean;
@@ -26,6 +34,8 @@ const PRIORITY_WEIGHTS: Record<TaskPriority, number> = {
 
 export function DayTasks({ tasks, overdueCount, isTodaySelected, onAddTask }: DayTasksProps) {
   const { t } = useTranslation();
+  const { isRtl } = useDirection();
+  const ChevronIcon = isRtl ? IconChevronLeft : IconChevronRight;
 
   // Sort: active tasks first (by priority high -> medium -> low), then completed tasks
   const sortedTasks = [...tasks].sort((a, b) => {
@@ -44,21 +54,23 @@ export function DayTasks({ tasks, overdueCount, isTodaySelected, onAddTask }: Da
     <div className="space-y-3">
       {/* Overdue alert if today is selected */}
       {isTodaySelected && overdueCount > 0 && (
-        <div className="flex items-center justify-between gap-2 rounded-xl border border-rose-200/80 bg-rose-50/70 px-3.5 py-2.5 text-rose-800 text-xs dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">
-          <div className="flex items-center gap-2">
-            <IconAlertCircle
-              className="shrink-0 text-rose-600 dark:text-rose-400"
-              size={15}
-              stroke={2}
-            />
-            <span>
-              {overdueCount} {t.dashboard.overdueWarning}
+        <Link
+          className="group flex items-center justify-between gap-2.5 rounded-xl border border-rose-200/80 bg-rose-50/70 px-3 py-2 text-rose-800 text-xs transition-colors hover:bg-rose-50 active:bg-rose-100/70 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300 dark:hover:bg-rose-950/50"
+          href="/tasks"
+        >
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 ring-1 ring-rose-500/15 dark:bg-rose-500/20 dark:text-rose-400">
+              <IconAlertCircle size={15} stroke={1.8} />
+            </div>
+            <span className="truncate font-medium">
+              <span className="font-semibold">{overdueCount}</span> {t.dashboard.overdueWarning}
             </span>
           </div>
-          <Link className="font-medium underline underline-offset-2 hover:opacity-80" href="/tasks">
-            {t.bottomNav.tasks}
-          </Link>
-        </div>
+          <span className="inline-flex shrink-0 items-center gap-0.5 font-medium text-[11px] text-rose-700 dark:text-rose-300">
+            <span>{t.bottomNav.tasks}</span>
+            <ChevronIcon size={14} stroke={2} />
+          </span>
+        </Link>
       )}
 
       {/* Task List or Empty State */}

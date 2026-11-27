@@ -50,6 +50,15 @@ describe("TaskItem", () => {
     expect(mockPush).toHaveBeenCalledWith("/tasks/edit?id=task-123");
 
     const deleteBtn = screen.getByLabelText("Delete task");
+    expect(deleteBtn).toHaveAttribute("aria-pressed", "false");
+
+    // First click arms confirmation (turns red) without deleting
+    fireEvent.click(deleteBtn);
+    expect(deleteBtn).toHaveAttribute("aria-pressed", "true");
+    expect(deleteBtn.className).toContain("bg-red-500");
+    expect(deleteSpy).not.toHaveBeenCalled();
+
+    // Second click confirms and deletes the task
     fireEvent.click(deleteBtn);
     expect(deleteSpy).toHaveBeenCalledWith("task-123");
   });
@@ -73,5 +82,35 @@ describe("TaskItem", () => {
 
     fireEvent.click(screen.getByText("UI Design Polish"));
     expect(mockPush).toHaveBeenCalledWith("/tasks/edit?id=task-456");
+  });
+
+  it("requires two clicks to uncheck a completed task", async () => {
+    const completedTask: Task = {
+      completed: true,
+      createdAt: 1000,
+      dueDate: null,
+      id: "task-done",
+      priority: "medium",
+      title: "Completed task",
+      updatedAt: 1000,
+    };
+
+    const toggleSpy = vi.spyOn(taskRepository, "toggleComplete").mockResolvedValue({
+      ...completedTask,
+      completed: false,
+    });
+
+    render(<TaskItem task={completedTask} />);
+
+    const checkbox = screen.getByLabelText("Mark as active");
+
+    // First click arms undo confirmation (turns red) without toggling
+    fireEvent.click(checkbox);
+    expect(checkbox.className).toContain("data-[state=checked]:bg-red-500");
+    expect(toggleSpy).not.toHaveBeenCalled();
+
+    // Second click confirms and unchecks the task
+    fireEvent.click(checkbox);
+    expect(toggleSpy).toHaveBeenCalledWith("task-done");
   });
 });

@@ -62,6 +62,7 @@ function TaskEditContent() {
       title={t.tasks.editTaskTitle}
       initialValues={{
         categoryId: task.categoryId,
+        completed: task.completed,
         description: task.description,
         dueDate: task.dueDate,
         priority: task.priority,
