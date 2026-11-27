@@ -194,10 +194,106 @@
     animation-name: settings-slide-back-rtl;
   }
 
+  /* Splash Screen Choreographed Brand Animations (100% GPU Compositor Safe) */
+  .splash-aura {
+    will-change: opacity;
+    opacity: 0;
+    animation: splash-aura-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.12s forwards;
+  }
+
+  .splash-guide-ring {
+    will-change: transform, opacity;
+    transform-origin: center;
+    opacity: 0;
+    animation: splash-guide-rotate 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.12s forwards;
+  }
+
+  .splash-orbit-ring {
+    will-change: transform, opacity;
+    transform-origin: center;
+    opacity: 0;
+    animation: splash-orbit-spin 0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.14s forwards;
+  }
+
+  .splash-ripple {
+    will-change: transform, opacity;
+    opacity: 0;
+    animation: splash-ring-ripple 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+  }
+
+  .splash-medallion {
+    will-change: transform, opacity;
+    opacity: 0;
+    animation: splash-medallion-enter 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+  }
+
+  .splash-fox-layer {
+    will-change: transform, opacity;
+    opacity: 0;
+    animation: splash-fox-enter 0.54s cubic-bezier(0.22, 1, 0.36, 1) 0.14s forwards;
+  }
+
+  .splash-eye {
+    stroke-dasharray: 110;
+    stroke-dashoffset: 110;
+    animation: splash-eye-draw 0.32s cubic-bezier(0.22, 1, 0.36, 1) 0.28s forwards;
+  }
+
+  .splash-check {
+    stroke-dasharray: 290;
+    stroke-dashoffset: 290;
+    animation: splash-check-draw 0.48s cubic-bezier(0.32, 0.94, 0.6, 1) 0.38s forwards;
+  }
+
+  .splash-wordmark {
+    will-change: transform, opacity;
+    opacity: 0;
+    animation: splash-wordmark-up 0.44s cubic-bezier(0.22, 1, 0.36, 1) 0.22s forwards;
+  }
+
+  .splash-hairline {
+    will-change: transform, opacity;
+    opacity: 0;
+    transform-origin: center;
+    animation: splash-line-expand 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+  }
+
+  .splash-tagline {
+    will-change: transform, opacity;
+    opacity: 0;
+    animation: splash-tagline-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.36s forwards;
+  }
+
+  .splash-bar-fill {
+    will-change: transform;
+    transform-origin: left;
+    transform: scale3d(0, 1, 1);
+    animation: splash-bar-fill 1.05s cubic-bezier(0.4, 0, 0.2, 1) 0.18s forwards;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .animate-settings-forward,
-    .animate-settings-backward {
-      animation: none;
+    .animate-settings-backward,
+    .splash-aura,
+    .splash-guide-ring,
+    .splash-orbit-ring,
+    .splash-ripple,
+    .splash-medallion,
+    .splash-fox-layer,
+    .splash-eye,
+    .splash-check,
+    .splash-wordmark,
+    .splash-hairline,
+    .splash-tagline,
+    .splash-bar-fill {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      stroke-dashoffset: 0 !important;
+    }
+
+    .splash-ripple {
+      opacity: 0 !important;
     }
   }
 }
@@ -255,15 +351,141 @@
   }
 }
 
-@keyframes splash-progress {
-  0% {
-    transform: translateX(-100%);
+@keyframes splash-aura-in {
+  from {
+    opacity: 0;
   }
-  50% {
-    transform: translateX(20%);
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes splash-guide-rotate {
+  from {
+    opacity: 0;
+    transform: rotate(-30deg) scale3d(0.92, 0.92, 1);
+  }
+  to {
+    opacity: 0.5;
+    transform: rotate(0deg) scale3d(1, 1, 1);
+  }
+}
+
+@keyframes splash-orbit-spin {
+  0% {
+    opacity: 0;
+    transform: rotate(-160deg) scale3d(0.92, 0.92, 1);
+  }
+  25% {
+    opacity: 1;
   }
   100% {
-    transform: translateX(100%);
+    opacity: 1;
+    transform: rotate(200deg) scale3d(1, 1, 1);
+  }
+}
+
+@keyframes splash-ring-ripple {
+  0% {
+    opacity: 0.45;
+    transform: scale3d(0.9, 0.9, 1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale3d(1.3, 1.3, 1);
+  }
+}
+
+@keyframes splash-medallion-enter {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0) scale3d(0.84, 0.84, 1);
+  }
+  70% {
+    opacity: 1;
+    transform: translate3d(0, -1px, 0) scale3d(1.02, 1.02, 1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  }
+}
+
+@keyframes splash-fox-enter {
+  0% {
+    opacity: 0;
+    transform: scale3d(0.78, 0.78, 1) rotate(-12deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale3d(1.03, 1.03, 1) rotate(1.5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale3d(1, 1, 1) rotate(0deg);
+  }
+}
+
+@keyframes splash-eye-draw {
+  from {
+    stroke-dashoffset: 110;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes splash-check-draw {
+  from {
+    stroke-dashoffset: 290;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes splash-wordmark-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes splash-line-expand {
+  from {
+    opacity: 0;
+    transform: scale3d(0, 1, 1);
+  }
+  to {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes splash-tagline-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes splash-bar-fill {
+  0% {
+    transform: scale3d(0, 1, 1);
+  }
+  75% {
+    transform: scale3d(0.92, 1, 1);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
   }
 }
 

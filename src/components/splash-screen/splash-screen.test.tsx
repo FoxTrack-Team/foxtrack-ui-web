@@ -16,7 +16,7 @@ describe("SplashScreen", () => {
     render(<SplashScreen minDuration={500} />);
 
     expect(screen.getByRole("status", { name: /application loading/i })).toBeInTheDocument();
-    expect(screen.getByAltText("FoxTrack Logo")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "FoxTrack Logo" })).toBeInTheDocument();
     expect(screen.getByText("Personal Productivity")).toBeInTheDocument();
   });
 
