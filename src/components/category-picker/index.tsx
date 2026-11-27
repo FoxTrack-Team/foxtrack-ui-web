@@ -49,7 +49,7 @@ export function CategoryPicker({ disabled = false, onChange, value }: CategoryPi
           disabled={disabled}
           type="button"
           className={cn(
-            "flex h-9 min-w-0 flex-1 items-center justify-between rounded-xl border px-3 text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20",
+            "flex h-11 min-w-0 flex-1 items-center justify-between rounded-xl border px-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 sm:h-10 sm:text-xs",
             selectedCategory
               ? "border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
               : "border-neutral-200 bg-neutral-50 text-neutral-500 hover:bg-neutral-100/70 dark:border-neutral-800 dark:bg-neutral-800/80 dark:text-neutral-400 dark:hover:bg-neutral-800",
@@ -62,7 +62,7 @@ export function CategoryPicker({ disabled = false, onChange, value }: CategoryPi
               <>
                 <div
                   className={cn(
-                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-md shadow-2xs",
+                    "flex h-6 w-6 shrink-0 items-center justify-center rounded-md shadow-2xs sm:h-5 sm:w-5",
                     colorDetails.iconBgClass,
                   )}
                 >
@@ -75,24 +75,24 @@ export function CategoryPicker({ disabled = false, onChange, value }: CategoryPi
             ) : (
               <>
                 <IconCategory className="h-4 w-4 shrink-0 text-neutral-400" stroke={1.75} />
-                <span className="text-neutral-400 dark:text-neutral-500">
+                <span className="text-neutral-500 dark:text-neutral-400">
                   {t.tasks.selectCategory}
                 </span>
               </>
             )}
           </div>
 
-          <IconChevronDown className="h-3.5 w-3.5 shrink-0 text-neutral-400" stroke={2} />
+          <IconChevronDown className="h-4 w-4 shrink-0 text-neutral-400" stroke={2} />
         </button>
 
         {selectedCategory && !disabled && (
           <button
             aria-label={t.tasks.noCategory}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-neutral-200 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-700 active:scale-95 dark:border-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-neutral-200 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700 active:scale-95 sm:h-10 sm:w-10 dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
             type="button"
             onClick={() => onChange(null)}
           >
-            <IconX size={15} stroke={2} />
+            <IconX size={16} stroke={2} />
           </button>
         )}
       </div>
@@ -106,12 +106,12 @@ export function CategoryPicker({ disabled = false, onChange, value }: CategoryPi
         onClose={() => setIsOpen(false)}
       >
         <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto p-0.5 sm:grid-cols-2">
+          <div className="grid max-h-72 grid-cols-2 gap-2 overflow-y-auto p-0.5 sm:grid-cols-2">
             {/* Clear option */}
             <button
               type="button"
               className={cn(
-                "flex items-center gap-2.5 rounded-xl border p-2.5 text-start transition-all active:scale-[0.98]",
+                "flex min-h-12 items-center gap-2.5 rounded-xl border p-2.5 text-start transition-all active:scale-[0.98]",
                 !value
                   ? "border-primary bg-primary/10 text-primary font-medium"
                   : "border-neutral-200/80 bg-neutral-50/60 hover:bg-neutral-100 text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900/40 dark:text-neutral-400 dark:hover:bg-neutral-800/60",
@@ -121,7 +121,7 @@ export function CategoryPicker({ disabled = false, onChange, value }: CategoryPi
               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-neutral-200/70 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
                 <IconX size={15} stroke={2} />
               </div>
-              <span className="text-xs truncate">{t.tasks.noCategory}</span>
+              <span className="truncate text-xs">{t.tasks.noCategory}</span>
             </button>
 
             {categories.map((cat) => {
@@ -132,7 +132,7 @@ export function CategoryPicker({ disabled = false, onChange, value }: CategoryPi
                   key={cat.id}
                   type="button"
                   className={cn(
-                    "flex items-center gap-2.5 rounded-xl border p-2.5 text-start transition-all active:scale-[0.98]",
+                    "flex min-h-12 items-center gap-2.5 rounded-xl border p-2.5 text-start transition-all active:scale-[0.98]",
                     isSelected
                       ? "border-primary bg-primary/10 font-semibold ring-1 ring-primary/30"
                       : "border-neutral-200/80 bg-white hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900/80 dark:hover:border-neutral-700",

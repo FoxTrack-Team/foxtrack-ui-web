@@ -1,6 +1,12 @@
 "use client";
 
-import { IconDeviceDesktop, IconLanguage, IconMoon, IconSun } from "@tabler/icons-react";
+import {
+  IconDeviceDesktop,
+  IconLanguage,
+  IconMoon,
+  IconPalette,
+  IconSun,
+} from "@tabler/icons-react";
 
 import { AppTheme, useSettings } from "@/providers/settings-provider";
 
@@ -23,7 +29,7 @@ export function AppearanceSection() {
           <h1 className="font-bold text-base text-neutral-900 tracking-tight dark:text-neutral-100">
             {t.settings.appearance.title}
           </h1>
-          <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">
+          <p className="mt-0.5 text-neutral-500 text-xs dark:text-neutral-400">
             {t.settings.appearance.description}
           </p>
         </div>
@@ -34,8 +40,9 @@ export function AppearanceSection() {
         <div className="space-y-3.5">
           {/* Theme Picker */}
           <div>
-            <label className="mb-1.5 block font-medium text-neutral-700 text-xs dark:text-neutral-300">
-              {t.settings.appearance.theme}
+            <label className="mb-1.5 flex items-center gap-1.5 font-medium text-neutral-700 text-xs dark:text-neutral-300">
+              <IconPalette size={15} stroke={1.75} />
+              <span>{t.settings.appearance.theme}</span>
             </label>
             <div className="grid grid-cols-3 gap-1.5 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800/60">
               {themes.map((item) => {
@@ -43,13 +50,14 @@ export function AppearanceSection() {
                 const isActive = theme === item.key;
                 return (
                   <button
+                    aria-pressed={isActive}
                     key={item.key}
                     type="button"
                     className={cn(
-                      "flex items-center justify-center gap-1.5 rounded-lg py-1.5 font-medium text-xs transition-all",
+                      "flex min-h-10 items-center justify-center gap-1.5 rounded-lg py-2 font-medium text-xs transition-all active:scale-[0.98]",
                       isActive
-                        ? "bg-white text-neutral-900 shadow-xs dark:bg-neutral-700 dark:text-neutral-100"
-                        : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200",
+                        ? "bg-white text-neutral-900 shadow-xs ring-1 ring-black/5 dark:bg-neutral-700/90 dark:text-white dark:ring-white/10"
+                        : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200",
                     )}
                     onClick={() => setTheme(item.key)}
                   >
@@ -71,31 +79,33 @@ export function AppearanceSection() {
             </div>
             <div className="mt-1.5 grid grid-cols-2 gap-1.5 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800/60">
               <button
+                aria-pressed={language === "en"}
                 type="button"
                 className={cn(
-                  "flex items-center justify-center rounded-lg py-1.5 font-medium text-xs transition-all",
+                  "flex min-h-10 items-center justify-center rounded-lg py-2 font-medium text-xs transition-all active:scale-[0.98]",
                   language === "en"
-                    ? "bg-white text-neutral-900 shadow-xs dark:bg-neutral-700 dark:text-neutral-100"
-                    : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200",
+                    ? "bg-white text-neutral-900 shadow-xs ring-1 ring-black/5 dark:bg-neutral-700/90 dark:text-white dark:ring-white/10"
+                    : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200",
                 )}
                 onClick={() => setLanguage("en")}
               >
                 English
               </button>
               <button
+                aria-pressed={language === "fa"}
                 type="button"
                 className={cn(
-                  "flex items-center justify-center rounded-lg py-1.5 font-medium text-xs transition-all",
+                  "flex min-h-10 items-center justify-center rounded-lg py-2 font-medium text-xs transition-all active:scale-[0.98]",
                   language === "fa"
-                    ? "bg-white text-neutral-900 shadow-xs dark:bg-neutral-700 dark:text-neutral-100"
-                    : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200",
+                    ? "bg-white text-neutral-900 shadow-xs ring-1 ring-black/5 dark:bg-neutral-700/90 dark:text-white dark:ring-white/10"
+                    : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200",
                 )}
                 onClick={() => setLanguage("fa")}
               >
                 فارسی
               </button>
             </div>
-            <p className="mt-1.5 text-[11px] text-neutral-400 dark:text-neutral-500">
+            <p className="mt-1.5 text-neutral-500 text-[11px] dark:text-neutral-400">
               {t.settings.appearance.directionNote}
             </p>
           </div>

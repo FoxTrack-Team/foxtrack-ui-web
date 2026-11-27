@@ -11,21 +11,22 @@ import {
 } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 
-import { useSettings, useTranslation } from "@/providers/settings-provider";
+import { useTranslation } from "@/providers/settings-provider";
 
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
 
 import { Task } from "@/features/tasks/types";
 
+import { cn } from "@/lib/utils";
+
 import { db } from "@/db/database";
 
 export function DataSection() {
   const { t } = useTranslation();
-  const { language } = useSettings();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [status, setStatus] = useState<{ message: string; type: "error" | "success" } | null>(null);
 
   const tasks = useLiveQuery(() => db.tasks.toArray(), []) ?? [];
   const totalCount = tasks.length;
@@ -38,7 +39,7 @@ export function DataSection() {
         app: "FoxTrack",
         exportedAt: new Date().toISOString(),
         tasks,
-        version: process.env.NEXT_PUBLIC_APP_VERSION || "1.0.5",
+        version: process.env.NEXT_PUBLIC_APP_VERSION || "1.0.6",
       };
       const jsonStr = JSON.stringify(backup, null, 2);
       const blob = new Blob([jsonStr], { type: "application/json" });
@@ -48,7 +49,7 @@ export function DataSection() {
       a.download = `foxtrack-backup-${new Date().toISOString().slice(0, 10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      setStatusMessage(t.settings.data.exportSuccess);
+      setStatus({ message: t.settings.data.exportSuccess, type: "success" });
     } catch (err) {
       console.error("Export failed", err);
     }
@@ -71,7 +72,7 @@ export function DataSection() {
             : [];
 
         if (tasksToImport.length === 0) {
-          alert(t.settings.data.importError);
+          setStatus({ message: t.settings.data.importError, type: "error" });
           return;
         }
 
@@ -83,12 +84,13 @@ export function DataSection() {
           }
         });
 
-        setStatusMessage(
-          t.settings.data.importSuccess.replace("{count}", String(validTasks.length)),
-        );
+        setStatus({
+          message: t.settings.data.importSuccess.replace("{count}", String(validTasks.length)),
+          type: "success",
+        });
       } catch (err) {
         console.error("Import failed", err);
-        alert(t.settings.data.importError);
+        setStatus({ message: t.settings.data.importError, type: "error" });
       } finally {
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
@@ -102,7 +104,7 @@ export function DataSection() {
     try {
       await db.tasks.clear();
       setIsResetModalOpen(false);
-      setStatusMessage(t.settings.data.resetSuccess);
+      setStatus({ message: t.settings.data.resetSuccess, type: "success" });
     } catch (err) {
       console.error("Failed to clear database", err);
     }
@@ -116,18 +118,18 @@ export function DataSection() {
           <h1 className="font-bold text-base text-neutral-900 tracking-tight dark:text-neutral-100">
             {t.settings.data.title}
           </h1>
-          <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">
+          <p className="mt-0.5 text-neutral-500 text-xs dark:text-neutral-400">
             {t.settings.data.description}
           </p>
         </div>
 
-        <span className="rounded-md bg-neutral-100/90 px-2 py-0.5 font-medium text-[10px] text-neutral-500 dark:bg-neutral-800/90 dark:text-neutral-400">
-          {totalCount} {language === "fa" ? "تسک" : "tasks"}
+        <span className="shrink-0 rounded-md bg-neutral-100/90 px-2 py-0.5 font-medium text-[11px] text-neutral-500 tabular-nums dark:bg-neutral-800/90 dark:text-neutral-400">
+          {totalCount} {totalCount === 1 ? t.dashboard.taskSingular : t.dashboard.tasksCount}
         </span>
       </div>
 
       {/* Real-time stats */}
-      <div className="flex flex-wrap items-center gap-2 rounded-xl bg-neutral-100/70 p-2.5 text-xs dark:bg-neutral-800/40">
+      <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-neutral-100/70 p-3 text-xs tabular-nums dark:bg-neutral-800/40">
         <span className="font-medium text-neutral-600 text-xs dark:text-neutral-300">
           {t.settings.data.statsTotal}:
         </span>
@@ -135,66 +137,78 @@ export function DataSection() {
           {totalCount}
         </span>
         <span className="text-neutral-300 dark:text-neutral-700">•</span>
-        <span className="text-neutral-500 dark:text-neutral-400">
+        <span className="text-neutral-600 dark:text-neutral-400">
           {activeCount} {t.settings.data.statsActive}
         </span>
         <span className="text-neutral-300 dark:text-neutral-700">•</span>
-        <span className="text-neutral-500 dark:text-neutral-400">
+        <span className="text-neutral-600 dark:text-neutral-400">
           {completedCount} {t.settings.data.statsCompleted}
         </span>
       </div>
 
-      {/* Feedback message */}
-      {statusMessage && (
-        <div className="flex items-center gap-1.5 rounded-lg bg-orange-50 px-3 py-1.5 text-orange-800 text-xs dark:bg-orange-950/30 dark:text-orange-300">
-          <IconCheck size={14} stroke={2} />
-          <span>{statusMessage}</span>
+      {/* Feedback message (success or inline error replacing native alert) */}
+      {status && (
+        <div
+          role={status.type === "error" ? "alert" : "status"}
+          className={cn(
+            "flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-xs",
+            status.type === "error"
+              ? "bg-rose-50 text-rose-800 dark:bg-rose-950/40 dark:text-rose-300"
+              : "bg-orange-50 text-orange-800 dark:bg-orange-950/30 dark:text-orange-300",
+          )}
+        >
+          {status.type === "error" ? (
+            <IconAlertTriangle className="shrink-0" size={15} stroke={2} />
+          ) : (
+            <IconCheck className="shrink-0" size={15} stroke={2} />
+          )}
+          <span>{status.message}</span>
         </div>
       )}
 
-      {/* Operations Card */}
+      {/* Backup & Restore Card */}
       <section className="rounded-xl border border-neutral-200/80 bg-white p-3.5 shadow-2xs dark:border-neutral-800/80 dark:bg-neutral-900/60">
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           {/* Export */}
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col items-stretch justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-3">
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-neutral-800 text-xs dark:text-neutral-200">
+              <p className="font-medium text-neutral-800 text-sm sm:text-xs dark:text-neutral-200">
                 {t.settings.data.exportBackup}
               </p>
-              <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
+              <p className="text-neutral-500 text-xs sm:text-[11px] dark:text-neutral-400">
                 {t.settings.data.exportBackupDesc}
               </p>
             </div>
             <Button
-              className="gap-1.5"
+              className="min-h-10 w-full gap-1.5 rounded-xl sm:min-h-9 sm:w-auto sm:rounded-lg"
               size="sm"
               type="button"
               variant="outline"
               onClick={handleExport}
             >
-              <IconDownload size={14} stroke={2} />
+              <IconDownload size={15} stroke={2} />
               <span>{t.settings.data.exportBackup}</span>
             </Button>
           </div>
 
           {/* Import */}
-          <div className="flex items-center justify-between gap-3 border-neutral-100 border-t pt-3 dark:border-neutral-800/40">
+          <div className="flex flex-col items-stretch justify-between gap-2.5 border-neutral-100 border-t pt-3.5 sm:flex-row sm:items-center sm:gap-3 dark:border-neutral-800/40">
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-neutral-800 text-xs dark:text-neutral-200">
+              <p className="font-medium text-neutral-800 text-sm sm:text-xs dark:text-neutral-200">
                 {t.settings.data.importBackup}
               </p>
-              <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
+              <p className="text-neutral-500 text-xs sm:text-[11px] dark:text-neutral-400">
                 {t.settings.data.importBackupDesc}
               </p>
             </div>
             <Button
-              className="gap-1.5"
+              className="min-h-10 w-full gap-1.5 rounded-xl sm:min-h-9 sm:w-auto sm:rounded-lg"
               size="sm"
               type="button"
               variant="outline"
               onClick={() => fileInputRef.current?.click()}
             >
-              <IconUpload size={14} stroke={2} />
+              <IconUpload size={15} stroke={2} />
               <span>{t.settings.data.importBackup}</span>
             </Button>
             <input
@@ -205,28 +219,30 @@ export function DataSection() {
               onChange={handleFileSelect}
             />
           </div>
+        </div>
+      </section>
 
-          {/* Reset / Danger Zone */}
-          <div className="flex items-center justify-between gap-3 border-neutral-100 border-t pt-3 dark:border-neutral-800/40">
-            <div className="min-w-0 flex-1">
-              <p className="font-medium text-red-600 text-xs dark:text-red-400">
-                {t.settings.data.resetData}
-              </p>
-              <p className="text-[11px] text-neutral-400 dark:text-neutral-500">
-                {t.settings.data.resetDataDesc}
-              </p>
-            </div>
-            <Button
-              className="gap-1.5 text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950/40"
-              size="sm"
-              type="button"
-              variant="ghost"
-              onClick={() => setIsResetModalOpen(true)}
-            >
-              <IconTrash size={14} stroke={1.75} />
-              <span>{t.settings.data.resetData}</span>
-            </Button>
+      {/* Danger Zone Card */}
+      <section className="rounded-xl border border-red-200/70 bg-red-50/40 p-3.5 shadow-2xs dark:border-red-900/40 dark:bg-red-950/15">
+        <div className="flex flex-col items-stretch justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="font-medium text-red-600 text-sm sm:text-xs dark:text-red-400">
+              {t.settings.data.resetData}
+            </p>
+            <p className="text-neutral-500 text-xs sm:text-[11px] dark:text-neutral-400">
+              {t.settings.data.resetDataDesc}
+            </p>
           </div>
+          <Button
+            className="min-h-10 w-full gap-1.5 rounded-xl border border-red-200/90 bg-white text-red-600 shadow-2xs hover:bg-red-50 hover:text-red-700 sm:min-h-9 sm:w-auto sm:rounded-lg dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-950/60"
+            size="sm"
+            type="button"
+            variant="ghost"
+            onClick={() => setIsResetModalOpen(true)}
+          >
+            <IconTrash size={15} stroke={1.75} />
+            <span>{t.settings.data.resetData}</span>
+          </Button>
         </div>
       </section>
 
@@ -247,17 +263,18 @@ export function DataSection() {
             </p>
           </div>
 
-          <div className="flex items-center justify-end gap-2 border-neutral-100 border-t pt-3 dark:border-neutral-800/80">
+          <div className="flex flex-col-reverse gap-2 border-neutral-100 border-t pt-3 sm:flex-row sm:justify-end dark:border-neutral-800/80">
             <Button
+              className="h-10 w-full rounded-full sm:h-9 sm:w-auto"
               size="sm"
               type="button"
-              variant="ghost"
+              variant="outline"
               onClick={() => setIsResetModalOpen(false)}
             >
               {t.common.cancel}
             </Button>
             <Button
-              className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
+              className="h-10 w-full rounded-full bg-red-600 text-white hover:bg-red-700 sm:h-9 sm:w-auto dark:bg-red-600 dark:hover:bg-red-700"
               size="sm"
               type="button"
               onClick={handleConfirmReset}

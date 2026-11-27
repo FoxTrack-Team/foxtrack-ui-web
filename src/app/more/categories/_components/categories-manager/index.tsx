@@ -14,8 +14,6 @@ import { Button } from "@/components/ui/button";
 import { categoryRepository } from "@/features/categories/services/dexie-category-repository";
 import { Category } from "@/features/categories/types";
 
-import { cn } from "@/lib/utils";
-
 import { db } from "@/db/database";
 
 import { CategoryItem } from "../category-item";
@@ -54,20 +52,33 @@ export function CategoriesManager() {
   }
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-3.5 pb-4">
       {/* Section Header */}
-      <div>
-        <div className="flex items-center gap-2">
-          <h2 className="font-bold text-base text-neutral-900 tracking-tight dark:text-neutral-100">
-            {t.categories.title}
-          </h2>
-          <span className="rounded-md bg-neutral-100/90 px-1.5 py-0.5 font-medium text-[10px] text-neutral-500 dark:bg-neutral-800/90 dark:text-neutral-400">
-            {categories.length}
-          </span>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <h1 className="font-bold text-base text-neutral-900 tracking-tight dark:text-neutral-100">
+              {t.categories.title}
+            </h1>
+            <span className="rounded-md bg-neutral-100/90 px-2 py-0.5 font-medium text-[11px] text-neutral-500 tabular-nums dark:bg-neutral-800/90 dark:text-neutral-400">
+              {categories.length}
+            </span>
+          </div>
+          <p className="mt-0.5 text-neutral-500 text-xs dark:text-neutral-400">
+            {t.categories.subtitle}
+          </p>
         </div>
-        <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">
-          {t.categories.subtitle}
-        </p>
+
+        <Button
+          aria-label={t.categories.newCategory}
+          className="h-9 shrink-0 gap-1.5 rounded-xl px-3 font-medium text-xs shadow-xs"
+          size="sm"
+          type="button"
+          onClick={handleNavigateNew}
+        >
+          <IconPlus size={15} stroke={2.5} />
+          <span>{t.categories.newCategory}</span>
+        </Button>
       </div>
 
       {/* Category Grid */}
@@ -103,26 +114,6 @@ export function CategoriesManager() {
         </div>
       )}
 
-      {/* Floating Action Button (FAB) */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-22 z-30 mx-auto max-w-xl px-5 sm:bottom-24 sm:px-6">
-        <div className="flex justify-end">
-          <button
-            aria-label={t.categories.newCategory}
-            type="button"
-            className={cn(
-              "pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full",
-              "bg-primary text-primary-foreground shadow-[0_6px_20px_rgba(249,115,22,0.4)]",
-              "transition-all duration-200 hover:scale-105 hover:bg-primary/90 active:scale-95",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-950",
-              deletingCategory !== null && "pointer-events-none scale-75 opacity-0",
-            )}
-            onClick={handleNavigateNew}
-          >
-            <IconPlus size={26} stroke={2.5} />
-          </button>
-        </div>
-      </div>
-
       {/* Delete Confirmation Modal */}
       <Modal
         description={t.categories.deleteConfirmDesc}
@@ -131,9 +122,9 @@ export function CategoriesManager() {
         title={t.categories.deleteConfirmTitle}
         onClose={() => setDeletingCategory(null)}
       >
-        <div className="flex justify-end gap-2 pt-2">
+        <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
           <Button
-            className="h-8 text-xs rounded-full"
+            className="h-10 w-full rounded-full text-xs sm:h-9 sm:w-auto"
             type="button"
             variant="outline"
             onClick={() => setDeletingCategory(null)}
@@ -141,7 +132,7 @@ export function CategoriesManager() {
             {t.categories.cancel}
           </Button>
           <Button
-            className="h-8 text-xs rounded-full"
+            className="h-10 w-full rounded-full text-xs sm:h-9 sm:w-auto"
             type="button"
             variant="destructive"
             onClick={handleDeleteConfirm}

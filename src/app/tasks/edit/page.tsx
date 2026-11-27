@@ -79,7 +79,7 @@ export default function EditTaskPage() {
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-4 pb-20">
+    <div className="space-y-4">
       <SubpageHeader backHref="/tasks" backLabel={t.tasks.title} />
       <Suspense fallback={null}>
         <TaskEditContent />

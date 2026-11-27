@@ -10,7 +10,7 @@ export default function MoreCategoriesPage() {
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-3 pb-20">
+    <div className="space-y-3">
       <SubpageHeader backHref="/more" backLabel={t.more.title} />
       <CategoriesManager />
     </div>

@@ -7,7 +7,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
   useSyncExternalStore,
 } from "react";
 
@@ -42,6 +41,55 @@ const SettingsContext = createContext<SettingsContextValue | null>(null);
 const STORAGE_THEME_KEY = "foxtrack-theme";
 const STORAGE_LANG_KEY = "foxtrack-language";
 export const SETTINGS_CHANGE_EVENT = "foxtrack:settings";
+
+const settingsListeners = new Set<() => void>();
+
+function emitSettingsStoreChange() {
+  for (const listener of settingsListeners) {
+    listener();
+  }
+}
+
+function subscribeSettingsStore(callback: () => void) {
+  settingsListeners.add(callback);
+  if (typeof window === "undefined") {
+    return () => {
+      settingsListeners.delete(callback);
+    };
+  }
+  function onStorage(e: StorageEvent) {
+    if (e.key === STORAGE_THEME_KEY || e.key === STORAGE_LANG_KEY || e.key === null) {
+      callback();
+    }
+  }
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(SETTINGS_CHANGE_EVENT, callback);
+  return () => {
+    settingsListeners.delete(callback);
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(SETTINGS_CHANGE_EVENT, callback);
+  };
+}
+
+function getServerThemeSnapshot(): AppTheme {
+  return "system";
+}
+
+function getServerLanguageSnapshot(): SupportedLanguage {
+  return DEFAULT_LANGUAGE;
+}
+
+function subscribeHydration() {
+  return () => {};
+}
+
+function getClientHydrated(): boolean {
+  return true;
+}
+
+function getServerHydrated(): boolean {
+  return false;
+}
 
 function readInitialTheme(): AppTheme {
   if (typeof window === "undefined") return "system";
@@ -106,8 +154,17 @@ function applyDomLanguage(lang: SupportedLanguage) {
 }
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<AppTheme>(readInitialTheme);
-  const [language, setLanguageState] = useState<SupportedLanguage>(readInitialLanguage);
+  const isHydrated = useSyncExternalStore(subscribeHydration, getClientHydrated, getServerHydrated);
+  const theme = useSyncExternalStore(
+    subscribeSettingsStore,
+    readInitialTheme,
+    getServerThemeSnapshot,
+  );
+  const language = useSyncExternalStore(
+    subscribeSettingsStore,
+    readInitialLanguage,
+    getServerLanguageSnapshot,
+  );
   const isSystemDark = useSyncExternalStore(
     subscribeSystemTheme,
     getSystemSnapshot,
@@ -127,36 +184,29 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         const storedTheme = await db.settings.get("theme");
         if (active && storedTheme?.value) {
           const valid = storedTheme.value as AppTheme;
-          if (valid === "system" || valid === "light" || valid === "dark") {
-            setThemeState((prev) => {
-              if (prev !== valid) {
-                try {
-                  localStorage.setItem(STORAGE_THEME_KEY, valid);
-                } catch {
-                  /* ignore */
-                }
-                return valid;
-              }
-              return prev;
-            });
+          if (
+            (valid === "system" || valid === "light" || valid === "dark") &&
+            valid !== readInitialTheme()
+          ) {
+            try {
+              localStorage.setItem(STORAGE_THEME_KEY, valid);
+            } catch {
+              /* ignore */
+            }
+            emitSettingsStoreChange();
           }
         }
 
         const storedLang = await db.settings.get("language");
         if (active && storedLang?.value) {
           const validLang = storedLang.value as SupportedLanguage;
-          if (validLang === "en" || validLang === "fa") {
-            setLanguageState((prev) => {
-              if (prev !== validLang) {
-                try {
-                  localStorage.setItem(STORAGE_LANG_KEY, validLang);
-                } catch {
-                  /* ignore */
-                }
-                return validLang;
-              }
-              return prev;
-            });
+          if ((validLang === "en" || validLang === "fa") && validLang !== readInitialLanguage()) {
+            try {
+              localStorage.setItem(STORAGE_LANG_KEY, validLang);
+            } catch {
+              /* ignore */
+            }
+            emitSettingsStoreChange();
           }
         }
       } catch {
@@ -177,24 +227,26 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     });
   }, [language]);
 
-  // Update DOM when theme or language changes
+  // Update DOM when theme or language changes after hydration
   useEffect(() => {
+    if (!isHydrated) return;
     applyDomTheme(theme, isSystemDark);
-  }, [theme, isSystemDark]);
+  }, [isHydrated, theme, isSystemDark]);
 
   useEffect(() => {
+    if (!isHydrated) return;
     applyDomLanguage(language);
-  }, [language]);
+  }, [isHydrated, language]);
 
   const setTheme = useCallback(
     (nextTheme: AppTheme) => {
-      setThemeState(nextTheme);
       try {
         localStorage.setItem(STORAGE_THEME_KEY, nextTheme);
       } catch {
         /* ignore */
       }
       applyDomTheme(nextTheme, isSystemDark);
+      emitSettingsStoreChange();
 
       db.settings.put({ key: "theme", value: nextTheme }).catch(() => {});
       window.dispatchEvent(new Event(SETTINGS_CHANGE_EVENT));
@@ -203,13 +255,13 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   );
 
   const setLanguage = useCallback((nextLang: SupportedLanguage) => {
-    setLanguageState(nextLang);
     try {
       localStorage.setItem(STORAGE_LANG_KEY, nextLang);
     } catch {
       /* ignore */
     }
     applyDomLanguage(nextLang);
+    emitSettingsStoreChange();
 
     db.settings.put({ key: "language", value: nextLang }).catch(() => {});
     window.dispatchEvent(new Event(SETTINGS_CHANGE_EVENT));

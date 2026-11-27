@@ -7,18 +7,24 @@ import { useTranslation } from "@/providers/settings-provider";
 
 import { TaskFilter } from "@/features/tasks/types";
 
+import { cn } from "@/lib/utils";
+
 interface EmptyStateProps {
   action?: React.ReactNode;
+  badge?: React.ReactNode;
   description?: string;
   filter?: TaskFilter;
+  framed?: boolean;
   icon?: Icon;
   title?: string;
 }
 
 export function EmptyState({
   action,
+  badge,
   description: customDescription,
   filter,
+  framed = false,
   icon: CustomIcon,
   title: customTitle,
 }: EmptyStateProps) {
@@ -38,18 +44,36 @@ export function EmptyState({
     IconComponent = CustomIcon ?? IconCircleCheck;
   }
 
-  return (
-    <div className="my-8 flex flex-col items-center justify-center py-10 text-center">
-      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-100 text-neutral-400 ring-1 ring-neutral-200/50 dark:bg-neutral-850 dark:text-neutral-500 dark:ring-neutral-800">
-        <IconComponent size={20} stroke={1.75} />
+  const content = (
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center text-center",
+        framed
+          ? "w-full max-w-sm rounded-2xl border border-neutral-200/80 bg-white px-6 py-8 shadow-2xs dark:border-neutral-800/80 dark:bg-neutral-900/60"
+          : "my-8 py-10",
+      )}
+    >
+      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500 ring-1 ring-neutral-200/60 dark:bg-neutral-800/80 dark:text-neutral-400 dark:ring-neutral-800">
+        <IconComponent size={22} stroke={1.75} />
       </div>
-      <h3 className="font-semibold text-neutral-800 text-sm tracking-tight dark:text-neutral-200">
+      {badge ? <div className="mb-2">{badge}</div> : null}
+      <h2 className="font-semibold text-base text-neutral-800 tracking-tight dark:text-neutral-200">
         {title}
-      </h3>
-      <p className="mt-1 max-w-xs text-neutral-400 text-xs leading-relaxed dark:text-neutral-500">
+      </h2>
+      <p className="mt-1.5 max-w-[260px] text-neutral-500 text-xs leading-relaxed dark:text-neutral-400">
         {description}
       </p>
-      {action ? <div className="mt-4">{action}</div> : null}
+      {action ? <div className="mt-5">{action}</div> : null}
     </div>
   );
+
+  if (framed) {
+    return (
+      <div className="flex min-h-[calc(100dvh-17rem)] items-center justify-center py-4">
+        {content}
+      </div>
+    );
+  }
+
+  return content;
 }

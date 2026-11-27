@@ -20,6 +20,19 @@ export function formatFriendlyDate(timestamp: number | null, lang: string = "en"
   }
 
   const currentYear = new Date().getFullYear();
+  if (isFa) {
+    try {
+      return new Intl.DateTimeFormat(
+        "fa-IR",
+        date.getFullYear() === currentYear
+          ? { day: "numeric", month: "short" }
+          : { day: "numeric", month: "short", year: "numeric" },
+      ).format(date);
+    } catch {
+      /* fallback below */
+    }
+  }
+
   if (date.getFullYear() === currentYear) {
     return format(date, "MMM d");
   }
@@ -125,5 +138,22 @@ export function formatDayNumber(date: Date, lang: string = "en"): string {
     return new Intl.DateTimeFormat("en-US", { day: "numeric" }).format(date);
   } catch {
     return String(date.getDate());
+  }
+}
+
+/**
+ * Formats month and year matching the Gregorian calendar grid (e.g., "November 2026" or "نوامبر ۲۰۲۶").
+ */
+export function formatMonthYear(date: Date, lang: string = "en"): string {
+  try {
+    if (lang === "fa") {
+      return new Intl.DateTimeFormat("fa-IR-u-ca-gregory", {
+        month: "long",
+        year: "numeric",
+      }).format(date);
+    }
+    return format(date, "MMMM yyyy");
+  } catch {
+    return format(date, "MMMM yyyy");
   }
 }

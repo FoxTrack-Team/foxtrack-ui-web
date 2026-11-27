@@ -59,49 +59,57 @@ export default function MorePage() {
   ];
 
   return (
-    <div className="space-y-3 pb-20">
+    <div className="space-y-3">
       <div className="mb-1.5">
         <h1 className="font-bold text-base text-neutral-900 tracking-tight dark:text-neutral-100">
           {t.more.title}
         </h1>
-        <p className="text-[11px] text-neutral-400 dark:text-neutral-500">{t.more.subtitle}</p>
+        <p className="text-neutral-500 text-xs dark:text-neutral-400">{t.more.subtitle}</p>
       </div>
 
       {/* Grouped List Card */}
       <div className="divide-y divide-neutral-100 overflow-hidden rounded-xl border border-neutral-200/80 bg-white shadow-2xs dark:divide-neutral-800/60 dark:border-neutral-800/80 dark:bg-neutral-900/60">
         {sections.map((section) => {
           const IconComp = section.icon;
+          const isUpcoming = section.href !== "/more/categories";
           return (
             <Link
-              className="group flex w-full items-center justify-between px-3 py-2.5 text-start transition-colors hover:bg-neutral-50/80 active:bg-neutral-100/80 sm:px-3.5 dark:hover:bg-neutral-800/30 dark:active:bg-neutral-800/60"
+              className="group flex min-h-[60px] w-full items-center justify-between gap-2 px-3.5 py-3 text-start transition-colors hover:bg-neutral-50/80 active:bg-neutral-100/80 dark:hover:bg-neutral-800/30 dark:active:bg-neutral-800/60"
               href={section.href}
               key={section.id}
             >
-              <div className="flex min-w-0 items-center gap-2.5">
+              <div className="flex min-w-0 flex-1 items-center gap-3">
                 <div
                   className={cn(
-                    "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg",
+                    "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
                     section.iconContainerClass,
                   )}
                 >
-                  <IconComp size={15} stroke={2} />
+                  <IconComp size={18} stroke={2} />
                 </div>
-                <div className="min-w-0">
-                  <h2 className="font-medium text-neutral-900 text-xs tracking-tight leading-snug dark:text-neutral-100">
+                <div className="min-w-0 flex-1">
+                  <h2 className="font-medium text-neutral-900 text-sm tracking-tight leading-snug dark:text-neutral-100">
                     {section.title}
                   </h2>
-                  <p className="truncate text-[11px] text-neutral-400 leading-tight dark:text-neutral-500">
+                  <p className="mt-0.5 line-clamp-2 text-neutral-500 text-xs leading-snug dark:text-neutral-400">
                     {section.description}
                   </p>
                 </div>
               </div>
 
-              <div className="flex shrink-0 items-center gap-1.5 ps-2.5">
-                <span className="hidden rounded-md bg-neutral-100/90 px-2 py-0.5 font-medium text-[10px] text-neutral-500 sm:inline-flex dark:bg-neutral-800/90 dark:text-neutral-400">
+              <div className="flex shrink-0 items-center gap-1.5 ps-2">
+                <span
+                  className={cn(
+                    "inline-flex rounded-md px-2 py-0.5 font-medium text-[11px] tabular-nums",
+                    isUpcoming
+                      ? "bg-orange-500/10 text-orange-600 dark:bg-orange-500/15 dark:text-orange-400"
+                      : "bg-neutral-100/90 text-neutral-600 dark:bg-neutral-800/90 dark:text-neutral-300",
+                  )}
+                >
                   {section.badge}
                 </span>
                 <ForwardChevron
-                  className="h-3.5 w-3.5 text-neutral-400 transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 dark:text-neutral-500"
+                  className="h-4 w-4 text-neutral-400 transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 dark:text-neutral-500"
                   stroke={2}
                 />
               </div>

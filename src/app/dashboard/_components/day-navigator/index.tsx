@@ -153,27 +153,27 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
           )}
         </div>
 
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1.5">
           {!isCurrentDayToday && (
             <button
               aria-label={t.dashboard.today}
-              className="inline-flex items-center gap-1 rounded-lg border border-neutral-200/80 bg-white px-2 py-1 font-medium text-neutral-700 text-xs shadow-2xs transition-colors hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+              className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-neutral-200/80 bg-white px-2.5 py-1.5 font-medium text-neutral-700 text-xs shadow-2xs transition-all hover:bg-neutral-50 active:scale-95 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
               type="button"
               onClick={() => onSelectDate(new Date())}
             >
-              <IconRotate size={13} stroke={2} />
+              <IconRotate size={14} stroke={2} />
               <span>{t.dashboard.today}</span>
             </button>
           )}
 
-          <div className="flex items-center rounded-lg border border-neutral-200/80 bg-white p-0.5 shadow-2xs dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="flex items-center rounded-xl border border-neutral-200/80 bg-white p-0.5 shadow-2xs dark:border-neutral-800 dark:bg-neutral-900">
             <button
-              aria-label="Previous day"
-              className="rounded-md p-1.5 text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+              aria-label={t.dashboard.prevDay}
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 active:scale-95 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
               type="button"
               onClick={handlePrevDay}
             >
-              <PrevIcon size={16} stroke={2} />
+              <PrevIcon size={17} stroke={2} />
             </button>
             <DatePicker
               showQuickPresets={false}
@@ -181,11 +181,11 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
               value={selectedDate.getTime()}
               trigger={
                 <button
-                  aria-label="Open calendar"
-                  className="rounded-md p-1.5 text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+                  aria-label={t.dashboard.openCalendar}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 active:scale-95 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
                   type="button"
                 >
-                  <IconCalendar size={16} stroke={2} />
+                  <IconCalendar size={17} stroke={2} />
                 </button>
               }
               onChange={(timestamp) => {
@@ -193,12 +193,12 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
               }}
             />
             <button
-              aria-label="Next day"
-              className="rounded-md p-1.5 text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+              aria-label={t.dashboard.nextDay}
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 active:scale-95 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
               type="button"
               onClick={handleNextDay}
             >
-              <NextIcon size={16} stroke={2} />
+              <NextIcon size={17} stroke={2} />
             </button>
           </div>
         </div>
@@ -207,7 +207,7 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
       {/* Horizontal Scrollable Days Slider */}
       <div className="relative rounded-xl border border-neutral-200/80 bg-white p-1 shadow-2xs sm:p-1.5 dark:border-neutral-800/80 dark:bg-neutral-900/60">
         <div
-          className="no-scrollbar flex items-center gap-1.5 overflow-x-auto py-0.5 [touch-action:pan-x]"
+          className="no-scrollbar flex items-center gap-1 overflow-x-auto py-0.5 [touch-action:pan-x]"
           ref={scrollContainerRef}
           onScroll={handleScroll}
         >
@@ -223,7 +223,7 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
                 ref={isSelected ? activeDayRef : null}
                 type="button"
                 className={cn(
-                  "relative flex min-h-[46px] w-[44px] shrink-0 flex-col items-center justify-center rounded-lg py-1.5 transition-all duration-150 sm:w-[48px]",
+                  "relative flex min-h-[48px] w-[calc((100%-24px)/7)] min-w-[42px] shrink-0 flex-col items-center justify-center rounded-lg py-1.5 transition-all duration-150 active:scale-95",
                   isSelected
                     ? "bg-orange-500 font-semibold text-white shadow-xs"
                     : isDayToday
@@ -232,10 +232,10 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
                 )}
                 onClick={() => onSelectDate(day)}
               >
-                <span className="text-[10px] uppercase opacity-80 sm:text-[11px]">
+                <span className="text-[11px] uppercase opacity-80">
                   {formatShortWeekday(day, language)}
                 </span>
-                <span className="mt-0.5 font-medium text-xs sm:text-sm">
+                <span className="mt-0.5 font-medium text-xs tabular-nums sm:text-sm">
                   {formatDayNumber(day, language)}
                 </span>
 

@@ -38,7 +38,7 @@ export function CategoryForm({
   const { t } = useTranslation();
   const [name, setName] = useState(initialValues?.name ?? "");
   const [selectedColor, setSelectedColor] = useState<string>(initialValues?.color ?? "orange");
-  const [selectedIcon, setSelectedIcon] = useState<string>(initialValues?.icon ?? "target");
+  const [selectedIcon, setSelectedIcon] = useState<string>(initialValues?.icon ?? "heart");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -79,7 +79,7 @@ export function CategoryForm({
         <h1 className="font-bold text-base text-neutral-900 tracking-tight dark:text-neutral-100">
           {title}
         </h1>
-        <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">
+        <p className="mt-0.5 text-neutral-500 text-xs dark:text-neutral-400">
           {t.categories.subtitle}
         </p>
       </div>
@@ -90,8 +90,8 @@ export function CategoryForm({
           {t.categories.nameLabel}
         </label>
         <input
-          autoFocus
-          className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-neutral-900 text-xs focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-primary"
+          autoFocus={!isEdit}
+          className="min-h-11 w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-base text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 sm:min-h-10 sm:text-sm dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-primary dark:focus:bg-neutral-900"
           placeholder={t.categories.namePlaceholder}
           type="text"
           value={name}
@@ -104,20 +104,21 @@ export function CategoryForm({
         <label className="mb-2 block font-medium text-neutral-700 text-xs dark:text-neutral-300">
           {t.categories.colorLabel}
         </label>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-8 gap-2 pt-0.5">
           {CATEGORY_COLORS.map((color) => {
             const isSelected = selectedColor === color.id;
             return (
               <button
                 aria-label={color.name}
+                aria-pressed={isSelected}
                 key={color.id}
                 type="button"
                 className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full transition-all active:scale-95",
+                  "mx-auto flex h-8 w-8 items-center justify-center rounded-full transition-all active:scale-95 sm:h-9 sm:w-9",
                   color.bgClass,
                   isSelected
-                    ? "ring-2 ring-orange-500 ring-offset-2 dark:ring-offset-neutral-900 scale-105"
-                    : "opacity-80 hover:opacity-100",
+                    ? "ring-2 ring-orange-500 ring-offset-2 dark:ring-offset-neutral-950 scale-105"
+                    : "opacity-85 hover:opacity-100",
                 )}
                 onClick={() => setSelectedColor(color.id)}
               >
@@ -133,18 +134,19 @@ export function CategoryForm({
         <label className="mb-2 block font-medium text-neutral-700 text-xs dark:text-neutral-300">
           {t.categories.iconLabel}
         </label>
-        <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 rounded-2xl border border-neutral-200/80 bg-neutral-50/50 p-2.5 max-h-56 overflow-y-auto dark:border-neutral-800/80 dark:bg-neutral-900/30">
+        <div className="grid max-h-[204px] grid-cols-6 gap-2 overflow-y-auto rounded-2xl border border-neutral-200/80 bg-neutral-50/50 p-2.5 sm:grid-cols-8 dark:border-neutral-800/80 dark:bg-neutral-900/30">
           {CATEGORY_ICONS.map((opt) => {
             const isSelected = selectedIcon === opt.id;
             return (
               <button
                 aria-label={opt.name}
+                aria-pressed={isSelected}
                 key={opt.id}
                 type="button"
                 className={cn(
                   "flex h-10 w-full items-center justify-center rounded-xl transition-all active:scale-95",
                   isSelected
-                    ? cn("shadow-2xs scale-105", colorDetails.iconBgClass)
+                    ? cn("ring-1 ring-current/30 shadow-2xs scale-105", colorDetails.iconBgClass)
                     : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200",
                 )}
                 onClick={() => setSelectedIcon(opt.id)}
@@ -157,38 +159,38 @@ export function CategoryForm({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:justify-between">
-        <div className="order-3 sm:order-1">
+      <div className="flex flex-col gap-2.5 pt-1 sm:flex-row sm:items-center sm:justify-between">
+        <div className="order-2 sm:order-1">
           {isEdit && onDelete && (
             <Button
-              className="w-full sm:w-auto gap-1 h-10 sm:h-9 text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-950/40 rounded-full"
+              className="h-10 w-full gap-1.5 rounded-xl text-rose-600 text-xs hover:bg-rose-50 hover:text-rose-700 sm:h-9 sm:w-auto dark:text-rose-400 dark:hover:bg-rose-950/40"
               disabled={isSubmitting}
               type="button"
               variant="ghost"
               onClick={() => setIsDeleteModalOpen(true)}
             >
-              <IconTrash size={14} stroke={2} />
+              <IconTrash size={15} stroke={2} />
               <span>{t.categories.deleteCategory}</span>
             </Button>
           )}
         </div>
 
-        <div className="order-1 sm:order-2 flex flex-col sm:flex-row items-center gap-2">
+        <div className="order-1 flex flex-row-reverse items-center gap-2.5 sm:order-2">
           <Button
-            className="w-full sm:w-auto order-2 sm:order-1 h-10 sm:h-9 text-xs rounded-full"
+            className="h-11 flex-[1.35] rounded-xl text-sm sm:h-9 sm:flex-none sm:min-w-[120px] sm:text-xs"
+            disabled={!name.trim() || isSubmitting}
+            type="submit"
+          >
+            {isEdit ? t.categories.saveCategory : t.categories.createCategory}
+          </Button>
+          <Button
+            className="h-11 flex-1 rounded-xl text-sm sm:h-9 sm:flex-none sm:text-xs"
             disabled={isSubmitting}
             type="button"
             variant="outline"
             onClick={onCancel}
           >
             {t.categories.cancel}
-          </Button>
-          <Button
-            className="w-full sm:w-auto order-1 sm:order-2 h-10 sm:h-9 text-xs sm:min-w-[100px] rounded-full"
-            disabled={!name.trim() || isSubmitting}
-            type="submit"
-          >
-            {isEdit ? t.categories.saveCategory : t.categories.createCategory}
           </Button>
         </div>
       </div>
@@ -202,9 +204,9 @@ export function CategoryForm({
           title={t.categories.deleteConfirmTitle}
           onClose={() => setIsDeleteModalOpen(false)}
         >
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
             <Button
-              className="h-8 text-xs rounded-full"
+              className="h-10 w-full rounded-full text-xs sm:h-9 sm:w-auto"
               type="button"
               variant="outline"
               onClick={() => setIsDeleteModalOpen(false)}
@@ -212,7 +214,7 @@ export function CategoryForm({
               {t.categories.cancel}
             </Button>
             <Button
-              className="h-8 text-xs rounded-full"
+              className="h-10 w-full rounded-full text-xs sm:h-9 sm:w-auto"
               type="button"
               variant="destructive"
               onClick={handleDeleteConfirm}

@@ -51,8 +51,8 @@ describe("CategoriesManager (HabitNow Style)", () => {
       expect(screen.getByText("Other")).toBeInTheDocument();
     });
 
-    // Check that items count (0 entry) is shown under each category
-    const zeroHabitsList = screen.getAllByText("0 entry");
+    // Check that items count (0 entries) is shown under each category
+    const zeroHabitsList = screen.getAllByText("0 entries");
     expect(zeroHabitsList.length).toBe(14);
 
     // Default categories should be read-only without delete or edit buttons

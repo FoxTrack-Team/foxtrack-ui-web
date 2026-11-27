@@ -34,11 +34,11 @@ describe("BottomNav", () => {
 
     const habitsLink = screen.getByRole("link", { name: /^habits$/i });
     expect(habitsLink).toHaveAttribute("aria-current", "page");
-    expect(habitsLink.className).toContain("bg-orange-500");
+    expect(habitsLink.className).toContain("text-orange-600");
 
     const dashboardLink = screen.getByRole("link", { name: /^dashboard$/i });
     expect(dashboardLink).not.toHaveAttribute("aria-current");
-    expect(dashboardLink.className).not.toContain("bg-orange-500");
+    expect(dashboardLink.className).not.toContain("text-orange-600");
   });
 
   it("does not render any Soon badges on the navigation items", () => {
@@ -54,7 +54,7 @@ describe("BottomNav", () => {
 
     const dashboardLink = screen.getByRole("link", { name: /^dashboard$/i });
     expect(dashboardLink).toHaveAttribute("aria-current", "page");
-    expect(dashboardLink.className).toContain("bg-orange-500");
+    expect(dashboardLink.className).toContain("text-orange-600");
 
     const tasksLink = screen.getByRole("link", { name: /^tasks$/i });
     expect(tasksLink).not.toHaveAttribute("aria-current");
@@ -67,7 +67,7 @@ describe("BottomNav", () => {
     const links = screen.getAllByRole("link");
     for (const link of links) {
       expect(link).not.toHaveAttribute("aria-current");
-      expect(link.className).not.toContain("text-white");
+      expect(link.className).not.toContain("text-orange-600");
     }
   });
 });

@@ -92,7 +92,7 @@ export const CATEGORY_ICONS: readonly CategoryIconOption[] = [
   { icon: IconHeart, id: "heart", name: "Heart" },
   { icon: IconPill, id: "pill", name: "Medicine" },
   { icon: IconStethoscope, id: "stethoscope", name: "Doctor" },
-  { icon: IconApple, id: "apple", name: "Nutrition" },
+  { icon: IconApple, id: "apple", name: "Healthy Food" },
   { icon: IconBottle, id: "bottle", name: "Water" },
   { icon: IconBath, id: "bath", name: "Hygiene" },
 

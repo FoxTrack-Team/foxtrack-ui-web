@@ -86,7 +86,7 @@ export function DayTasks({ tasks, overdueCount, isTodaySelected, onAddTask }: Da
             {t.dashboard.noTasksForDayDesc}
           </p>
           <Button
-            className="mt-4 gap-1.5"
+            className="mt-4 min-h-10 gap-1.5 rounded-xl px-4"
             size="sm"
             type="button"
             variant="outline"

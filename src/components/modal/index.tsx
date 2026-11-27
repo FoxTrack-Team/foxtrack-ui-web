@@ -5,6 +5,8 @@ import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react"
 import { IconX } from "@tabler/icons-react";
 import { createPortal } from "react-dom";
 
+import { useTranslation } from "@/providers/settings-provider";
+
 import { cn } from "@/lib/utils";
 
 export interface ModalProps {
@@ -76,6 +78,7 @@ export function Modal({
   showHandle = true,
   title,
 }: ModalProps) {
+  const { t } = useTranslation();
   const modalId = useId();
   const isClient = useIsClient();
   const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
@@ -208,7 +211,7 @@ export function Modal({
         aria-modal="true"
         role="dialog"
         className={cn(
-          "relative w-full rounded-t-2xl border-t border-neutral-200/80 bg-white p-5 shadow-2xl transition-all",
+          "relative flex max-h-[85dvh] w-full flex-col rounded-t-2xl border-t border-neutral-200/80 bg-white p-5 shadow-2xl transition-all",
           "pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] sm:rounded-2xl sm:border sm:border-neutral-200/80 sm:pb-5",
           "dark:border-neutral-800/80 dark:bg-neutral-900",
           MAX_WIDTH_CLASSES[maxWidth],
@@ -232,8 +235,8 @@ export function Modal({
         {/* Mobile Swipe-Down Handle */}
         {showHandle && (
           <div
-            aria-label="Drag down to close"
-            className="-mt-2 mb-2.5 flex h-6 w-full cursor-grab items-center justify-center active:cursor-grabbing sm:hidden"
+            aria-label={t.common.dragToClose}
+            className="-mt-2 mb-2.5 flex h-7 w-full shrink-0 cursor-grab items-center justify-center active:cursor-grabbing sm:hidden"
             role="button"
             tabIndex={0}
             onTouchEnd={handleTouchEnd}
@@ -242,6 +245,12 @@ export function Modal({
             onClick={(e) => {
               e.stopPropagation();
               onClose();
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClose();
+              }
             }}
           >
             <div className="h-1.5 w-12 rounded-full bg-neutral-300 transition-colors hover:bg-neutral-400 dark:bg-neutral-700 dark:hover:bg-neutral-600" />
@@ -252,7 +261,7 @@ export function Modal({
         {(title || showCloseButton) && (
           <div
             className={cn(
-              "flex items-center justify-between border-b border-neutral-100 pb-3 dark:border-neutral-800/70",
+              "flex shrink-0 items-center justify-between border-b border-neutral-100 pb-3 dark:border-neutral-800/70",
               headerClassName,
             )}
             onTouchEnd={handleTouchEnd}
@@ -274,8 +283,8 @@ export function Modal({
 
             {showCloseButton && (
               <button
-                aria-label="Close"
-                className="rounded-lg p-1 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                aria-label={t.common.close}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-800 active:scale-95 active:bg-neutral-200/70 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -289,7 +298,11 @@ export function Modal({
         )}
 
         {/* Modal Content */}
-        <div className={cn((title || showCloseButton) && "pt-3.5")}>{children}</div>
+        <div
+          className={cn("min-h-0 flex-1 overflow-y-auto", (title || showCloseButton) && "pt-3.5")}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

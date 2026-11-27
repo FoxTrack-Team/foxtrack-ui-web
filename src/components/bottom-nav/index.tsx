@@ -94,16 +94,16 @@ export function BottomNav() {
   }, [currentPath, language]);
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 pb-[env(safe-area-inset-bottom)] sm:bottom-6">
+    <div className="pointer-events-none fixed inset-x-0 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex justify-center px-3 sm:bottom-6 sm:px-4">
       <nav
         aria-label="Bottom navigation"
-        className="pointer-events-auto relative flex items-center gap-1 rounded-full border border-neutral-200/80 bg-white/90 p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl dark:border-neutral-800/80 dark:bg-neutral-900/90 dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
+        className="pointer-events-auto relative grid w-[min(calc(100vw-1.5rem),23rem)] grid-cols-4 items-center gap-1 rounded-full border border-neutral-200/80 bg-white/95 p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl sm:flex sm:w-auto dark:border-neutral-800/80 dark:bg-neutral-900/95 dark:shadow-[0_10px_32px_rgba(0,0,0,0.45)]"
         ref={navRef}
       >
         {hasMeasured && indicatorStyle && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute z-0 rounded-full bg-orange-500 shadow-[0_2px_12px_rgba(249,115,22,0.4)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            className="pointer-events-none absolute z-0 rounded-full bg-orange-500/12 ring-1 ring-orange-500/20 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] dark:bg-orange-500/16 dark:ring-orange-500/25"
             style={{
               height: `${indicatorStyle.height}px`,
               left: `${indicatorStyle.left}px`,
@@ -127,17 +127,25 @@ export function BottomNav() {
               href={item.href}
               key={item.href}
               className={cn(
-                "relative z-10 flex select-none items-center gap-2 rounded-full px-4 py-2 font-medium text-xs transition-colors duration-200",
+                "relative z-10 flex min-h-[50px] min-w-0 select-none flex-col items-center justify-center gap-1 rounded-full px-2 py-1.5 font-medium transition-colors duration-200 sm:min-h-[42px] sm:flex-row sm:gap-2 sm:px-4 sm:py-2",
                 isActive
                   ? cn(
-                      "text-white",
-                      !hasMeasured && "bg-orange-500 shadow-[0_2px_10px_rgba(249,115,22,0.3)]",
+                      "text-orange-600 dark:text-orange-400",
+                      !hasMeasured &&
+                        "bg-orange-500/12 ring-1 ring-orange-500/20 dark:bg-orange-500/16 dark:ring-orange-500/25",
                     )
-                  : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100",
+                  : "text-neutral-500 hover:bg-neutral-100/80 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100",
               )}
             >
-              <IconComponent size={17} stroke={isActive ? 2.25 : 1.75} />
-              <span className={cn(isActive ? "font-semibold" : "hidden sm:inline")}>{label}</span>
+              <IconComponent size={19} stroke={isActive ? 2.15 : 1.7} />
+              <span
+                className={cn(
+                  "whitespace-nowrap text-[11px] leading-none tracking-tight sm:text-xs",
+                  isActive && "font-semibold",
+                )}
+              >
+                {label}
+              </span>
             </Link>
           );
         })}

@@ -9,7 +9,6 @@ import {
   eachDayOfInterval,
   endOfMonth,
   endOfWeek,
-  format,
   isSameDay,
   isSameMonth,
   isToday,
@@ -23,7 +22,9 @@ import { useTranslation } from "@/providers/settings-provider";
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
 
-import { formatFriendlyDate } from "@/lib/date-utils";
+import { useDirection } from "@/hooks/use-direction";
+
+import { formatFriendlyDate, formatMonthYear } from "@/lib/date-utils";
 import { cn } from "@/lib/utils";
 
 interface DatePickerProps {
@@ -36,7 +37,8 @@ interface DatePickerProps {
   value: number | null;
 }
 
-const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"] as const;
+const WEEKDAYS_EN = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"] as const;
+const WEEKDAYS_FA = ["ی", "د", "س", "چ", "پ", "ج", "ش"] as const;
 
 function toEndOfDayTimestamp(date: Date): number {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999).getTime();
@@ -55,6 +57,10 @@ export function DatePicker({
   const selectedDate = value ? new Date(value) : null;
   const [currentMonth, setCurrentMonth] = useState<Date>(() => selectedDate ?? new Date());
   const { language, t } = useTranslation();
+  const { isRtl } = useDirection();
+  const PrevIcon = isRtl ? IconChevronRight : IconChevronLeft;
+  const NextIcon = isRtl ? IconChevronLeft : IconChevronRight;
+  const weekdays = language === "fa" ? WEEKDAYS_FA : WEEKDAYS_EN;
 
   function handleOpen() {
     if (disabled) return;
@@ -89,43 +95,33 @@ export function DatePicker({
   return (
     <>
       {trigger ? (
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={handleOpen}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handleOpen();
-            }
-          }}
-        >
+        <span className="contents" onClick={handleOpen}>
           {trigger}
-        </div>
+        </span>
       ) : value ? (
         <div
           className={cn(
-            "flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 font-medium text-[11px] text-orange-600 dark:bg-orange-950/30 dark:text-orange-400",
+            "inline-flex min-h-10 items-center justify-between gap-1 rounded-xl border border-orange-200/80 bg-orange-50 px-3 font-medium text-xs text-orange-600 dark:border-orange-900/50 dark:bg-orange-950/30 dark:text-orange-400",
             className,
           )}
         >
           <button
-            className="flex items-center gap-1 hover:underline"
+            className="flex min-h-9 min-w-0 flex-1 items-center gap-1.5 hover:underline"
             disabled={disabled}
             type="button"
             onClick={handleOpen}
           >
-            <IconCalendar size={13} stroke={2} />
-            <span>{formatFriendlyDate(value, language)}</span>
+            <IconCalendar size={14} stroke={2} />
+            <span className="truncate">{formatFriendlyDate(value, language)}</span>
           </button>
           <button
             aria-label={t.datePicker.clear}
-            className="rounded p-0.5 text-orange-500 hover:bg-orange-100 hover:text-orange-700 dark:text-orange-400 dark:hover:bg-orange-900/50"
+            className="-me-1.5 flex h-8 w-8 items-center justify-center rounded-lg text-orange-500 transition-colors hover:bg-orange-100 hover:text-orange-700 active:scale-95 dark:text-orange-400 dark:hover:bg-orange-900/50"
             disabled={disabled}
             type="button"
             onClick={handleClear}
           >
-            <IconX size={12} stroke={2.5} />
+            <IconX size={14} stroke={2.5} />
           </button>
         </div>
       ) : (
@@ -133,12 +129,12 @@ export function DatePicker({
           disabled={disabled}
           type="button"
           className={cn(
-            "flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] text-neutral-500 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800",
+            "inline-flex min-h-10 items-center gap-2 rounded-xl border border-neutral-200/80 bg-neutral-50/80 px-3 font-normal text-xs text-neutral-500 transition-colors hover:bg-neutral-100 active:scale-[0.99] dark:border-neutral-800 dark:bg-neutral-800/80 dark:text-neutral-400 dark:hover:bg-neutral-800",
             className,
           )}
           onClick={handleOpen}
         >
-          <IconCalendar size={13} stroke={1.75} />
+          <IconCalendar className="shrink-0 text-neutral-400" size={16} stroke={1.75} />
           <span>{t.datePicker.selectDueDate}</span>
         </button>
       )}
@@ -154,21 +150,21 @@ export function DatePicker({
         {showQuickPresets && (
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
             <button
-              className="rounded-lg border border-neutral-200 px-2.5 py-1 font-medium text-[11px] text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
+              className="min-h-9 shrink-0 rounded-lg border border-neutral-200 px-3 py-1.5 font-medium text-xs text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 active:scale-95 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
               type="button"
               onClick={() => handleQuickPreset(0)}
             >
               {t.datePicker.today}
             </button>
             <button
-              className="rounded-lg border border-neutral-200 px-2.5 py-1 font-medium text-[11px] text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
+              className="min-h-9 shrink-0 rounded-lg border border-neutral-200 px-3 py-1.5 font-medium text-xs text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 active:scale-95 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
               type="button"
               onClick={() => handleQuickPreset(1)}
             >
               {t.datePicker.tomorrow}
             </button>
             <button
-              className="rounded-lg border border-neutral-200 px-2.5 py-1 font-medium text-[11px] text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
+              className="min-h-9 shrink-0 rounded-lg border border-neutral-200 px-3 py-1.5 font-medium text-xs text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 active:scale-95 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
               type="button"
               onClick={() => handleQuickPreset(7)}
             >
@@ -179,29 +175,29 @@ export function DatePicker({
 
         {/* Month Navigation Header */}
         <div className={cn("flex items-center justify-between", showQuickPresets && "mt-3")}>
-          <span className="font-medium text-neutral-800 text-xs dark:text-neutral-200">
-            {format(currentMonth, "MMMM yyyy")}
+          <span className="font-semibold text-neutral-800 text-sm sm:text-xs dark:text-neutral-200">
+            {formatMonthYear(currentMonth, language)}
           </span>
           <div className="flex items-center gap-1">
             <Button
-              aria-label="Previous month"
-              className="h-6 w-6 rounded-md"
+              aria-label={t.datePicker.prevMonth}
+              className="h-9 w-9 rounded-lg"
               size="icon"
               type="button"
               variant="ghost"
               onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
             >
-              <IconChevronLeft size={14} stroke={2} />
+              <PrevIcon size={16} stroke={2} />
             </Button>
             <Button
-              aria-label="Next month"
-              className="h-6 w-6 rounded-md"
+              aria-label={t.datePicker.nextMonth}
+              className="h-9 w-9 rounded-lg"
               size="icon"
               type="button"
               variant="ghost"
               onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
             >
-              <IconChevronRight size={14} stroke={2} />
+              <NextIcon size={16} stroke={2} />
             </Button>
           </div>
         </div>
@@ -210,9 +206,9 @@ export function DatePicker({
         <div className="mt-2">
           {/* Weekday Labels */}
           <div className="grid grid-cols-7 text-center">
-            {WEEKDAYS.map((day) => (
+            {weekdays.map((day) => (
               <span
-                className="py-1 font-medium text-[10px] text-neutral-400 dark:text-neutral-500"
+                className="py-1 font-medium text-[11px] text-neutral-500 dark:text-neutral-400"
                 key={day}
               >
                 {day}
@@ -226,24 +222,26 @@ export function DatePicker({
               const isSelected = selectedDate && isSameDay(day, selectedDate);
               const isCurrentDay = isToday(day);
               const isCurrentMonth = isSameMonth(day, currentMonth);
+              const dayLabel =
+                language === "fa" ? day.getDate().toLocaleString("fa-IR") : String(day.getDate());
 
               return (
                 <button
                   key={day.toISOString()}
                   type="button"
                   className={cn(
-                    "flex h-7 w-full items-center justify-center rounded-md text-xs transition-colors",
+                    "flex h-10 w-full items-center justify-center rounded-lg text-xs tabular-nums transition-all active:scale-95 sm:text-sm",
                     isSelected
                       ? "bg-orange-500 font-semibold text-white shadow-xs"
                       : isCurrentDay
                         ? "border border-orange-500/40 font-semibold text-orange-600 dark:text-orange-400"
                         : isCurrentMonth
                           ? "text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
-                          : "text-neutral-300 hover:bg-neutral-50 dark:text-neutral-600 dark:hover:bg-neutral-800/40",
+                          : "text-neutral-400 hover:bg-neutral-50 dark:text-neutral-600 dark:hover:bg-neutral-800/40",
                   )}
                   onClick={() => handleSelectDate(day)}
                 >
-                  {format(day, "d")}
+                  {dayLabel}
                 </button>
               );
             })}

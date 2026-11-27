@@ -20,7 +20,7 @@ export default function NewCategoryPage() {
   }
 
   return (
-    <div className="space-y-4 pb-20">
+    <div className="space-y-4">
       <SubpageHeader backHref="/more/categories" backLabel={t.categories.title} />
       <CategoryForm
         title={t.categories.newCategory}

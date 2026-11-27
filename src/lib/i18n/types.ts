@@ -37,6 +37,7 @@ export interface Dictionary {
     colorLabel: string;
     createCategory: string;
     defaultBadge: string;
+    defaultReadOnly: string;
     deleteCategory: string;
     deleteConfirmButton: string;
     deleteConfirmDesc: string;
@@ -46,6 +47,7 @@ export interface Dictionary {
     emptyTitle: string;
     iconLabel: string;
     itemsCount: string;
+    itemsCountPlural: string;
     loadDefaults: string;
     nameLabel: string;
     namePlaceholder: string;
@@ -60,11 +62,15 @@ export interface Dictionary {
     allDone: string;
     completedCount: string;
     highPriority: string;
+    nextDay: string;
     noTasksForDay: string;
     noTasksForDayDesc: string;
+    openCalendar: string;
     overdueWarning: string;
     pendingCount: string;
+    prevDay: string;
     progress: string;
+    taskSingular: string;
     tasksCount: string;
     title: string;
     today: string;
@@ -77,6 +83,7 @@ export interface Dictionary {
     close: string;
     confirm: string;
     delete: string;
+    dragToClose: string;
     edit: string;
     loading: string;
     ok: string;
@@ -87,8 +94,10 @@ export interface Dictionary {
     calendar: string;
     clear: string;
     customDate: string;
+    nextMonth: string;
     nextWeek: string;
     noDate: string;
+    prevMonth: string;
     quickDates: string;
     selectDueDate: string;
     title: string;
@@ -191,6 +200,7 @@ export interface Dictionary {
     priorityMed: string;
     saveTask: string;
     selectCategory: string;
+    taskTitle: string;
     title: string;
     today: string;
     tomorrow: string;

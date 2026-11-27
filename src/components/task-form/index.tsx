@@ -2,7 +2,7 @@
 
 import { type FormEvent, useState } from "react";
 
-import { IconCheck, IconFlag, IconTrash } from "@tabler/icons-react";
+import { IconCheck, IconTrash } from "@tabler/icons-react";
 
 import { useTranslation } from "@/providers/settings-provider";
 
@@ -98,7 +98,7 @@ export function TaskForm({
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">{subtitle}</p>
+          <p className="mt-0.5 text-neutral-500 text-xs dark:text-neutral-400">{subtitle}</p>
         )}
       </div>
 
@@ -109,7 +109,7 @@ export function TaskForm({
           role="checkbox"
           type="button"
           className={cn(
-            "flex w-full items-center justify-between rounded-xl border px-3.5 py-2.5 text-xs transition-colors",
+            "flex min-h-11 w-full items-center justify-between rounded-xl border px-3.5 py-2.5 text-sm transition-colors sm:text-xs",
             completed
               ? "border-orange-200/80 bg-orange-50/70 text-orange-700 dark:border-orange-900/50 dark:bg-orange-950/30 dark:text-orange-300"
               : "border-neutral-200 bg-neutral-50 text-neutral-700 hover:bg-neutral-100/80 dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700/60",
@@ -119,7 +119,7 @@ export function TaskForm({
           <span className="flex items-center gap-2.5 font-medium">
             <span
               className={cn(
-                "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-colors",
+                "flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full border transition-colors sm:h-4 sm:w-4",
                 completed
                   ? "border-orange-500 bg-orange-500 text-white"
                   : "border-neutral-300 bg-white dark:border-neutral-600 dark:bg-neutral-900",
@@ -135,11 +135,11 @@ export function TaskForm({
       {/* Task Title Input */}
       <div>
         <label className="mb-1.5 block font-medium text-neutral-700 text-xs dark:text-neutral-300">
-          {t.tasks.title}
+          {t.tasks.taskTitle}
         </label>
         <input
-          autoFocus
-          className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-neutral-900 text-xs focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-primary"
+          autoFocus={!isEdit}
+          className="min-h-11 w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-base text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 sm:min-h-10 sm:text-sm dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-primary dark:focus:bg-neutral-900"
           placeholder={t.tasks.placeholder}
           type="text"
           value={taskTitle}
@@ -153,7 +153,7 @@ export function TaskForm({
           {t.tasks.description}
         </label>
         <textarea
-          className="w-full resize-none rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-neutral-900 text-xs placeholder:text-neutral-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-primary"
+          className="w-full resize-none rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-base text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 sm:text-sm dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-primary dark:focus:bg-neutral-900"
           placeholder={t.tasks.placeholderDesc}
           rows={3}
           value={description}
@@ -165,81 +165,81 @@ export function TaskForm({
       <CategoryPicker value={categoryId} onChange={setCategoryId} />
 
       {/* Priority & Due Date Row */}
-      <div className="space-y-3 pt-1">
+      <div className="space-y-3.5 pt-0.5">
         <div>
           <label className="mb-1.5 block font-medium text-neutral-700 text-xs dark:text-neutral-300">
             {t.tasks.priorityLabel}
           </label>
-          <div className="flex items-center gap-2">
-            <span className="text-neutral-400 dark:text-neutral-500">
-              <IconFlag size={14} stroke={2} />
-            </span>
-            <div className="flex flex-wrap items-center gap-1.5">
-              {priorities.map((p) => {
-                const isSelected = priority === p.value;
-                return (
-                  <button
-                    aria-label={p.value}
-                    key={p.value}
-                    type="button"
-                    className={cn(
-                      "flex items-center gap-1.5 rounded-full px-3 py-1 font-medium text-xs transition-colors active:scale-95",
-                      isSelected
-                        ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
-                        : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200/70 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700",
-                    )}
-                    onClick={() => setPriority(p.value)}
-                  >
-                    <span className={cn("h-1.5 w-1.5 rounded-full", p.dotClass)} />
-                    <span>{p.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+          <div className="grid grid-cols-3 gap-1.5 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800/70">
+            {priorities.map((p) => {
+              const isSelected = priority === p.value;
+              return (
+                <button
+                  aria-label={p.value}
+                  aria-pressed={isSelected}
+                  key={p.value}
+                  type="button"
+                  className={cn(
+                    "flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 font-medium text-xs transition-all active:scale-[0.98]",
+                    isSelected
+                      ? "bg-white text-neutral-900 shadow-xs ring-1 ring-black/5 dark:bg-neutral-700/90 dark:text-white dark:ring-white/15"
+                      : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200",
+                  )}
+                  onClick={() => setPriority(p.value)}
+                >
+                  <span className={cn("h-2 w-2 rounded-full", p.dotClass)} />
+                  <span>{p.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         <div>
           <label className="mb-1.5 block font-medium text-neutral-700 text-xs dark:text-neutral-300">
-            {t.tasks.dueDate}
+            {t.datePicker.title}
           </label>
-          <DatePicker value={dueDate} onChange={setDueDate} />
+          <DatePicker
+            className="h-11 w-full justify-start px-3 text-sm sm:h-10 sm:text-xs"
+            value={dueDate}
+            onChange={setDueDate}
+          />
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="order-3 sm:order-1">
+      <div className="flex flex-col gap-2.5 pt-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="order-2 sm:order-1">
           {isEdit && onDelete && (
             <Button
-              className="w-full sm:w-auto gap-1 h-10 sm:h-9 text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-950/40 rounded-full"
+              className="h-10 w-full gap-1.5 rounded-xl text-rose-600 text-xs hover:bg-rose-50 hover:text-rose-700 sm:h-9 sm:w-auto dark:text-rose-400 dark:hover:bg-rose-950/40"
               disabled={isSubmitting}
               type="button"
               variant="ghost"
               onClick={() => setIsDeleteModalOpen(true)}
             >
-              <IconTrash size={14} stroke={2} />
+              <IconTrash size={15} stroke={2} />
               <span>{t.tasks.deleteTask}</span>
             </Button>
           )}
         </div>
 
-        <div className="order-1 sm:order-2 flex flex-col sm:flex-row items-center gap-2">
+        <div className="order-1 flex flex-row-reverse items-center gap-2.5 sm:order-2">
           <Button
-            className="w-full sm:w-auto order-2 sm:order-1 h-10 sm:h-9 text-xs rounded-full"
+            className="h-11 flex-[1.35] rounded-xl text-sm sm:h-9 sm:flex-none sm:min-w-[110px] sm:text-xs"
+            disabled={!taskTitle.trim() || isSubmitting}
+            type="submit"
+          >
+            {isEdit ? t.tasks.saveTask : t.tasks.addTask}
+          </Button>
+          <Button
+            className="h-11 flex-1 rounded-xl text-sm sm:h-9 sm:flex-none sm:text-xs"
             disabled={isSubmitting}
             type="button"
             variant="outline"
             onClick={onCancel}
           >
             {t.common.cancel}
-          </Button>
-          <Button
-            className="w-full sm:w-auto order-1 sm:order-2 h-10 sm:h-9 text-xs sm:min-w-[100px] rounded-full"
-            disabled={!taskTitle.trim() || isSubmitting}
-            type="submit"
-          >
-            {isEdit ? t.tasks.saveTask : t.tasks.addTask}
           </Button>
         </div>
       </div>
@@ -253,9 +253,9 @@ export function TaskForm({
           title={t.tasks.deleteTask}
           onClose={() => setIsDeleteModalOpen(false)}
         >
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
             <Button
-              className="h-8 text-xs rounded-full"
+              className="h-10 w-full rounded-full text-xs sm:h-9 sm:w-auto"
               type="button"
               variant="outline"
               onClick={() => setIsDeleteModalOpen(false)}
@@ -263,7 +263,7 @@ export function TaskForm({
               {t.common.cancel}
             </Button>
             <Button
-              className="h-8 text-xs rounded-full"
+              className="h-10 w-full rounded-full text-xs sm:h-9 sm:w-auto"
               type="button"
               variant="destructive"
               onClick={handleDeleteConfirm}

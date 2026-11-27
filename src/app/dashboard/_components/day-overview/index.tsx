@@ -59,11 +59,11 @@ export function DayOverview({ tasks }: DayOverviewProps) {
             )}
           </svg>
 
-          <div className="absolute inset-0 flex items-center justify-center font-bold text-[11px]">
+          <div className="absolute inset-0 flex items-center justify-center font-bold text-[11px] tabular-nums">
             {isAllDone ? (
               <IconCheck className="text-emerald-500" size={16} stroke={3} />
             ) : total === 0 ? (
-              <span className="text-neutral-400 dark:text-neutral-600">0%</span>
+              <span className="text-neutral-500 dark:text-neutral-500">0%</span>
             ) : (
               <span className="text-neutral-800 dark:text-neutral-200">{percentage}%</span>
             )}
@@ -73,10 +73,10 @@ export function DayOverview({ tasks }: DayOverviewProps) {
         {/* Content & Details */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
-            <span className="truncate font-semibold text-neutral-900 text-xs sm:text-sm dark:text-neutral-100">
+            <span className="truncate font-semibold text-neutral-900 text-xs tabular-nums sm:text-sm dark:text-neutral-100">
               {total === 0
-                ? t.dashboard.noTasksForDay
-                : `${completed} / ${total} ${t.dashboard.tasksCount}`}
+                ? `0 / 0 ${t.dashboard.tasksCount}`
+                : `${completed} / ${total} ${total === 1 ? t.dashboard.taskSingular : t.dashboard.tasksCount}`}
             </span>
           </div>
 
@@ -96,7 +96,7 @@ export function DayOverview({ tasks }: DayOverviewProps) {
           </div>
 
           {/* Compact Fluid Metrics Badges */}
-          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tabular-nums">
             <span className="inline-flex items-center gap-1 text-neutral-600 dark:text-neutral-400">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
               <span>

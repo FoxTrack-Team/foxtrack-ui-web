@@ -79,7 +79,7 @@ export function CategoryFormModal({ category, isOpen, onClose, onSubmit }: Categ
           </label>
           <input
             autoFocus
-            className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-neutral-900 text-xs focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-orange-500"
+            className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-neutral-900 text-xs focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-orange-500 dark:focus:bg-neutral-900"
             placeholder={t.categories.namePlaceholder}
             type="text"
             value={name}

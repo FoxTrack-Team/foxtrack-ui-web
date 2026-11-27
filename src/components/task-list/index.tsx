@@ -28,7 +28,7 @@ export function TaskList({ tasks, isLoading, filter }: TaskListProps) {
   }
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-2.5">
       {tasks.map((task) => (
         <TaskItem key={task.id} task={task} />
       ))}

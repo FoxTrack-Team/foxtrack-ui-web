@@ -23,7 +23,7 @@ const GITHUB_REPO = "FoxTrack-Team/foxtrack-ui-web";
 
 export function AboutSection() {
   const { t } = useTranslation();
-  const currentVersion = process.env.NEXT_PUBLIC_APP_VERSION || "1.0.5";
+  const currentVersion = process.env.NEXT_PUBLIC_APP_VERSION || "1.0.6";
   const [isChecking, setIsChecking] = useState(false);
   const [updateResult, setUpdateResult] = useState<{
     latestTag: string;
@@ -73,7 +73,7 @@ export function AboutSection() {
         <h1 className="font-bold text-base text-neutral-900 tracking-tight dark:text-neutral-100">
           {t.about.title}
         </h1>
-        <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">
+        <p className="mt-0.5 text-neutral-500 text-xs dark:text-neutral-400">
           {t.about.description}
         </p>
       </div>
@@ -97,25 +97,22 @@ export function AboutSection() {
                 <span className="font-bold text-neutral-900 text-sm tracking-tight dark:text-neutral-100">
                   Fox<span className="text-orange-500">Track</span>
                 </span>
-                <span className="rounded-md bg-orange-50 px-1.5 py-0.5 font-mono font-medium text-[10px] text-orange-600 dark:bg-orange-950/40 dark:text-orange-400">
-                  {formattedVersion}
-                </span>
               </div>
-              <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">
-                {platformLabel}
+              <p className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+                {t.header.subtitle}
               </p>
             </div>
           </div>
 
           <Button
-            className="w-full gap-1.5 rounded-lg sm:w-auto"
+            className="h-10 w-full gap-1.5 rounded-xl sm:h-9 sm:w-auto sm:rounded-lg"
             disabled={isChecking}
             size="sm"
             type="button"
             variant="outline"
             onClick={handleCheckForUpdates}
           >
-            <IconRefresh className={isChecking ? "animate-spin" : ""} size={14} stroke={2} />
+            <IconRefresh className={isChecking ? "animate-spin" : ""} size={15} stroke={2} />
             <span>{isChecking ? t.about.checking : t.about.checkForUpdates}</span>
           </Button>
         </div>
@@ -124,21 +121,21 @@ export function AboutSection() {
           <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-neutral-100 border-t pt-2.5 text-xs dark:border-neutral-800/60">
             {updateResult.newer ? (
               <>
-                <span className="inline-flex items-center gap-1.5 font-medium text-[11px] text-orange-600 dark:text-orange-400">
-                  <IconSparkles size={13} stroke={2} />
+                <span className="inline-flex items-center gap-1.5 font-medium text-xs text-orange-600 dark:text-orange-400">
+                  <IconSparkles size={14} stroke={2} />
                   <span>
                     {t.about.updateAvailable}: {updateResult.latestTag}
                   </span>
                 </span>
-                <Button asChild className="rounded-lg" size="sm" variant="default">
+                <Button asChild className="rounded-xl sm:rounded-lg" size="sm" variant="default">
                   <a href={updateResult.releaseUrl} rel="noopener noreferrer" target="_blank">
                     {t.update.downloadButton}
                   </a>
                 </Button>
               </>
             ) : (
-              <span className="inline-flex items-center gap-1.5 text-[11px] text-emerald-600 dark:text-emerald-400">
-                <IconCheck size={13} stroke={2.5} />
+              <span className="inline-flex items-center gap-1.5 text-emerald-600 text-xs dark:text-emerald-400">
+                <IconCheck size={14} stroke={2.5} />
                 <span>{t.about.upToDate}</span>
               </span>
             )}
@@ -149,27 +146,27 @@ export function AboutSection() {
       {/* Grouped App Info & Links Card */}
       <section className="divide-y divide-neutral-100 overflow-hidden rounded-xl border border-neutral-200/80 bg-white shadow-2xs dark:divide-neutral-800/60 dark:border-neutral-800/80 dark:bg-neutral-900/60">
         {/* Version */}
-        <div className="flex items-center justify-between px-3.5 py-2.5">
+        <div className="flex min-h-[48px] items-center justify-between px-3.5 py-2.5">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-orange-500/10 text-orange-600 ring-1 ring-orange-500/15 dark:bg-orange-500/20 dark:text-orange-400">
-              <IconInfoCircle size={15} stroke={1.8} />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-500/10 text-orange-600 ring-1 ring-orange-500/15 dark:bg-orange-500/20 dark:text-orange-400">
+              <IconInfoCircle size={16} stroke={1.8} />
             </div>
-            <span className="font-medium text-neutral-700 text-xs dark:text-neutral-300">
+            <span className="font-medium text-neutral-700 text-sm sm:text-xs dark:text-neutral-300">
               {t.about.version}
             </span>
           </div>
-          <span className="font-mono font-medium text-neutral-600 text-xs dark:text-neutral-300">
+          <span className="font-medium font-mono text-neutral-600 text-xs tabular-nums dark:text-neutral-300">
             {formattedVersion}
           </span>
         </div>
 
         {/* Platform */}
-        <div className="flex items-center justify-between px-3.5 py-2.5">
+        <div className="flex min-h-[48px] items-center justify-between px-3.5 py-2.5">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 ring-1 ring-blue-500/15 dark:bg-blue-500/20 dark:text-blue-400">
-              <PlatformIcon size={15} stroke={1.8} />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 ring-1 ring-blue-500/15 dark:bg-blue-500/20 dark:text-blue-400">
+              <PlatformIcon size={16} stroke={1.8} />
             </div>
-            <span className="font-medium text-neutral-700 text-xs dark:text-neutral-300">
+            <span className="font-medium text-neutral-700 text-sm sm:text-xs dark:text-neutral-300">
               {t.about.platform}
             </span>
           </div>
@@ -180,22 +177,22 @@ export function AboutSection() {
 
         {/* GitHub Repository */}
         <a
-          className="group flex items-center justify-between px-3.5 py-2.5 transition-colors hover:bg-neutral-50/80 active:bg-neutral-100/80 dark:hover:bg-neutral-800/30 dark:active:bg-neutral-800/60"
+          className="group flex min-h-[48px] items-center justify-between px-3.5 py-2.5 transition-colors hover:bg-neutral-50/80 active:bg-neutral-100/80 dark:hover:bg-neutral-800/30 dark:active:bg-neutral-800/60"
           href={`https://github.com/${GITHUB_REPO}`}
           rel="noopener noreferrer"
           target="_blank"
         >
           <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700 ring-1 ring-neutral-200/80 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700/60">
-              <IconBrandGithub size={15} stroke={1.8} />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700 ring-1 ring-neutral-200/80 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700/60">
+              <IconBrandGithub size={16} stroke={1.8} />
             </div>
-            <span className="font-medium text-neutral-700 text-xs dark:text-neutral-300">
+            <span className="font-medium text-neutral-700 text-sm sm:text-xs dark:text-neutral-300">
               {t.about.githubRepo}
             </span>
           </div>
           <span className="flex items-center gap-1 font-medium text-orange-600 text-xs dark:text-orange-400">
             <span>GitHub</span>
-            <IconExternalLink size={13} stroke={2} />
+            <IconExternalLink size={14} stroke={2} />
           </span>
         </a>
       </section>

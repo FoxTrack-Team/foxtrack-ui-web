@@ -11,12 +11,18 @@ export default function MoreProjectsPage() {
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-3 pb-20">
+    <div className="space-y-3">
       <SubpageHeader backHref="/more" backLabel={t.more.title} />
       <EmptyState
+        framed
         description={t.more.upcomingProjectsDesc}
         icon={IconFolder}
         title={t.more.upcomingProjectsTitle}
+        badge={
+          <span className="inline-flex items-center rounded-md bg-orange-500/10 px-2.5 py-0.5 font-semibold text-[10px] text-orange-600 uppercase tracking-wider dark:bg-orange-500/15 dark:text-orange-400">
+            {t.more.upcomingSoon}
+          </span>
+        }
       />
     </div>
   );

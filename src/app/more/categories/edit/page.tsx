@@ -28,9 +28,7 @@ function CategoryEditContent() {
     return (
       <div className="rounded-2xl border border-neutral-200/80 bg-white p-6 text-center dark:border-neutral-800 dark:bg-neutral-900">
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          {category?.isDefault
-            ? t.categories.defaultBadge + " - دسته‌بندی‌های پیش‌فرض قابل ویرایش نیستند."
-            : t.common.retry}
+          {category?.isDefault ? t.categories.defaultReadOnly : t.common.retry}
         </p>
         <Button
           className="mt-4 text-xs rounded-full"
@@ -79,7 +77,7 @@ export default function EditCategoryPage() {
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-4 pb-20">
+    <div className="space-y-4">
       <SubpageHeader backHref="/more/categories" backLabel={t.categories.title} />
       <Suspense fallback={null}>
         <CategoryEditContent />

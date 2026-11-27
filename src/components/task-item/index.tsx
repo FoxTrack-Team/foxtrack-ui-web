@@ -100,14 +100,14 @@ export function TaskItem({ task }: TaskItemProps) {
   return (
     <div
       className={cn(
-        "group mb-1.5 flex cursor-pointer items-center justify-between gap-2.5 rounded-lg border px-3 py-2 transition-colors",
+        "group mb-1.5 flex cursor-pointer items-center justify-between gap-2.5 rounded-xl border px-3.5 py-2.5 transition-colors",
         task.completed
-          ? "border-transparent bg-neutral-100/50 dark:bg-neutral-900/30"
-          : "border-neutral-200/70 bg-white hover:border-neutral-300 dark:border-neutral-800/80 dark:bg-neutral-900 dark:hover:border-neutral-700",
+          ? "border-transparent bg-neutral-100/50 active:bg-neutral-100 dark:bg-neutral-900/30 dark:active:bg-neutral-900/50"
+          : "border-neutral-200/70 bg-white hover:border-neutral-300 active:bg-neutral-50 dark:border-neutral-800/80 dark:bg-neutral-900 dark:hover:border-neutral-700 dark:active:bg-neutral-800/70",
       )}
       onClick={handleNavigateEdit}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-2.5">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         <div className="flex shrink-0 items-center" onClick={(e) => e.stopPropagation()}>
           <Checkbox
             aria-label={task.completed ? t.tasks.markActive : t.tasks.markCompleted}
@@ -122,21 +122,61 @@ export function TaskItem({ task }: TaskItemProps) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <p
-            className={cn(
-              "break-words text-sm leading-snug transition-all",
-              task.completed
-                ? "text-neutral-400 line-through dark:text-neutral-500"
-                : "text-neutral-800 dark:text-neutral-200",
-            )}
-          >
-            {task.title}
-          </p>
+          <div className="flex items-start justify-between gap-2">
+            <p
+              className={cn(
+                "min-w-0 flex-1 break-words pt-0.5 font-medium text-[15px] leading-snug transition-all sm:text-sm",
+                task.completed
+                  ? "text-neutral-400 line-through dark:text-neutral-500"
+                  : "text-neutral-800 dark:text-neutral-100",
+              )}
+            >
+              {task.title}
+            </p>
+
+            <div
+              className={cn(
+                "-me-1 -mt-0.5 flex shrink-0 items-center gap-0.5 transition-opacity",
+                confirmingDelete
+                  ? "opacity-100"
+                  : "opacity-85 sm:opacity-0 sm:group-hover:opacity-100",
+              )}
+            >
+              <Button
+                aria-label={t.tasks.editTask}
+                className="h-8 w-8 rounded-lg text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                size="icon"
+                type="button"
+                variant="ghost"
+                onClick={handleNavigateEdit}
+              >
+                <IconEdit size={15} stroke={1.75} />
+              </Button>
+              <Button
+                aria-label={t.tasks.deleteTask}
+                aria-pressed={confirmingDelete}
+                size="icon"
+                title={confirmingDelete ? t.tasks.deleteConfirm : t.tasks.deleteTask}
+                type="button"
+                variant="ghost"
+                className={cn(
+                  "h-8 w-8 rounded-lg transition-colors",
+                  confirmingDelete
+                    ? "bg-red-500 text-white hover:bg-red-600 hover:text-white dark:bg-red-600 dark:text-white dark:hover:bg-red-500"
+                    : "text-neutral-500 hover:bg-red-50 hover:text-red-600 dark:text-neutral-400 dark:hover:bg-red-950/40 dark:hover:text-red-400",
+                )}
+                onBlur={() => setConfirmingDelete(false)}
+                onClick={handleDelete}
+              >
+                <IconTrash size={15} stroke={1.75} />
+              </Button>
+            </div>
+          </div>
 
           {task.description && (
             <p
               className={cn(
-                "mt-0.5 line-clamp-1 text-xs leading-normal",
+                "mt-0.5 line-clamp-2 text-xs leading-relaxed",
                 task.completed
                   ? "text-neutral-400/80 line-through dark:text-neutral-500/80"
                   : "text-neutral-500 dark:text-neutral-400",
@@ -146,7 +186,7 @@ export function TaskItem({ task }: TaskItemProps) {
             </p>
           )}
 
-          <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px]">
+          <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs">
             <span
               aria-label={priorityLabel}
               title={priorityLabel}
@@ -156,16 +196,16 @@ export function TaskItem({ task }: TaskItemProps) {
                 task.completed && "opacity-50",
               )}
             >
-              <IconFlag size={12} stroke={2} />
+              <IconFlag size={13} stroke={2} />
             </span>
 
             {task.dueDate && (
               <span
                 className={cn(
-                  "inline-flex items-center gap-1 font-medium",
+                  "inline-flex items-center gap-1 font-medium text-[11px]",
                   isOverdue
                     ? "text-rose-600 dark:text-rose-400"
-                    : "text-neutral-400 dark:text-neutral-500",
+                    : "text-neutral-500 dark:text-neutral-400",
                 )}
               >
                 {isOverdue ? (
@@ -181,7 +221,7 @@ export function TaskItem({ task }: TaskItemProps) {
             {category && colorDetails && (
               <span
                 className={cn(
-                  "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-medium text-[10px] border shadow-2xs",
+                  "inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 font-medium text-[11px] shadow-2xs",
                   colorDetails.badgeClass,
                 )}
               >
@@ -191,42 +231,6 @@ export function TaskItem({ task }: TaskItemProps) {
             )}
           </div>
         </div>
-      </div>
-
-      <div
-        className={cn(
-          "flex items-center gap-0.5 transition-opacity",
-          confirmingDelete ? "opacity-100" : "opacity-90 sm:opacity-0 sm:group-hover:opacity-100",
-        )}
-      >
-        <Button
-          aria-label={t.tasks.editTask}
-          className="h-7 w-7 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200"
-          size="icon"
-          type="button"
-          variant="ghost"
-          onClick={handleNavigateEdit}
-        >
-          <IconEdit size={14} stroke={1.75} />
-        </Button>
-        <Button
-          aria-label={t.tasks.deleteTask}
-          aria-pressed={confirmingDelete}
-          size="icon"
-          title={confirmingDelete ? t.tasks.deleteConfirm : t.tasks.deleteTask}
-          type="button"
-          variant="ghost"
-          className={cn(
-            "h-7 w-7 transition-colors",
-            confirmingDelete
-              ? "bg-red-500 text-white hover:bg-red-600 hover:text-white dark:bg-red-600 dark:text-white dark:hover:bg-red-500"
-              : "text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40 dark:hover:text-red-400",
-          )}
-          onBlur={() => setConfirmingDelete(false)}
-          onClick={handleDelete}
-        >
-          <IconTrash size={14} stroke={1.75} />
-        </Button>
       </div>
     </div>
   );

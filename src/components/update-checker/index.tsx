@@ -133,9 +133,9 @@ export function UpdateChecker() {
         {t.update.message}
       </p>
 
-      <div className="mt-5 flex items-center justify-end gap-2">
+      <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
         <Button
-          className="text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+          className="h-10 w-full rounded-full text-neutral-600 hover:bg-neutral-100 sm:h-9 sm:w-auto dark:text-neutral-400 dark:hover:bg-neutral-800"
           size="sm"
           type="button"
           variant="ghost"
@@ -145,7 +145,7 @@ export function UpdateChecker() {
         </Button>
 
         <Button
-          className="flex items-center gap-1.5 bg-orange-500 font-medium text-white shadow-xs hover:bg-orange-600 active:scale-[0.98]"
+          className="flex h-10 w-full items-center gap-1.5 rounded-full bg-orange-500 font-medium text-white shadow-xs hover:bg-orange-600 active:scale-[0.98] sm:h-9 sm:w-auto"
           size="sm"
           type="button"
           onClick={handleDownload}

@@ -27,7 +27,7 @@ export function TaskFab({ defaultDueDate = null }: TaskFabProps = {}) {
   }
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-22 z-30 mx-auto max-w-xl px-5 sm:bottom-24 sm:px-6">
+    <div className="pointer-events-none fixed inset-x-0 bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-xl px-5 sm:bottom-24 sm:px-6">
       <div className="flex justify-end">
         <button
           aria-label={t.tasks.addNewTask}

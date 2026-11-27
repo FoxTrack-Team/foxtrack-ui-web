@@ -43,11 +43,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f97316",
-  width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  themeColor: "#f97316",
+  viewportFit: "cover",
+  width: "device-width",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -79,8 +78,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen antialiased">
         <DirectionProvider>
           <SplashScreen />
-          <main className="min-h-screen bg-neutral-50 pb-32 text-neutral-900 transition-colors sm:pb-36 dark:bg-neutral-950 dark:text-neutral-100">
-            <div className="mx-auto max-w-xl px-4 pt-[calc(env(safe-area-inset-top)+1rem)] pb-6 sm:pt-10 sm:pb-10">
+          <main className="min-h-screen bg-neutral-50 pb-[calc(10rem+env(safe-area-inset-bottom))] text-neutral-900 transition-colors sm:pb-40 dark:bg-neutral-950 dark:text-neutral-100">
+            <div className="mx-auto max-w-xl pt-[calc(env(safe-area-inset-top)+1rem)] pe-[max(1rem,env(safe-area-inset-right))] pb-6 ps-[max(1rem,env(safe-area-inset-left))] sm:px-6 sm:pt-10 sm:pb-10">
               <Header />
               <div className="animate-page-enter">{children}</div>
             </div>
