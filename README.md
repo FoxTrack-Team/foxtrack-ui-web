@@ -1,39 +1,46 @@
-# FoxTrack — Phase 1
+<div align="center">
 
-FoxTrack is a minimalist, modern, offline-first Todo List application inspired by the simplicity and usability of apps like TickTick, built with a mobile-first philosophy.
+# 🦊 FoxTrack
+
+**A minimalist, offline-first personal productivity app**  
+_Tasks · Daily Habits · Gamified Rewards — crafted with Apple Human Interface Guidelines_
+
+![Next.js](https://img.shields.io/badge/Next.js-App%20Router-black?style=flat-square&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Capacitor](https://img.shields.io/badge/Capacitor-Android-119EFF?style=flat-square&logo=capacitor&logoColor=white)
+![Dexie](https://img.shields.io/badge/Dexie.js-IndexedDB-orange?style=flat-square)
+![Vitest](https://img.shields.io/badge/Vitest-Tested-6E9F18?style=flat-square&logo=vitest&logoColor=white)
+
+</div>
 
 ---
 
-## 🚀 Key Features (Phase 1)
+## ✨ Key Features
 
-- **Offline-First Storage**: Powered by **Dexie.js** and **IndexedDB**. All task creation, editing, status toggles, priority adjustments, and deletions persist locally with zero server dependence.
-- **Instant Task Creation**: Quick keyboard-driven workflow — type your task and press `Enter` to create immediately.
-- **Priority Management**: 3 distinct priority levels (`Low`, `Medium`, `High`) with clean visual indicators.
-- **Due Date Handling**: Optional due dates with human-friendly labels (`Today`, `Tomorrow`, `Nov 25`), overdue visual alerts, and full local timezone awareness.
-- **Sensible Default Sorting**:
-  1. Active tasks before completed tasks
-  2. Higher-priority before lower-priority
-  3. Earlier due dates first
-  4. Newest created first
-- **Live Reactive UI**: Uses Dexie's `useLiveQuery` to reactively reflect all database updates immediately without state duplication.
-- **Themes**: Seamless Light mode and Dark mode support with persistent user preference.
-- **PWA & Offline Shell**: Service Worker precaches the application shell and static assets, allowing the app to launch, reload, and function completely offline.
-- **Android Ready**: Configured with **Capacitor** to run the bundled local web assets natively on Android devices.
+| Module                         | Highlights                                                                                                                                         |
+| :----------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **📋 Tasks & Scheduling**      | Priorities (`Low`, `Medium`, `High`), due dates & **Apple Wheel TimePicker**, overdue alerts, and smart filters (`All`, `Active`, `Completed`).    |
+| **🔥 Habits & Streaks**        | Daily/weekly schedules, streak tracking with automatic **FoxCoins multipliers** (`1.2x`, `1.5x`, `2x`), and today-only completion lock.            |
+| **⭕ Apple Fitness Dashboard** | Concentric **Activity Rings** for daily Tasks & Habits progress, plus a live FoxCoins & Next Reward summary card.                                  |
+| **🏆 Rewards & Gamification**  | Earn **FoxCoins**, protect streaks with **Streak Freeze**, optional **Strict Mode** penalties, and redeem custom rewards in `/more/rewards/shop/`. |
+| **📅 Calendar Settings**       | Switch between **Gregorian** and **Jalali (Solar)** calendars, customize start of week & weekend days (with canonical Gregorian storage).          |
+| **🔔 Local Notifications**     | Android & Web reminders with custom chime (`foxtrack_chime.wav`) and custom brand icon (`ic_stat_foxtrack`).                                       |
+| **💾 Full Offline Backup**     | Complete JSON Export & Import covering tasks, habits, habit logs, categories, rewards, coin logs, and settings.                                    |
+| **🌐 Bilingual & Themes**      | **English (LTR)** & **Persian (RTL)** with Apple HIG Light & Dark modes.                                                                           |
 
 ---
 
 ## 🛠️ Technology Stack
 
 - **Framework**: Next.js (App Router, Static Export `output: 'export'`)
-- **Language**: TypeScript
+- **Language**: TypeScript (strict)
 - **Styling**: Tailwind CSS
-- **Icons**: Lucide React
-- **Local Database**: Dexie.js (IndexedDB)
+- **Icons**: `@tabler/icons-react`
+- **Local Database**: Dexie.js (IndexedDB) with versioned migrations
 - **Validation**: Zod
-- **Date Handling**: date-fns
-- **PWA**: Custom Service Worker + Web App Manifest
-- **Mobile Engine**: Capacitor (Android)
-- **Testing**: Vitest + React Testing Library + fake-indexeddb
+- **Date Handling**: `date-fns` + custom Jalali/Gregorian utilities
+- **Mobile Engine**: Capacitor (Android + `@capacitor/local-notifications`)
+- **Testing**: Vitest + React Testing Library + `fake-indexeddb`
 - **Package Manager**: pnpm
 
 ---
