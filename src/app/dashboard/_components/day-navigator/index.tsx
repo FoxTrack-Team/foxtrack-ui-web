@@ -9,8 +9,6 @@ import {
   eachDayOfInterval,
   isSameDay,
   isToday,
-  isTomorrow,
-  isYesterday,
   subDays,
 } from "date-fns";
 
@@ -116,16 +114,6 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
   }
 
   const isCurrentDayToday = isToday(selectedDate);
-  const isCurrentDayTomorrow = isTomorrow(selectedDate);
-  const isCurrentDayYesterday = isYesterday(selectedDate);
-
-  const relativeLabel = isCurrentDayToday
-    ? t.dashboard.today
-    : isCurrentDayTomorrow
-      ? t.dashboard.tomorrow
-      : isCurrentDayYesterday
-        ? t.dashboard.yesterday
-        : null;
 
   function handlePrevDay() {
     onSelectDate(subDays(selectedDate, 1));
@@ -142,27 +130,20 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
     <div className="space-y-3">
       {/* Top Header Bar */}
       <div className="flex items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <h2 className="truncate font-bold text-base text-neutral-900 tracking-tight sm:text-lg dark:text-neutral-100">
-            {formatDayHeader(selectedDate, language)}
-          </h2>
-          {relativeLabel && (
-            <span className="shrink-0 rounded-full bg-orange-100 px-2 py-0.5 font-medium text-[11px] text-orange-700 dark:bg-orange-950/60 dark:text-orange-300">
-              {relativeLabel}
-            </span>
-          )}
-        </div>
+        <h2 className="min-w-0 truncate font-bold text-base text-neutral-900 tracking-tight sm:text-lg dark:text-neutral-100">
+          {formatDayHeader(selectedDate, language)}
+        </h2>
 
         <div className="flex shrink-0 items-center gap-1.5">
           {!isCurrentDayToday && (
             <button
               aria-label={t.dashboard.today}
-              className="inline-flex min-h-10 items-center gap-1 rounded-xl bg-white px-2.5 py-1.5 font-medium text-neutral-700 text-xs shadow-2xs transition-all hover:bg-neutral-50 active:scale-95 dark:bg-neutral-900/80 dark:text-neutral-300 dark:hover:bg-neutral-800"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-neutral-700 shadow-2xs transition-all after:absolute after:-inset-0.5 after:content-[''] hover:bg-neutral-50 active:scale-95 dark:bg-neutral-900/80 dark:text-neutral-300 dark:hover:bg-neutral-800"
+              title={t.dashboard.today}
               type="button"
               onClick={() => onSelectDate(new Date())}
             >
-              <IconRotate size={14} stroke={2} />
-              <span>{t.dashboard.today}</span>
+              <IconRotate size={16} stroke={2} />
             </button>
           )}
 
