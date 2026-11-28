@@ -79,7 +79,7 @@ export function AboutSection() {
       </div>
 
       {/* App Identity & Update Check Card */}
-      <section className="rounded-xl border border-neutral-200/80 bg-white p-3.5 shadow-2xs dark:border-neutral-800/80 dark:bg-neutral-900/60">
+      <section className="rounded-2xl bg-white p-3.5 shadow-2xs dark:bg-neutral-900/80">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 ring-1 ring-orange-500/20 dark:bg-orange-500/15 dark:ring-orange-500/25">

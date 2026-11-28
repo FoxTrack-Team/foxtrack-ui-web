@@ -58,7 +58,7 @@ export function CategoryFormModal({ category, isOpen, onClose, onSubmit }: Categ
     >
       <form className="space-y-4" onSubmit={handleSubmit}>
         {/* HabitNow Live Preview */}
-        <div className="flex flex-col items-center justify-center rounded-xl border border-neutral-200/60 bg-neutral-50/60 py-3.5 dark:border-neutral-800/60 dark:bg-neutral-900/40">
+        <div className="flex flex-col items-center justify-center rounded-xl bg-neutral-50/90 py-3.5 dark:bg-neutral-800/50">
           <div
             className={cn(
               "flex h-12 w-12 items-center justify-center rounded-2xl shadow-xs transition-all",
@@ -147,10 +147,19 @@ export function CategoryFormModal({ category, isOpen, onClose, onSubmit }: Categ
 
         {/* Actions */}
         <div className="flex justify-end gap-2 pt-2">
-          <Button className="h-8 text-xs" type="button" variant="outline" onClick={onClose}>
+          <Button
+            className="h-9 rounded-xl text-xs"
+            type="button"
+            variant="outline"
+            onClick={onClose}
+          >
             {t.categories.cancel}
           </Button>
-          <Button className="h-8 text-xs" disabled={!name.trim() || isSubmitting} type="submit">
+          <Button
+            className="h-9 rounded-xl text-xs"
+            disabled={!name.trim() || isSubmitting}
+            type="submit"
+          >
             {category ? t.categories.saveCategory : t.categories.createCategory}
           </Button>
         </div>

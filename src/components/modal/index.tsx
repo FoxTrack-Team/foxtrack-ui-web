@@ -24,10 +24,10 @@ export interface ModalProps {
 }
 
 const MAX_WIDTH_CLASSES: Record<"sm" | "md" | "lg" | "xl", string> = {
-  sm: "max-w-sm",
-  md: "max-w-md",
-  lg: "max-w-lg",
-  xl: "max-w-xl",
+  sm: "sm:max-w-sm",
+  md: "sm:max-w-md",
+  lg: "sm:max-w-lg",
+  xl: "sm:max-w-xl",
 };
 
 const isTest = typeof process !== "undefined" && process.env.NODE_ENV === "test";
@@ -74,7 +74,7 @@ export function Modal({
   isOpen,
   maxWidth = "md",
   onClose,
-  showCloseButton = true,
+  showCloseButton = false,
   showHandle = true,
   title,
 }: ModalProps) {
@@ -211,8 +211,8 @@ export function Modal({
         aria-modal="true"
         role="dialog"
         className={cn(
-          "relative flex max-h-[85dvh] w-full flex-col rounded-t-2xl border-t border-neutral-200/80 bg-white p-5 shadow-2xl transition-all",
-          "pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] sm:rounded-2xl sm:border sm:border-neutral-200/80 sm:pb-5",
+          "relative flex max-h-[85dvh] w-full flex-col rounded-t-3xl border-t border-neutral-200/80 bg-white px-4 py-5 shadow-2xl transition-all",
+          "pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:rounded-2xl sm:border sm:border-neutral-200/80 sm:px-5 sm:pb-5",
           "dark:border-neutral-800/80 dark:bg-neutral-900",
           MAX_WIDTH_CLASSES[maxWidth],
           !isDragging &&
@@ -236,7 +236,7 @@ export function Modal({
         {showHandle && (
           <div
             aria-label={t.common.dragToClose}
-            className="-mt-2 mb-2.5 flex h-7 w-full shrink-0 cursor-grab items-center justify-center active:cursor-grabbing sm:hidden"
+            className="-mt-5 mb-1 flex h-6 w-full shrink-0 cursor-grab items-start justify-center pt-1.5 active:cursor-grabbing sm:hidden"
             role="button"
             tabIndex={0}
             onTouchEnd={handleTouchEnd}
@@ -253,17 +253,14 @@ export function Modal({
               }
             }}
           >
-            <div className="h-1.5 w-12 rounded-full bg-neutral-300 transition-colors hover:bg-neutral-400 dark:bg-neutral-700 dark:hover:bg-neutral-600" />
+            <div className="h-1 w-9 rounded-full bg-neutral-300 transition-colors hover:bg-neutral-400 dark:bg-neutral-700 dark:hover:bg-neutral-600" />
           </div>
         )}
 
         {/* Header */}
         {(title || showCloseButton) && (
           <div
-            className={cn(
-              "flex shrink-0 items-center justify-between border-b border-neutral-100 pb-3 dark:border-neutral-800/70",
-              headerClassName,
-            )}
+            className={cn("flex shrink-0 items-center justify-between pb-2.5", headerClassName)}
             onTouchEnd={handleTouchEnd}
             onTouchMove={handleTouchMove}
             onTouchStart={handleTouchStart}
@@ -284,14 +281,14 @@ export function Modal({
             {showCloseButton && (
               <button
                 aria-label={t.common.close}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-800 active:scale-95 active:bg-neutral-200/70 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-500 transition-colors after:absolute after:-inset-1.5 after:content-[''] hover:bg-neutral-200/80 hover:text-neutral-800 active:scale-95 active:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   onClose();
                 }}
               >
-                <IconX size={18} stroke={2} />
+                <IconX size={16} stroke={2} />
               </button>
             )}
           </div>

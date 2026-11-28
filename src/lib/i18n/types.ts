@@ -58,6 +58,9 @@ export interface Dictionary {
     title: string;
   };
   dashboard: {
+    addChoiceTitle: string;
+    addHabitDesc: string;
+    addTaskDesc: string;
     addTaskForDay: string;
     allDone: string;
     completedCount: string;
@@ -67,6 +70,7 @@ export interface Dictionary {
     noTasksForDayDesc: string;
     openCalendar: string;
     overdueWarning: string;
+    overdueWarningSingular: string;
     pendingCount: string;
     prevDay: string;
     progress: string;
@@ -90,6 +94,12 @@ export interface Dictionary {
     retry: string;
     save: string;
   };
+  timePicker: {
+    clearTime: string;
+    hour: string;
+    minute: string;
+    selectTime: string;
+  };
   datePicker: {
     calendar: string;
     clear: string;
@@ -111,6 +121,44 @@ export interface Dictionary {
     habitsTitle: string;
     projectsDesc: string;
     projectsTitle: string;
+  };
+  habits: {
+    addHabit: string;
+    all: string;
+    archive: string;
+    archived: string;
+    createHabit: string;
+    daily: string;
+    deleteConfirm: string;
+    deleteHabit: string;
+    description: string;
+    descriptionPlaceholder: string;
+    durationLabel: string;
+    editHabit: string;
+    editHabitSubtitle: string;
+    emptyAllDesc: string;
+    emptyAllTitle: string;
+    emptyArchivedDesc: string;
+    emptyArchivedTitle: string;
+    emptyTodayDesc: string;
+    emptyTodayTitle: string;
+    endTime: string;
+    frequencyLabel: string;
+    markDone: string;
+    markUndone: string;
+    newHabit: string;
+    newHabitSubtitle: string;
+    nowBadge: string;
+    saveHabit: string;
+    scheduledHours: string;
+    specificDays: string;
+    startTime: string;
+    streakDays: string;
+    title: string;
+    titleLabel: string;
+    titlePlaceholder: string;
+    today: string;
+    unarchive: string;
   };
   header: {
     subtitle: string;

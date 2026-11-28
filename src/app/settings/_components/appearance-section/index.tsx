@@ -36,15 +36,15 @@ export function AppearanceSection() {
       </div>
 
       {/* Settings Card */}
-      <section className="rounded-xl border border-neutral-200/80 bg-white p-3.5 shadow-2xs dark:border-neutral-800/80 dark:bg-neutral-900/60">
-        <div className="space-y-3.5">
+      <section className="rounded-2xl bg-white p-3.5 shadow-2xs dark:bg-neutral-900/80">
+        <div className="space-y-4">
           {/* Theme Picker */}
           <div>
             <label className="mb-1.5 flex items-center gap-1.5 font-medium text-neutral-700 text-xs dark:text-neutral-300">
               <IconPalette size={15} stroke={1.75} />
               <span>{t.settings.appearance.theme}</span>
             </label>
-            <div className="grid grid-cols-3 gap-1.5 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800/60">
+            <div className="grid grid-cols-3 gap-1 rounded-xl bg-neutral-200/70 p-1 dark:bg-neutral-800/80">
               {themes.map((item) => {
                 const IconComp = item.icon;
                 const isActive = theme === item.key;
@@ -70,14 +70,14 @@ export function AppearanceSection() {
           </div>
 
           {/* Language Picker */}
-          <div className="border-neutral-100 border-t pt-3 dark:border-neutral-800/60">
+          <div className="pt-1">
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-1.5 font-medium text-neutral-700 text-xs dark:text-neutral-300">
                 <IconLanguage size={15} stroke={1.75} />
                 <span>{t.settings.appearance.language}</span>
               </label>
             </div>
-            <div className="mt-1.5 grid grid-cols-2 gap-1.5 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800/60">
+            <div className="mt-1.5 grid grid-cols-2 gap-1 rounded-xl bg-neutral-200/70 p-1 dark:bg-neutral-800/80">
               <button
                 aria-pressed={language === "en"}
                 type="button"

@@ -21,14 +21,21 @@ function TaskEditContent() {
   const id = searchParams.get("id");
   const { t } = useTranslation();
 
-  const task = useLiveQuery(() => (id ? db.tasks.get(id) : undefined), [id]);
+  const task = useLiveQuery(
+    () => (id ? db.tasks.get(id).then((item) => item ?? null) : null),
+    [id],
+  );
 
-  if (!id || (task === undefined && typeof window !== "undefined")) {
+  if (task === undefined) {
+    return null;
+  }
+
+  if (!id || task === null) {
     return (
-      <div className="rounded-2xl border border-neutral-200/80 bg-white p-6 text-center dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="rounded-2xl bg-white p-6 text-center shadow-2xs dark:bg-neutral-900/80">
         <p className="text-sm text-neutral-600 dark:text-neutral-400">{t.common.retry}</p>
         <Button
-          className="mt-4 text-xs rounded-full"
+          className="mt-4 rounded-xl text-xs"
           type="button"
           variant="outline"
           onClick={() => router.push("/tasks")}
@@ -37,10 +44,6 @@ function TaskEditContent() {
         </Button>
       </div>
     );
-  }
-
-  if (!task) {
-    return null;
   }
 
   async function handleUpdate(values: TaskFormValues) {

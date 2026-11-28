@@ -9,16 +9,22 @@ import { useTranslation } from "@/providers/settings-provider";
 import { cn } from "@/lib/utils";
 
 interface TaskFabProps {
+  ariaLabel?: string;
   defaultDueDate?: number | null;
   isOpen?: boolean;
+  onClick?: () => void;
   onOpenChange?: (open: boolean) => void;
 }
 
-export function TaskFab({ defaultDueDate = null }: TaskFabProps = {}) {
+export function TaskFab({ ariaLabel, defaultDueDate = null, onClick }: TaskFabProps = {}) {
   const router = useRouter();
   const { t } = useTranslation();
 
   function handleClick() {
+    if (onClick) {
+      onClick();
+      return;
+    }
     if (defaultDueDate) {
       router.push(`/tasks/new?dueDate=${defaultDueDate}`);
     } else {
@@ -30,7 +36,7 @@ export function TaskFab({ defaultDueDate = null }: TaskFabProps = {}) {
     <div className="pointer-events-none fixed inset-x-0 bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-xl px-5 sm:bottom-24 sm:px-6">
       <div className="flex justify-end">
         <button
-          aria-label={t.tasks.addNewTask}
+          aria-label={ariaLabel ?? t.tasks.addNewTask}
           type="button"
           className={cn(
             "pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full",

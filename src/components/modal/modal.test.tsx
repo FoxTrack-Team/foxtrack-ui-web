@@ -29,7 +29,7 @@ describe("Modal", () => {
   it("calls onClose when close button is clicked", () => {
     const handleClose = vi.fn();
     render(
-      <Modal isOpen={true} title="Test Title" onClose={handleClose}>
+      <Modal showCloseButton isOpen={true} title="Test Title" onClose={handleClose}>
         <div>Modal Content</div>
       </Modal>,
     );
@@ -42,7 +42,7 @@ describe("Modal", () => {
   it("calls onClose when Escape key is pressed", () => {
     const handleClose = vi.fn();
     render(
-      <Modal isOpen={true} title="Test Title" onClose={handleClose}>
+      <Modal showCloseButton isOpen={true} title="Test Title" onClose={handleClose}>
         <div>Modal Content</div>
       </Modal>,
     );
@@ -54,7 +54,7 @@ describe("Modal", () => {
   it("calls onClose when drag handle is clicked", () => {
     const handleClose = vi.fn();
     render(
-      <Modal isOpen={true} title="Test Title" onClose={handleClose}>
+      <Modal showCloseButton isOpen={true} title="Test Title" onClose={handleClose}>
         <div>Modal Content</div>
       </Modal>,
     );

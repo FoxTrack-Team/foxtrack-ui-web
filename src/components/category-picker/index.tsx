@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { IconCategory, IconChevronDown, IconPlus, IconX } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -26,10 +26,19 @@ interface CategoryPickerProps {
 export function CategoryPicker({ disabled = false, onChange, value }: CategoryPickerProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const selectedTileRef = useRef<HTMLButtonElement>(null);
 
   const categories = useLiveQuery(() => db.categories.orderBy("order").toArray(), []) ?? [];
   const selectedCategory = categories.find((c) => c.id === value);
   const colorDetails = selectedCategory ? getCategoryColor(selectedCategory.color) : null;
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const raf = requestAnimationFrame(() => {
+      selectedTileRef.current?.scrollIntoView?.({ block: "nearest" });
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [isOpen]);
 
   function handleSelect(category: Category | null) {
     onChange(category ? category.id : null);
@@ -43,16 +52,17 @@ export function CategoryPicker({ disabled = false, onChange, value }: CategoryPi
       </label>
 
       {/* Trigger Button */}
-      <div className="flex items-center gap-1.5">
+      <div className="relative">
         <button
           aria-label={t.tasks.selectCategory}
           disabled={disabled}
           type="button"
           className={cn(
-            "flex h-11 min-w-0 flex-1 items-center justify-between rounded-xl border px-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 sm:h-10 sm:text-xs",
+            "flex h-11 w-full min-w-0 items-center justify-between rounded-xl px-3.5 text-sm shadow-2xs ring-1 ring-black/[0.04] transition-colors focus:outline-none focus:ring-2 focus:ring-primary/30 sm:h-10 sm:text-xs dark:ring-white/[0.06]",
+            selectedCategory && !disabled && "pe-11",
             selectedCategory
-              ? "border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
-              : "border-neutral-200 bg-neutral-50 text-neutral-500 hover:bg-neutral-100/70 dark:border-neutral-800 dark:bg-neutral-800/80 dark:text-neutral-400 dark:hover:bg-neutral-800",
+              ? "bg-white dark:bg-neutral-900/80"
+              : "bg-white text-neutral-500 hover:bg-neutral-50 dark:bg-neutral-900/80 dark:text-neutral-400 dark:hover:bg-neutral-800/80",
             disabled && "cursor-not-allowed opacity-50",
           )}
           onClick={() => setIsOpen(true)}
@@ -82,43 +92,44 @@ export function CategoryPicker({ disabled = false, onChange, value }: CategoryPi
             )}
           </div>
 
-          <IconChevronDown className="h-4 w-4 shrink-0 text-neutral-400" stroke={2} />
+          {!selectedCategory && (
+            <IconChevronDown className="h-4 w-4 shrink-0 text-neutral-400" stroke={2} />
+          )}
         </button>
 
         {selectedCategory && !disabled && (
           <button
             aria-label={t.tasks.noCategory}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-neutral-200 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700 active:scale-95 sm:h-10 sm:w-10 dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+            className="absolute end-3 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-neutral-200/80 text-neutral-500 transition-colors after:absolute after:-inset-2.5 after:content-[''] hover:bg-neutral-300/80 hover:text-neutral-700 active:scale-95 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
             type="button"
             onClick={() => onChange(null)}
           >
-            <IconX size={16} stroke={2} />
+            <IconX size={13} stroke={2.4} />
           </button>
         )}
       </div>
 
       {/* Category Selection Modal */}
       <Modal
-        description={t.categories.subtitle}
         isOpen={isOpen}
         maxWidth="md"
         title={t.tasks.selectCategory}
         onClose={() => setIsOpen(false)}
       >
-        <div className="space-y-3">
-          <div className="grid max-h-72 grid-cols-2 gap-2 overflow-y-auto p-0.5 sm:grid-cols-2">
+        <div className="space-y-3 pt-1">
+          <div className="grid grid-cols-2 gap-2 p-0.5 sm:grid-cols-2">
             {/* Clear option */}
             <button
               type="button"
               className={cn(
-                "flex min-h-12 items-center gap-2.5 rounded-xl border p-2.5 text-start transition-all active:scale-[0.98]",
+                "flex min-h-12 items-center gap-2.5 rounded-xl p-2.5 text-start transition-all active:scale-[0.98]",
                 !value
-                  ? "border-primary bg-primary/10 text-primary font-medium"
-                  : "border-neutral-200/80 bg-neutral-50/60 hover:bg-neutral-100 text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900/40 dark:text-neutral-400 dark:hover:bg-neutral-800/60",
+                  ? "bg-primary/10 font-medium text-primary ring-1 ring-primary/35"
+                  : "bg-neutral-50/90 text-neutral-600 hover:bg-neutral-100 dark:bg-neutral-800/60 dark:text-neutral-400 dark:hover:bg-neutral-800",
               )}
               onClick={() => handleSelect(null)}
             >
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-neutral-200/70 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-neutral-200/70 text-neutral-500 dark:bg-neutral-700/70 dark:text-neutral-400">
                 <IconX size={15} stroke={2} />
               </div>
               <span className="truncate text-xs">{t.tasks.noCategory}</span>
@@ -130,12 +141,13 @@ export function CategoryPicker({ disabled = false, onChange, value }: CategoryPi
               return (
                 <button
                   key={cat.id}
+                  ref={isSelected ? selectedTileRef : null}
                   type="button"
                   className={cn(
-                    "flex min-h-12 items-center gap-2.5 rounded-xl border p-2.5 text-start transition-all active:scale-[0.98]",
+                    "flex min-h-12 items-center gap-2.5 rounded-xl p-2.5 text-start transition-all active:scale-[0.98]",
                     isSelected
-                      ? "border-primary bg-primary/10 font-semibold ring-1 ring-primary/30"
-                      : "border-neutral-200/80 bg-white hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900/80 dark:hover:border-neutral-700",
+                      ? "bg-primary/10 font-semibold ring-1 ring-primary/35"
+                      : "bg-neutral-50/90 hover:bg-neutral-100 dark:bg-neutral-800/60 dark:hover:bg-neutral-800",
                   )}
                   onClick={() => handleSelect(cat)}
                 >
@@ -155,9 +167,16 @@ export function CategoryPicker({ disabled = false, onChange, value }: CategoryPi
             })}
           </div>
 
-          <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800">
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <button
+              className="flex min-h-11 items-center justify-center rounded-xl bg-neutral-100 px-3 py-2.5 font-medium text-neutral-700 text-xs transition-colors hover:bg-neutral-200/70 active:scale-[0.98] dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
+              type="button"
+              onClick={() => setIsOpen(false)}
+            >
+              {t.common.close}
+            </button>
             <a
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-neutral-300 px-3 py-2 text-xs font-medium text-neutral-600 transition-colors hover:border-primary hover:text-primary dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-primary dark:hover:text-primary"
+              className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-orange-500/12 px-3 py-2.5 font-medium text-orange-600 text-xs transition-colors hover:bg-orange-500/18 active:scale-[0.98] dark:bg-orange-500/15 dark:text-orange-400 dark:hover:bg-orange-500/22"
               href="/more/categories/new"
             >
               <IconPlus size={15} stroke={2} />

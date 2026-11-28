@@ -16,6 +16,7 @@ import { useTranslation } from "@/providers/settings-provider";
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
 
+import { Habit, HabitLog } from "@/features/habits/types";
 import { Task } from "@/features/tasks/types";
 
 import { cn } from "@/lib/utils";
@@ -33,13 +34,16 @@ export function DataSection() {
   const activeCount = tasks.filter((item) => !item.completed).length;
   const completedCount = tasks.filter((item) => item.completed).length;
 
-  function handleExport() {
+  async function handleExport() {
     try {
+      const [habits, habitLogs] = await Promise.all([db.habits.toArray(), db.habitLogs.toArray()]);
       const backup = {
         app: "FoxTrack",
         exportedAt: new Date().toISOString(),
+        habitLogs,
+        habits,
         tasks,
-        version: process.env.NEXT_PUBLIC_APP_VERSION || "1.0.6",
+        version: process.env.NEXT_PUBLIC_APP_VERSION || "1.0.7",
       };
       const jsonStr = JSON.stringify(backup, null, 2);
       const blob = new Blob([jsonStr], { type: "application/json" });
@@ -70,22 +74,43 @@ export function DataSection() {
           : Array.isArray(parsed.tasks)
             ? parsed.tasks
             : [];
+        const habitsToImport: Habit[] = Array.isArray(parsed.habits) ? parsed.habits : [];
+        const habitLogsToImport: HabitLog[] = Array.isArray(parsed.habitLogs)
+          ? parsed.habitLogs
+          : [];
 
-        if (tasksToImport.length === 0) {
+        if (
+          tasksToImport.length === 0 &&
+          habitsToImport.length === 0 &&
+          habitLogsToImport.length === 0
+        ) {
           setStatus({ message: t.settings.data.importError, type: "error" });
           return;
         }
 
         const validTasks = tasksToImport.filter((item) => item && typeof item.title === "string");
+        const validHabits = habitsToImport.filter((item) => item && typeof item.title === "string");
+        const validHabitLogs = habitLogsToImport.filter(
+          (item) => item && typeof item.habitId === "string" && typeof item.dateKey === "string",
+        );
 
-        await db.transaction("rw", db.tasks, async () => {
+        await db.transaction("rw", [db.tasks, db.habits, db.habitLogs], async () => {
           for (const item of validTasks) {
             await db.tasks.put(item);
+          }
+          for (const habit of validHabits) {
+            await db.habits.put(habit);
+          }
+          for (const log of validHabitLogs) {
+            await db.habitLogs.put(log);
           }
         });
 
         setStatus({
-          message: t.settings.data.importSuccess.replace("{count}", String(validTasks.length)),
+          message: t.settings.data.importSuccess.replace(
+            "{count}",
+            String(validTasks.length + validHabits.length),
+          ),
           type: "success",
         });
       } catch (err) {
@@ -102,7 +127,11 @@ export function DataSection() {
 
   async function handleConfirmReset() {
     try {
-      await db.tasks.clear();
+      await db.transaction("rw", [db.tasks, db.habits, db.habitLogs], async () => {
+        await db.tasks.clear();
+        await db.habits.clear();
+        await db.habitLogs.clear();
+      });
       setIsResetModalOpen(false);
       setStatus({ message: t.settings.data.resetSuccess, type: "success" });
     } catch (err) {
@@ -167,7 +196,7 @@ export function DataSection() {
       )}
 
       {/* Backup & Restore Card */}
-      <section className="rounded-xl border border-neutral-200/80 bg-white p-3.5 shadow-2xs dark:border-neutral-800/80 dark:bg-neutral-900/60">
+      <section className="rounded-2xl bg-white p-3.5 shadow-2xs dark:bg-neutral-900/80">
         <div className="space-y-3.5">
           {/* Export */}
           <div className="flex flex-col items-stretch justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-3">
@@ -263,9 +292,9 @@ export function DataSection() {
             </p>
           </div>
 
-          <div className="flex flex-col-reverse gap-2 border-neutral-100 border-t pt-3 sm:flex-row sm:justify-end dark:border-neutral-800/80">
+          <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
             <Button
-              className="h-10 w-full rounded-full sm:h-9 sm:w-auto"
+              className="h-10 w-full rounded-xl sm:h-9 sm:w-auto"
               size="sm"
               type="button"
               variant="outline"
@@ -274,7 +303,7 @@ export function DataSection() {
               {t.common.cancel}
             </Button>
             <Button
-              className="h-10 w-full rounded-full bg-red-600 text-white hover:bg-red-700 sm:h-9 sm:w-auto dark:bg-red-600 dark:hover:bg-red-700"
+              className="h-10 w-full rounded-xl bg-red-600 text-white hover:bg-red-700 sm:h-9 sm:w-auto dark:bg-red-600 dark:hover:bg-red-700"
               size="sm"
               type="button"
               onClick={handleConfirmReset}

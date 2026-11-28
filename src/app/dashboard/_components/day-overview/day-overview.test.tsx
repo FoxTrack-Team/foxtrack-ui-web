@@ -56,4 +56,13 @@ describe("DayOverview", () => {
     expect(screen.getByText(/1 \/ 1/)).toBeInTheDocument();
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "100");
   });
+
+  it("combines tasks and habits progress when habitsTotal > 0", () => {
+    render(<DayOverview habitsCompleted={1} habitsTotal={2} tasks={mockTasks} />);
+
+    // 1 task completed + 1 habit completed = 2 / 4 (50%)
+    expect(screen.getByText(/2 \/ 4/)).toBeInTheDocument();
+    expect(screen.getByText(/50%/)).toBeInTheDocument();
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "50");
+  });
 });

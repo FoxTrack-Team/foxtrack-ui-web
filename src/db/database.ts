@@ -1,6 +1,7 @@
 import Dexie, { type EntityTable } from "dexie";
 
 import { Category } from "@/features/categories/types";
+import { Habit, HabitLog } from "@/features/habits/types";
 import { Task } from "@/features/tasks/types";
 
 export interface AppSetting {
@@ -12,6 +13,8 @@ export class FoxTrackDatabase extends Dexie {
   tasks!: EntityTable<Task, "id">;
   settings!: EntityTable<AppSetting, "key">;
   categories!: EntityTable<Category, "id">;
+  habits!: EntityTable<Habit, "id">;
+  habitLogs!: EntityTable<HabitLog, "id">;
 
   constructor(dbName = "FoxTrackDB") {
     super(dbName);
@@ -159,6 +162,16 @@ export class FoxTrackDatabase extends Dexie {
             }
           });
       });
+
+    // Version 9: Add habits and habitLogs tables for time-blocked daily routines & habits
+    this.version(9).stores({
+      categories: "id, name, color, icon, order, createdAt, updatedAt, isDefault",
+      habitLogs: "id, habitId, dateKey, [habitId+dateKey], completed, updatedAt",
+      habits: "id, categoryId, frequencyType, archived, startTime, order, createdAt, updatedAt",
+      settings: "key",
+      tags: "id, name, color, createdAt, updatedAt",
+      tasks: "id, completed, priority, dueDate, createdAt, updatedAt, *tagIds, categoryId",
+    });
   }
 }
 

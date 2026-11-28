@@ -101,27 +101,31 @@ export function DatePicker({
       ) : value ? (
         <div
           className={cn(
-            "inline-flex min-h-10 items-center justify-between gap-1 rounded-xl border border-orange-200/80 bg-orange-50 px-3 font-medium text-xs text-orange-600 dark:border-orange-900/50 dark:bg-orange-950/30 dark:text-orange-400",
-            className,
+            "relative inline-flex items-center",
+            className?.includes("w-full") && "w-full",
           )}
         >
           <button
-            className="flex min-h-9 min-w-0 flex-1 items-center gap-1.5 hover:underline"
             disabled={disabled}
             type="button"
+            className={cn(
+              "inline-flex min-h-11 min-w-0 flex-1 items-center justify-start gap-2 rounded-xl bg-orange-500/12 px-3.5 font-medium text-orange-600 text-sm shadow-2xs ring-1 ring-orange-500/20 transition-colors hover:bg-orange-500/15 sm:min-h-10 sm:text-xs dark:bg-orange-500/15 dark:text-orange-400 dark:ring-orange-500/25",
+              !disabled && "pe-11",
+              className,
+            )}
             onClick={handleOpen}
           >
-            <IconCalendar size={14} stroke={2} />
+            <IconCalendar size={15} stroke={2} />
             <span className="truncate">{formatFriendlyDate(value, language)}</span>
           </button>
           <button
             aria-label={t.datePicker.clear}
-            className="-me-1.5 flex h-8 w-8 items-center justify-center rounded-lg text-orange-500 transition-colors hover:bg-orange-100 hover:text-orange-700 active:scale-95 dark:text-orange-400 dark:hover:bg-orange-900/50"
+            className="absolute end-3 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-orange-500/20 text-orange-600 transition-colors after:absolute after:-inset-2.5 after:content-[''] hover:bg-orange-500/30 active:scale-95 dark:bg-orange-500/25 dark:text-orange-300 dark:hover:bg-orange-500/35"
             disabled={disabled}
             type="button"
             onClick={handleClear}
           >
-            <IconX size={14} stroke={2.5} />
+            <IconX size={13} stroke={2.4} />
           </button>
         </div>
       ) : (
@@ -129,7 +133,7 @@ export function DatePicker({
           disabled={disabled}
           type="button"
           className={cn(
-            "inline-flex min-h-10 items-center gap-2 rounded-xl border border-neutral-200/80 bg-neutral-50/80 px-3 font-normal text-xs text-neutral-500 transition-colors hover:bg-neutral-100 active:scale-[0.99] dark:border-neutral-800 dark:bg-neutral-800/80 dark:text-neutral-400 dark:hover:bg-neutral-800",
+            "inline-flex min-h-11 items-center gap-2 rounded-xl bg-white px-3.5 font-normal text-neutral-500 text-sm shadow-2xs ring-1 ring-black/[0.04] transition-colors hover:bg-neutral-50 active:scale-[0.99] sm:min-h-10 sm:text-xs dark:bg-neutral-900/80 dark:text-neutral-400 dark:ring-white/[0.06] dark:hover:bg-neutral-800/80",
             className,
           )}
           onClick={handleOpen}
@@ -148,23 +152,23 @@ export function DatePicker({
       >
         {/* Quick Presets */}
         {showQuickPresets && (
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+          <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-1 text-xs">
             <button
-              className="min-h-9 shrink-0 rounded-lg border border-neutral-200 px-3 py-1.5 font-medium text-xs text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 active:scale-95 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
+              className="min-h-9 shrink-0 rounded-xl bg-neutral-100/85 px-3 py-1.5 font-medium text-neutral-700 text-xs transition-colors hover:bg-orange-500/10 hover:text-orange-600 active:scale-95 dark:bg-neutral-800/80 dark:text-neutral-300 dark:hover:bg-orange-500/15 dark:hover:text-orange-400"
               type="button"
               onClick={() => handleQuickPreset(0)}
             >
               {t.datePicker.today}
             </button>
             <button
-              className="min-h-9 shrink-0 rounded-lg border border-neutral-200 px-3 py-1.5 font-medium text-xs text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 active:scale-95 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
+              className="min-h-9 shrink-0 rounded-xl bg-neutral-100/85 px-3 py-1.5 font-medium text-neutral-700 text-xs transition-colors hover:bg-orange-500/10 hover:text-orange-600 active:scale-95 dark:bg-neutral-800/80 dark:text-neutral-300 dark:hover:bg-orange-500/15 dark:hover:text-orange-400"
               type="button"
               onClick={() => handleQuickPreset(1)}
             >
               {t.datePicker.tomorrow}
             </button>
             <button
-              className="min-h-9 shrink-0 rounded-lg border border-neutral-200 px-3 py-1.5 font-medium text-xs text-neutral-700 transition-colors hover:border-orange-500 hover:text-orange-600 active:scale-95 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-orange-500/50 dark:hover:text-orange-400"
+              className="min-h-9 shrink-0 rounded-xl bg-neutral-100/85 px-3 py-1.5 font-medium text-neutral-700 text-xs transition-colors hover:bg-orange-500/10 hover:text-orange-600 active:scale-95 dark:bg-neutral-800/80 dark:text-neutral-300 dark:hover:bg-orange-500/15 dark:hover:text-orange-400"
               type="button"
               onClick={() => handleQuickPreset(7)}
             >
@@ -178,10 +182,10 @@ export function DatePicker({
           <span className="font-semibold text-neutral-800 text-sm sm:text-xs dark:text-neutral-200">
             {formatMonthYear(currentMonth, language)}
           </span>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <Button
               aria-label={t.datePicker.prevMonth}
-              className="h-9 w-9 rounded-lg"
+              className="relative h-9 w-9 rounded-full after:absolute after:-inset-1 after:content-['']"
               size="icon"
               type="button"
               variant="ghost"
@@ -191,7 +195,7 @@ export function DatePicker({
             </Button>
             <Button
               aria-label={t.datePicker.nextMonth}
-              className="h-9 w-9 rounded-lg"
+              className="relative h-9 w-9 rounded-full after:absolute after:-inset-1 after:content-['']"
               size="icon"
               type="button"
               variant="ghost"
@@ -230,11 +234,11 @@ export function DatePicker({
                   key={day.toISOString()}
                   type="button"
                   className={cn(
-                    "flex h-10 w-full items-center justify-center rounded-lg text-xs tabular-nums transition-all active:scale-95 sm:text-sm",
+                    "relative mx-auto flex h-10 w-10 items-center justify-center rounded-full text-xs tabular-nums transition-all after:absolute after:-inset-0.5 after:content-[''] active:scale-95 sm:text-sm",
                     isSelected
                       ? "bg-orange-500 font-semibold text-white shadow-xs"
                       : isCurrentDay
-                        ? "border border-orange-500/40 font-semibold text-orange-600 dark:text-orange-400"
+                        ? "bg-orange-500/10 font-semibold text-orange-600 dark:bg-orange-500/15 dark:text-orange-400"
                         : isCurrentMonth
                           ? "text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
                           : "text-neutral-400 hover:bg-neutral-50 dark:text-neutral-600 dark:hover:bg-neutral-800/40",
@@ -247,6 +251,14 @@ export function DatePicker({
             })}
           </div>
         </div>
+
+        <button
+          className="mt-3 flex min-h-11 w-full items-center justify-center rounded-xl bg-neutral-100 px-3 py-2.5 font-medium text-neutral-700 text-xs transition-colors hover:bg-neutral-200/70 active:scale-[0.98] dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
+          type="button"
+          onClick={() => setIsOpen(false)}
+        >
+          {t.common.close}
+        </button>
       </Modal>
     </>
   );

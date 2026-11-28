@@ -21,7 +21,7 @@ export function SubpageHeader({ backHref = "/settings", backLabel, title }: Subp
     <div className="mb-2 flex items-center justify-between">
       <Link
         aria-label={label}
-        className="group inline-flex min-h-10 items-center gap-1.5 rounded-full border border-neutral-200/80 bg-white px-3.5 py-1.5 font-medium text-xs text-neutral-700 shadow-2xs transition-all hover:border-orange-200 hover:bg-orange-50/50 hover:text-orange-600 active:scale-95 sm:min-h-9 dark:border-neutral-800/80 dark:bg-neutral-900/80 dark:text-neutral-300 dark:hover:border-orange-900/50 dark:hover:bg-orange-950/30 dark:hover:text-orange-400"
+        className="group relative inline-flex min-h-10 items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 font-medium text-xs text-neutral-700 shadow-2xs transition-all after:absolute after:-inset-0.5 after:content-[''] hover:bg-orange-50/70 hover:text-orange-600 active:scale-95 sm:min-h-9 dark:bg-neutral-900/80 dark:text-neutral-300 dark:hover:bg-orange-950/30 dark:hover:text-orange-400"
         href={backHref}
       >
         <BackChevron

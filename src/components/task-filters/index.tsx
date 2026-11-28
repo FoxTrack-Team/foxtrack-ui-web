@@ -24,7 +24,7 @@ export function TaskFilters({ currentFilter, onFilterChange, counts }: TaskFilte
 
   return (
     <div className="mb-4 flex items-center">
-      <div className="grid w-full grid-cols-3 gap-1 rounded-xl bg-neutral-200/60 p-1 sm:inline-flex sm:w-auto dark:bg-neutral-900/80">
+      <div className="grid w-full grid-cols-3 gap-1 rounded-xl bg-neutral-200/70 p-1 sm:inline-flex sm:w-auto dark:bg-neutral-900/90">
         {filters.map(({ key, label, count }) => {
           const isActive = currentFilter === key;
           return (
@@ -32,9 +32,9 @@ export function TaskFilters({ currentFilter, onFilterChange, counts }: TaskFilte
               key={key}
               type="button"
               className={cn(
-                "flex min-h-9 select-none items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 font-medium text-xs transition-all active:scale-[0.98]",
+                "flex min-h-10 select-none items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 font-medium text-xs transition-all active:scale-[0.98] sm:min-h-9",
                 isActive
-                  ? "bg-white text-neutral-900 shadow-2xs dark:bg-neutral-800 dark:text-neutral-100"
+                  ? "bg-white text-neutral-900 shadow-xs dark:bg-neutral-800 dark:text-neutral-100"
                   : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200",
               )}
               onClick={() => onFilterChange(key)}

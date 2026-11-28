@@ -35,13 +35,21 @@ export function CategoryItem({ category, itemCount = 0, onDelete, onEdit }: Cate
 
   return (
     <div
+      role={!category.isDefault ? "button" : undefined}
+      tabIndex={!category.isDefault ? 0 : undefined}
       className={cn(
-        "group flex h-full flex-col justify-between rounded-2xl p-3 sm:px-3.5 sm:py-3 transition-all",
-        "border border-neutral-200/70 bg-white/90 shadow-2xs dark:border-neutral-800/80 dark:bg-neutral-900/60",
+        "group flex h-full flex-col justify-between rounded-2xl p-3 shadow-2xs transition-all sm:px-3.5 sm:py-3",
+        "bg-white dark:bg-neutral-900/80",
         !category.isDefault &&
-          "cursor-pointer hover:border-neutral-300 hover:bg-neutral-50/80 active:bg-neutral-100/70 dark:hover:border-neutral-700 dark:hover:bg-neutral-800/60",
+          "cursor-pointer hover:bg-neutral-50/80 active:bg-neutral-100/70 dark:hover:bg-neutral-800/70",
       )}
       onClick={handleNavigateEdit}
+      onKeyDown={(e) => {
+        if (!category.isDefault && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          handleNavigateEdit();
+        }
+      }}
     >
       {/* Top Row: Name + Count & Icon Tile */}
       <div className="flex items-center justify-between gap-2">
@@ -68,10 +76,10 @@ export function CategoryItem({ category, itemCount = 0, onDelete, onEdit }: Cate
 
       {/* Custom Category Actions Strip (full touch area without cramping card title) */}
       {!category.isDefault && (
-        <div className="mt-2.5 flex items-center justify-end gap-1.5 border-neutral-100 border-t pt-2 dark:border-neutral-800/60">
+        <div className="mt-2.5 flex items-center justify-end gap-1.5 pt-1">
           <button
             aria-label={`${t.common.edit} ${category.name}`}
-            className="flex h-9 flex-1 items-center justify-center gap-1 rounded-lg bg-neutral-100/80 px-2 font-medium text-[11px] text-neutral-600 transition-colors hover:bg-neutral-200/80 hover:text-neutral-900 active:scale-95 dark:bg-neutral-800/70 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+            className="relative flex h-9 flex-1 items-center justify-center gap-1 rounded-lg bg-neutral-100/80 px-2 font-medium text-[11px] text-neutral-600 transition-colors after:absolute after:-inset-y-1 after:inset-x-0 after:content-[''] hover:bg-neutral-200/80 hover:text-neutral-900 active:scale-95 dark:bg-neutral-800/70 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
             type="button"
             onClick={(e) => {
               e.stopPropagation();
@@ -84,7 +92,7 @@ export function CategoryItem({ category, itemCount = 0, onDelete, onEdit }: Cate
           {onDelete && (
             <button
               aria-label={`${t.common.delete} ${category.name}`}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-neutral-500 transition-colors hover:bg-rose-50 hover:text-rose-600 active:scale-95 dark:text-neutral-400 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
+              className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-neutral-500 transition-colors after:absolute after:-inset-1 after:content-[''] hover:bg-rose-50 hover:text-rose-600 active:scale-95 dark:text-neutral-400 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
               type="button"
               onClick={(e) => {
                 e.stopPropagation();

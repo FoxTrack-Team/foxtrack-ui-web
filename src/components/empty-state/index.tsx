@@ -49,11 +49,11 @@ export function EmptyState({
       className={cn(
         "flex flex-col items-center justify-center text-center",
         framed
-          ? "w-full max-w-sm rounded-2xl border border-neutral-200/80 bg-white px-6 py-8 shadow-2xs dark:border-neutral-800/80 dark:bg-neutral-900/60"
+          ? "w-full max-w-sm rounded-2xl bg-white px-6 py-8 shadow-2xs dark:bg-neutral-900/80"
           : "my-8 py-10",
       )}
     >
-      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500 ring-1 ring-neutral-200/60 dark:bg-neutral-800/80 dark:text-neutral-400 dark:ring-neutral-800">
+      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-500 dark:bg-neutral-800/80 dark:text-neutral-400">
         <IconComponent size={22} stroke={1.75} />
       </div>
       {badge ? <div className="mb-2">{badge}</div> : null}

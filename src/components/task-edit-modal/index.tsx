@@ -112,7 +112,7 @@ export function TaskEditModal({ isOpen, onClose, task }: TaskEditModalProps) {
   return (
     <Modal isOpen={isOpen} maxWidth="lg" title={t.tasks.editTaskTitle} onClose={onClose}>
       <div className="space-y-3.5">
-        <div className="rounded-xl border border-neutral-200/80 bg-neutral-50/70 p-3 transition-colors focus-within:border-neutral-300 focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/10 dark:border-neutral-800/80 dark:bg-neutral-900/60 dark:focus-within:border-neutral-700 dark:focus-within:bg-neutral-900">
+        <div className="rounded-xl bg-neutral-50/90 p-3 transition-colors focus-within:bg-neutral-100/70 focus-within:ring-2 focus-within:ring-primary/15 dark:bg-neutral-800/60 dark:focus-within:bg-neutral-800">
           <input
             className="w-full bg-transparent font-medium text-neutral-900 text-sm placeholder:text-neutral-400 focus:outline-none dark:text-neutral-100 dark:placeholder:text-neutral-500"
             disabled={isSaving}
@@ -139,7 +139,7 @@ export function TaskEditModal({ isOpen, onClose, task }: TaskEditModalProps) {
           <CategoryPicker value={categoryId} onChange={setCategoryId} />
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-2 border-neutral-100 border-t pt-2.5 text-xs dark:border-neutral-800/60">
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
           <div className="flex items-center gap-1">
             <span className="mr-0.5 text-neutral-400 dark:text-neutral-500">
               <IconFlag size={14} stroke={2} />
@@ -171,10 +171,10 @@ export function TaskEditModal({ isOpen, onClose, task }: TaskEditModalProps) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between border-neutral-100 border-t pt-3 dark:border-neutral-800/80">
+        <div className="flex items-center justify-between pt-2">
           <Button
             aria-label={t.tasks.deleteTask}
-            className="gap-1 text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-950/40 rounded-full"
+            className="gap-1 rounded-xl text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-950/40"
             disabled={isSaving}
             size="sm"
             type="button"
@@ -187,7 +187,7 @@ export function TaskEditModal({ isOpen, onClose, task }: TaskEditModalProps) {
 
           <div className="flex items-center gap-2">
             <Button
-              className="rounded-full"
+              className="rounded-xl"
               disabled={isSaving}
               size="sm"
               type="button"
@@ -197,7 +197,7 @@ export function TaskEditModal({ isOpen, onClose, task }: TaskEditModalProps) {
               {t.common.cancel}
             </Button>
             <Button
-              className="gap-1.5 rounded-full"
+              className="gap-1.5 rounded-xl"
               disabled={!title.trim() || isSaving}
               size="sm"
               type="button"

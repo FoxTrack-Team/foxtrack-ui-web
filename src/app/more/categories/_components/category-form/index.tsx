@@ -91,7 +91,7 @@ export function CategoryForm({
         </label>
         <input
           autoFocus={!isEdit}
-          className="min-h-11 w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-base text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 sm:min-h-10 sm:text-sm dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-primary dark:focus:bg-neutral-900"
+          className="min-h-11 w-full rounded-xl bg-white px-3.5 py-2.5 text-base text-neutral-900 shadow-2xs ring-1 ring-black/[0.04] placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary/30 sm:min-h-10 sm:text-sm dark:bg-neutral-900/80 dark:text-neutral-100 dark:ring-white/[0.06] dark:focus:ring-primary/40"
           placeholder={t.categories.namePlaceholder}
           type="text"
           value={name}
@@ -163,7 +163,7 @@ export function CategoryForm({
         <div className="order-2 sm:order-1">
           {isEdit && onDelete && (
             <Button
-              className="h-10 w-full gap-1.5 rounded-xl text-rose-600 text-xs hover:bg-rose-50 hover:text-rose-700 sm:h-9 sm:w-auto dark:text-rose-400 dark:hover:bg-rose-950/40"
+              className="h-11 w-full gap-1.5 rounded-xl bg-rose-500/[0.08] text-rose-600 text-xs hover:bg-rose-500/[0.14] hover:text-rose-700 sm:h-10 sm:w-auto dark:bg-rose-500/[0.12] dark:text-rose-400 dark:hover:bg-rose-500/[0.2]"
               disabled={isSubmitting}
               type="button"
               variant="ghost"
@@ -175,19 +175,19 @@ export function CategoryForm({
           )}
         </div>
 
-        <div className="order-1 flex flex-row-reverse items-center gap-2.5 sm:order-2">
+        <div className="order-1 flex flex-col gap-2 sm:order-2 sm:flex-row-reverse sm:items-center sm:gap-2.5">
           <Button
-            className="h-11 flex-[1.35] rounded-xl text-sm sm:h-9 sm:flex-none sm:min-w-[120px] sm:text-xs"
+            className="h-11 w-full rounded-xl text-sm sm:h-10 sm:w-auto sm:min-w-[120px] sm:text-xs"
             disabled={!name.trim() || isSubmitting}
             type="submit"
           >
             {isEdit ? t.categories.saveCategory : t.categories.createCategory}
           </Button>
           <Button
-            className="h-11 flex-1 rounded-xl text-sm sm:h-9 sm:flex-none sm:text-xs"
+            className="h-11 w-full rounded-xl bg-neutral-200/70 text-neutral-700 text-sm hover:bg-neutral-200 sm:h-10 sm:w-auto sm:px-5 sm:text-xs dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
             disabled={isSubmitting}
             type="button"
-            variant="outline"
+            variant="ghost"
             onClick={onCancel}
           >
             {t.categories.cancel}
@@ -206,7 +206,7 @@ export function CategoryForm({
         >
           <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
             <Button
-              className="h-10 w-full rounded-full text-xs sm:h-9 sm:w-auto"
+              className="h-10 w-full rounded-xl text-xs sm:h-9 sm:w-auto"
               type="button"
               variant="outline"
               onClick={() => setIsDeleteModalOpen(false)}
@@ -214,7 +214,7 @@ export function CategoryForm({
               {t.categories.cancel}
             </Button>
             <Button
-              className="h-10 w-full rounded-full text-xs sm:h-9 sm:w-auto"
+              className="h-10 w-full rounded-xl text-xs sm:h-9 sm:w-auto"
               type="button"
               variant="destructive"
               onClick={handleDeleteConfirm}

@@ -45,8 +45,7 @@ describe("TaskItem", () => {
     fireEvent.click(checkbox);
     expect(toggleSpy).toHaveBeenCalledWith("task-123");
 
-    const editBtn = screen.getByLabelText("Edit task");
-    fireEvent.click(editBtn);
+    fireEvent.click(screen.getByText("Review pull request"));
     expect(mockPush).toHaveBeenCalledWith("/tasks/edit?id=task-123");
 
     const deleteBtn = screen.getByLabelText("Delete task");
@@ -78,7 +77,10 @@ describe("TaskItem", () => {
     render(<TaskItem task={mockTaskWithDetails} />);
 
     expect(screen.getByText("UI Design Polish")).toBeInTheDocument();
-    expect(screen.getByText("Remember to check responsive mobile styles")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Remember to check responsive mobile styles"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Description")).toBeInTheDocument();
 
     fireEvent.click(screen.getByText("UI Design Polish"));
     expect(mockPush).toHaveBeenCalledWith("/tasks/edit?id=task-456");

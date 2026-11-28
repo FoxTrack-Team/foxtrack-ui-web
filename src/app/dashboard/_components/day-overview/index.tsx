@@ -9,16 +9,20 @@ import { Task } from "@/features/tasks/types";
 import { cn } from "@/lib/utils";
 
 interface DayOverviewProps {
+  habitsCompleted?: number;
+  habitsTotal?: number;
   tasks: Task[];
 }
 
-export function DayOverview({ tasks }: DayOverviewProps) {
+export function DayOverview({ habitsCompleted = 0, habitsTotal = 0, tasks }: DayOverviewProps) {
   const { t } = useTranslation();
 
-  const total = tasks.length;
-  const completed = tasks.filter((t) => t.completed).length;
+  const taskTotal = tasks.length;
+  const taskCompleted = tasks.filter((item) => item.completed).length;
+  const total = taskTotal + habitsTotal;
+  const completed = taskCompleted + habitsCompleted;
   const pending = total - completed;
-  const highPriority = tasks.filter((t) => !t.completed && t.priority === "high").length;
+  const highPriority = tasks.filter((item) => !item.completed && item.priority === "high").length;
   const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
   const isAllDone = total > 0 && pending === 0;
 
@@ -28,10 +32,16 @@ export function DayOverview({ tasks }: DayOverviewProps) {
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div className="rounded-xl border border-neutral-200/80 bg-white p-3.5 shadow-2xs sm:p-4 dark:border-neutral-800/80 dark:bg-neutral-900/60">
+    <div className="rounded-2xl bg-white p-3.5 shadow-2xs sm:p-4 dark:bg-neutral-900/80">
       <div className="flex items-center gap-3.5">
         {/* Mobile-Friendly Circular Progress Ring */}
-        <div className="relative flex h-11 w-11 shrink-0 items-center justify-center">
+        <div
+          aria-valuemax={100}
+          aria-valuemin={0}
+          aria-valuenow={percentage}
+          className="relative flex h-11 w-11 shrink-0 items-center justify-center"
+          role="progressbar"
+        >
           <svg className="h-11 w-11 -rotate-90 transform" viewBox="0 0 42 42">
             <circle
               className="stroke-neutral-100 dark:stroke-neutral-800"
@@ -72,31 +82,24 @@ export function DayOverview({ tasks }: DayOverviewProps) {
 
         {/* Content & Details */}
         <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="truncate font-semibold text-neutral-900 text-xs tabular-nums sm:text-sm dark:text-neutral-100">
-              {total === 0
-                ? `0 / 0 ${t.dashboard.tasksCount}`
-                : `${completed} / ${total} ${total === 1 ? t.dashboard.taskSingular : t.dashboard.tasksCount}`}
+              {habitsTotal === 0
+                ? total === 0
+                  ? `0 / 0 ${t.dashboard.tasksCount}`
+                  : `${completed} / ${total} ${total === 1 ? t.dashboard.taskSingular : t.dashboard.tasksCount}`
+                : `${completed} / ${total} ${t.dashboard.progress}`}
             </span>
-          </div>
-
-          {/* Micro Progress Bar */}
-          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
-            <div
-              aria-valuemax={100}
-              aria-valuemin={0}
-              aria-valuenow={percentage}
-              role="progressbar"
-              style={{ width: `${percentage}%` }}
-              className={cn(
-                "h-full rounded-full transition-all duration-300 ease-out",
-                isAllDone ? "bg-emerald-500" : "bg-orange-500",
-              )}
-            />
+            {habitsTotal > 0 && (
+              <span className="text-[11px] text-neutral-500 tabular-nums dark:text-neutral-400">
+                {t.bottomNav.tasks}: {taskCompleted}/{taskTotal} · {t.bottomNav.habits}:{" "}
+                {habitsCompleted}/{habitsTotal}
+              </span>
+            )}
           </div>
 
           {/* Compact Fluid Metrics Badges */}
-          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tabular-nums">
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tabular-nums">
             <span className="inline-flex items-center gap-1 text-neutral-600 dark:text-neutral-400">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
               <span>

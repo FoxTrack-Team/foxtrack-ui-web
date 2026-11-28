@@ -7,13 +7,11 @@ import {
   IconChecklist,
   IconChevronLeft,
   IconChevronRight,
-  IconPlus,
 } from "@tabler/icons-react";
 
 import { useTranslation } from "@/providers/settings-provider";
 
 import { TaskItem } from "@/components/task-item";
-import { Button } from "@/components/ui/button";
 
 import { Task, TaskPriority } from "@/features/tasks/types";
 
@@ -21,7 +19,6 @@ import { useDirection } from "@/hooks/use-direction";
 
 interface DayTasksProps {
   isTodaySelected: boolean;
-  onAddTask: () => void;
   overdueCount: number;
   tasks: Task[];
 }
@@ -32,7 +29,7 @@ const PRIORITY_WEIGHTS: Record<TaskPriority, number> = {
   medium: 2,
 };
 
-export function DayTasks({ tasks, overdueCount, isTodaySelected, onAddTask }: DayTasksProps) {
+export function DayTasks({ tasks, overdueCount, isTodaySelected }: DayTasksProps) {
   const { t } = useTranslation();
   const { isRtl } = useDirection();
   const ChevronIcon = isRtl ? IconChevronLeft : IconChevronRight;
@@ -50,20 +47,23 @@ export function DayTasks({ tasks, overdueCount, isTodaySelected, onAddTask }: Da
     return b.createdAt - a.createdAt;
   });
 
+  const completedCount = tasks.filter((item) => item.completed).length;
+
   return (
-    <div className="space-y-3">
+    <section className="space-y-2.5">
       {/* Overdue alert if today is selected */}
       {isTodaySelected && overdueCount > 0 && (
         <Link
-          className="group flex items-center justify-between gap-2.5 rounded-xl border border-rose-200/80 bg-rose-50/70 px-3 py-2 text-rose-800 text-xs transition-colors hover:bg-rose-50 active:bg-rose-100/70 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300 dark:hover:bg-rose-950/50"
+          className="group flex items-center justify-between gap-2.5 rounded-2xl bg-rose-500/[0.08] px-3.5 py-2.5 text-rose-800 text-xs transition-colors hover:bg-rose-500/[0.12] active:bg-rose-500/[0.16] dark:bg-rose-500/[0.12] dark:text-rose-300 dark:hover:bg-rose-500/[0.18]"
           href="/tasks"
         >
           <div className="flex min-w-0 items-center gap-2.5">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 ring-1 ring-rose-500/15 dark:bg-rose-500/20 dark:text-rose-400">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-rose-500/12 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400">
               <IconAlertCircle size={15} stroke={1.8} />
             </div>
             <span className="truncate font-medium">
-              <span className="font-semibold">{overdueCount}</span> {t.dashboard.overdueWarning}
+              <span className="font-semibold">{overdueCount}</span>{" "}
+              {overdueCount === 1 ? t.dashboard.overdueWarningSingular : t.dashboard.overdueWarning}
             </span>
           </div>
           <span className="inline-flex shrink-0 items-center gap-0.5 font-medium text-[11px] text-rose-700 dark:text-rose-300">
@@ -73,36 +73,43 @@ export function DayTasks({ tasks, overdueCount, isTodaySelected, onAddTask }: Da
         </Link>
       )}
 
-      {/* Task List or Empty State */}
+      {/* Symmetric Section Header */}
+      <div className="flex items-center justify-between px-0.5">
+        <div className="flex items-center gap-2">
+          <IconChecklist className="text-orange-500" size={16} stroke={2} />
+          <h2 className="font-semibold text-neutral-800 text-xs tracking-tight sm:text-sm dark:text-neutral-200">
+            {t.bottomNav.tasks}
+          </h2>
+          <span className="rounded-md bg-neutral-100 px-1.5 py-0.5 font-medium text-[11px] text-neutral-500 tabular-nums dark:bg-neutral-800 dark:text-neutral-400">
+            {completedCount}/{tasks.length}
+          </span>
+        </div>
+
+        <Link
+          className="font-medium text-orange-600 text-xs hover:underline dark:text-orange-400"
+          href="/tasks"
+        >
+          {t.tasks.all}
+        </Link>
+      </div>
+
+      {/* Task List or Compact Equal Empty State */}
       {sortedTasks.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-neutral-200/80 border-dashed bg-white/50 px-4 py-10 text-center dark:border-neutral-800/80 dark:bg-neutral-900/30">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500">
-            <IconChecklist size={22} stroke={1.75} />
+        <div className="flex items-center gap-2.5 rounded-2xl bg-white/75 px-3.5 py-3 shadow-2xs dark:bg-neutral-900/55">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500">
+            <IconChecklist size={16} stroke={1.75} />
           </div>
-          <p className="mt-3 font-medium text-neutral-700 text-sm dark:text-neutral-300">
+          <p className="truncate text-neutral-500 text-xs dark:text-neutral-400">
             {t.dashboard.noTasksForDay}
           </p>
-          <p className="mt-1 max-w-xs text-neutral-400 text-xs dark:text-neutral-500">
-            {t.dashboard.noTasksForDayDesc}
-          </p>
-          <Button
-            className="mt-4 min-h-10 gap-1.5 rounded-xl px-4"
-            size="sm"
-            type="button"
-            variant="outline"
-            onClick={onAddTask}
-          >
-            <IconPlus size={14} stroke={2.5} />
-            <span>{t.dashboard.addTaskForDay}</span>
-          </Button>
         </div>
       ) : (
-        <div className="space-y-1">
+        <div className="space-y-2.5">
           {sortedTasks.map((task) => (
             <TaskItem key={task.id} task={task} />
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }

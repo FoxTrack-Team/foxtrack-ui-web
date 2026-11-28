@@ -157,7 +157,7 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
           {!isCurrentDayToday && (
             <button
               aria-label={t.dashboard.today}
-              className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-neutral-200/80 bg-white px-2.5 py-1.5 font-medium text-neutral-700 text-xs shadow-2xs transition-all hover:bg-neutral-50 active:scale-95 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+              className="inline-flex min-h-10 items-center gap-1 rounded-xl bg-white px-2.5 py-1.5 font-medium text-neutral-700 text-xs shadow-2xs transition-all hover:bg-neutral-50 active:scale-95 dark:bg-neutral-900/80 dark:text-neutral-300 dark:hover:bg-neutral-800"
               type="button"
               onClick={() => onSelectDate(new Date())}
             >
@@ -166,10 +166,10 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
             </button>
           )}
 
-          <div className="flex items-center rounded-xl border border-neutral-200/80 bg-white p-0.5 shadow-2xs dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="flex items-center rounded-xl bg-white p-0.5 shadow-2xs dark:bg-neutral-900/80">
             <button
               aria-label={t.dashboard.prevDay}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 active:scale-95 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+              className="relative flex h-10 w-10 items-center justify-center rounded-lg text-neutral-600 transition-colors after:absolute after:-inset-0.5 after:content-[''] hover:bg-neutral-100 hover:text-neutral-900 active:scale-95 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
               type="button"
               onClick={handlePrevDay}
             >
@@ -182,7 +182,7 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
               trigger={
                 <button
                   aria-label={t.dashboard.openCalendar}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 active:scale-95 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+                  className="relative flex h-10 w-10 items-center justify-center rounded-lg text-neutral-600 transition-colors after:absolute after:-inset-0.5 after:content-[''] hover:bg-neutral-100 hover:text-neutral-900 active:scale-95 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
                   type="button"
                 >
                   <IconCalendar size={17} stroke={2} />
@@ -194,7 +194,7 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
             />
             <button
               aria-label={t.dashboard.nextDay}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 active:scale-95 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+              className="relative flex h-10 w-10 items-center justify-center rounded-lg text-neutral-600 transition-colors after:absolute after:-inset-0.5 after:content-[''] hover:bg-neutral-100 hover:text-neutral-900 active:scale-95 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
               type="button"
               onClick={handleNextDay}
             >
@@ -205,7 +205,7 @@ export function DayNavigator({ selectedDate, taskDatesSet, onSelectDate }: DayNa
       </div>
 
       {/* Horizontal Scrollable Days Slider */}
-      <div className="relative rounded-xl border border-neutral-200/80 bg-white p-1 shadow-2xs sm:p-1.5 dark:border-neutral-800/80 dark:bg-neutral-900/60">
+      <div className="relative rounded-2xl bg-white p-1 shadow-2xs sm:p-1.5 dark:bg-neutral-900/80">
         <div
           className="no-scrollbar flex items-center gap-1 overflow-x-auto py-0.5 [touch-action:pan-x]"
           ref={scrollContainerRef}
