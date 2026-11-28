@@ -1,3 +1,5 @@
+import { cancelTaskReminder, scheduleTaskReminder } from "@/lib/notifications";
+
 import { db as defaultDb, FoxTrackDatabase } from "@/db/database";
 
 import {
@@ -49,6 +51,9 @@ export class DexieTaskRepository implements TaskRepository {
       completed: false,
       priority: validatedInput.priority,
       dueDate: validatedInput.dueDate,
+      dueTime: validatedInput.dueTime ?? null,
+      reminderEnabled: validatedInput.reminderEnabled ?? true,
+      reminderTime: validatedInput.reminderTime ?? null,
       createdAt: now,
       updatedAt: now,
     };
@@ -57,6 +62,7 @@ export class DexieTaskRepository implements TaskRepository {
     TaskSchema.parse(task);
 
     await this.database.tasks.add(task);
+    void scheduleTaskReminder(task);
     return task;
   }
 
@@ -87,6 +93,7 @@ export class DexieTaskRepository implements TaskRepository {
     TaskSchema.parse(updatedTask);
 
     await this.database.tasks.put(updatedTask);
+    void scheduleTaskReminder(updatedTask);
     return updatedTask;
   }
 
@@ -96,6 +103,7 @@ export class DexieTaskRepository implements TaskRepository {
       throw new Error(`Task with id ${id} not found`);
     }
     await this.database.tasks.delete(id);
+    void cancelTaskReminder(id);
   }
 
   async toggleComplete(id: string): Promise<Task> {

@@ -134,6 +134,13 @@ export function DataSection() {
             }
             for (const setting of validSettings) {
               await db.settings.put(setting);
+              if (setting.key === "notificationsEnabled") {
+                try {
+                  localStorage.setItem("foxtrack-notifications-enabled", setting.value);
+                } catch {
+                  /* ignore */
+                }
+              }
             }
           },
         );

@@ -1,3 +1,5 @@
+import { cancelHabitReminder, scheduleHabitReminder } from "@/lib/notifications";
+
 import { db as defaultDb, FoxTrackDatabase } from "@/db/database";
 
 import {
@@ -53,6 +55,8 @@ export class DexieHabitRepository {
       frequencyType: validated.frequencyType,
       id: generateId(),
       order: validated.order ?? currentCount,
+      reminderEnabled: validated.reminderEnabled ?? true,
+      reminderTime: validated.reminderTime ?? null,
       startTime: validated.startTime ?? null,
       targetDays:
         validated.frequencyType === "daily" ? [0, 1, 2, 3, 4, 5, 6] : validated.targetDays,
@@ -62,6 +66,7 @@ export class DexieHabitRepository {
 
     HabitSchema.parse(habit);
     await this.database.habits.add(habit);
+    void scheduleHabitReminder(habit);
     return habit;
   }
 
@@ -95,6 +100,7 @@ export class DexieHabitRepository {
 
     HabitSchema.parse(updated);
     await this.database.habits.put(updated);
+    void scheduleHabitReminder(updated);
     return updated;
   }
 
@@ -107,6 +113,7 @@ export class DexieHabitRepository {
         await this.database.habits.delete(id);
       },
     );
+    void cancelHabitReminder(id);
   }
 
   async toggleArchive(id: string): Promise<Habit> {

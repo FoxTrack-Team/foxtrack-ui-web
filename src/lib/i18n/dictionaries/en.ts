@@ -95,6 +95,8 @@ export const enDictionary: Dictionary = {
     clearTime: "Clear time",
     hour: "Hour",
     minute: "Minute",
+    reminder: "Reminder",
+    reminderTime: "Reminder Time",
     selectTime: "Select time",
   },
   datePicker: {
@@ -174,6 +176,20 @@ export const enDictionary: Dictionary = {
     upcomingSoon: "Soon",
   },
   settings: {
+    notifications: {
+      description: "Reminders & custom notification sound",
+      enableReminders: "Enable Reminders",
+      enableRemindersDesc: "Notify for scheduled tasks and habits",
+      permissionDenied: "Notifications blocked by system",
+      permissionGranted: "Notifications allowed",
+      permissionPrompt: "Permission required for reminders",
+      requestPermission: "Allow Notifications",
+      testNotification: "Send Test Notification",
+      testNotificationBody: "Custom FoxTrack chime is active.",
+      testNotificationSent: "Test notification triggered.",
+      testNotificationTitle: "FoxTrack Reminder",
+      title: "Notifications",
+    },
     calendar: {
       calendarType: "Calendar Type",
       description: "Calendar system, start of week & weekends",

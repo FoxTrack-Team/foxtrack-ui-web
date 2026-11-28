@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import {
+  IconBell,
   IconCalendar,
   IconChevronLeft,
   IconChevronRight,
@@ -58,6 +59,16 @@ export default function SettingsPage() {
         "bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400 ring-1 ring-rose-500/15",
       id: "calendar",
       title: t.settings.calendar.title,
+    },
+    {
+      badge: t.settings.notifications.title,
+      description: t.settings.notifications.description,
+      href: "/settings/notifications",
+      icon: IconBell,
+      iconContainerClass:
+        "bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400 ring-1 ring-purple-500/15",
+      id: "notifications",
+      title: t.settings.notifications.title,
     },
     {
       badge: `${totalTasks} ${totalTasks === 1 ? t.dashboard.taskSingular : t.dashboard.tasksCount}`,

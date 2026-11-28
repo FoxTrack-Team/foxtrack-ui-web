@@ -100,6 +100,8 @@ export interface Dictionary {
     clearTime: string;
     hour: string;
     minute: string;
+    reminder: string;
+    reminderTime: string;
     selectTime: string;
   };
   datePicker: {
@@ -179,6 +181,20 @@ export interface Dictionary {
     upcomingSoon: string;
   };
   settings: {
+    notifications: {
+      description: string;
+      enableReminders: string;
+      enableRemindersDesc: string;
+      permissionDenied: string;
+      permissionGranted: string;
+      permissionPrompt: string;
+      requestPermission: string;
+      testNotification: string;
+      testNotificationBody: string;
+      testNotificationSent: string;
+      testNotificationTitle: string;
+      title: string;
+    };
     calendar: {
       calendarType: string;
       description: string;

@@ -21,6 +21,8 @@ export interface HabitFormValues {
   description?: string;
   endTime: string | null;
   frequencyType: HabitFrequency;
+  reminderEnabled?: boolean;
+  reminderTime?: string | null;
   startTime: string | null;
   targetDays: number[];
   title: string;
@@ -71,6 +73,10 @@ export function HabitForm({
   const [categoryId, setCategoryId] = useState<string | null>(initialValues?.categoryId ?? null);
   const [startTime, setStartTime] = useState(initialValues?.startTime ?? "");
   const [endTime, setEndTime] = useState(initialValues?.endTime ?? "");
+  const [reminderEnabled, setReminderEnabled] = useState<boolean>(
+    initialValues?.reminderEnabled ?? true,
+  );
+  const [reminderTime, setReminderTime] = useState(initialValues?.reminderTime ?? "");
   const [frequencyType, setFrequencyType] = useState<HabitFrequency>(
     initialValues?.frequencyType ?? "daily",
   );
@@ -104,6 +110,8 @@ export function HabitForm({
         description: description.trim() || undefined,
         endTime: endTime || null,
         frequencyType,
+        reminderEnabled,
+        reminderTime: reminderTime || null,
         startTime: startTime || null,
         targetDays: frequencyType === "daily" ? [0, 1, 2, 3, 4, 5, 6] : targetDays,
         title: trimmed,
@@ -194,6 +202,46 @@ export function HabitForm({
             <TimePicker ariaLabel={t.habits.endTime} value={endTime} onChange={setEndTime} />
           </div>
         </div>
+      </div>
+
+      {/* Reminder Controls */}
+      <div className="space-y-2.5 rounded-2xl bg-neutral-100/70 p-3 dark:bg-neutral-800/40">
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-medium text-neutral-700 text-xs dark:text-neutral-300">
+            {t.timePicker.reminder}
+          </span>
+          <button
+            aria-checked={reminderEnabled}
+            aria-label={t.timePicker.reminder}
+            role="switch"
+            type="button"
+            className={cn(
+              "relative inline-flex h-7 w-12 shrink-0 items-center rounded-full p-0.5 transition-colors",
+              reminderEnabled ? "bg-orange-500" : "bg-neutral-300 dark:bg-neutral-700",
+            )}
+            onClick={() => setReminderEnabled((prev) => !prev)}
+          >
+            <span
+              className={cn(
+                "h-6 w-6 rounded-full bg-white shadow-xs transition-transform",
+                reminderEnabled ? "translate-x-5 rtl:-translate-x-5" : "translate-x-0",
+              )}
+            />
+          </button>
+        </div>
+        {reminderEnabled && (
+          <div>
+            <label className="mb-1 block font-medium text-[11px] text-neutral-500 dark:text-neutral-400">
+              {t.timePicker.reminderTime}
+            </label>
+            <TimePicker
+              ariaLabel={t.timePicker.reminderTime}
+              placeholder={startTime || t.timePicker.selectTime}
+              value={reminderTime}
+              onChange={setReminderTime}
+            />
+          </div>
+        )}
       </div>
 
       {/* Frequency Selector */}

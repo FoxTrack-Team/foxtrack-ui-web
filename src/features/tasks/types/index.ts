@@ -13,6 +13,8 @@ export const TaskSchema = z.object({
   priority: TaskPriorityEnum,
   dueDate: z.number().nullable(),
   dueTime: z.string().nullable().optional(),
+  reminderEnabled: z.boolean().optional(),
+  reminderTime: z.string().nullable().optional(),
   createdAt: z.number(),
   updatedAt: z.number(),
 });
@@ -27,6 +29,8 @@ export const CreateTaskInputSchema = z.object({
   priority: TaskPriorityEnum.default("medium"),
   dueDate: z.number().nullable().default(null),
   dueTime: z.string().nullable().optional(),
+  reminderEnabled: z.boolean().optional(),
+  reminderTime: z.string().nullable().optional(),
 });
 
 export type CreateTaskInput = z.input<typeof CreateTaskInputSchema>;
@@ -40,6 +44,8 @@ export const UpdateTaskInputSchema = z.object({
   priority: TaskPriorityEnum.optional(),
   dueDate: z.number().nullable().optional(),
   dueTime: z.string().nullable().optional(),
+  reminderEnabled: z.boolean().optional(),
+  reminderTime: z.string().nullable().optional(),
 });
 
 export type UpdateTaskInput = z.infer<typeof UpdateTaskInputSchema>;

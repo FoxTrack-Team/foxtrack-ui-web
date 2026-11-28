@@ -95,6 +95,8 @@ export const faDictionary: Dictionary = {
     clearTime: "پاک کردن زمان",
     hour: "ساعت",
     minute: "دقیقه",
+    reminder: "یادآور",
+    reminderTime: "ساعت یادآور",
     selectTime: "انتخاب زمان",
   },
   datePicker: {
@@ -174,6 +176,20 @@ export const faDictionary: Dictionary = {
     upcomingSoon: "به زودی",
   },
   settings: {
+    notifications: {
+      description: "یادآورها و صدای اختصاصی نوتیفیکیشن",
+      enableReminders: "فعال‌سازی یادآورها",
+      enableRemindersDesc: "اعلان برای تسک‌ها و عادت‌های زمان‌بندی‌شده",
+      permissionDenied: "دسترسی نوتیفیکیشن مسدود شده است",
+      permissionGranted: "دسترسی نوتیفیکیشن فعال است",
+      permissionPrompt: "برای یادآورها نیاز به مجوز سیستم است",
+      requestPermission: "اجازه نوتیفیکیشن",
+      testNotification: "ارسال نوتیفیکیشن آزمایشی",
+      testNotificationBody: "صدای اختصاصی فاکس‌ترک فعال است.",
+      testNotificationSent: "نوتیفیکیشن آزمایشی ارسال شد.",
+      testNotificationTitle: "یادآور فاکس‌ترک",
+      title: "نوتیفیکیشن‌ها",
+    },
     calendar: {
       calendarType: "نوع تقویم",
       description: "نوع تقویم، شروع هفته و روزهای تعطیل",
