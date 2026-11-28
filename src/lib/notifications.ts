@@ -8,6 +8,8 @@ import { db } from "@/db/database";
 
 export const REMINDER_CHANNEL_ID = "foxtrack_reminders";
 export const CUSTOM_NOTIFICATION_SOUND = "foxtrack_chime.wav";
+export const CUSTOM_NOTIFICATION_ICON = "ic_stat_foxtrack";
+export const NOTIFICATION_ICON_COLOR = "#F97316";
 const STORAGE_NOTIFICATIONS_ENABLED_KEY = "foxtrack-notifications-enabled";
 
 export function isNotificationsEnabledInPrefs(): boolean {
@@ -139,8 +141,10 @@ export async function scheduleTaskReminder(
         {
           body: effectiveTime,
           channelId: REMINDER_CHANNEL_ID,
+          iconColor: NOTIFICATION_ICON_COLOR,
           id,
           schedule: { allowWhileIdle: true, at },
+          smallIcon: CUSTOM_NOTIFICATION_ICON,
           sound: CUSTOM_NOTIFICATION_SOUND,
           title: task.title,
         },
@@ -189,8 +193,10 @@ export async function scheduleHabitReminder(
         {
           body: effectiveTime ?? "",
           channelId: REMINDER_CHANNEL_ID,
+          iconColor: NOTIFICATION_ICON_COLOR,
           id,
           schedule: { allowWhileIdle: true, every: "day", on: { hour, minute } },
+          smallIcon: CUSTOM_NOTIFICATION_ICON,
           sound: CUSTOM_NOTIFICATION_SOUND,
           title: habit.title,
         },
@@ -220,8 +226,10 @@ export async function sendTestNotification(title: string, body: string): Promise
         {
           body,
           channelId: REMINDER_CHANNEL_ID,
+          iconColor: NOTIFICATION_ICON_COLOR,
           id: toNotificationId(`test:${Date.now()}`),
           schedule: { at: new Date(Date.now() + 1000) },
+          smallIcon: CUSTOM_NOTIFICATION_ICON,
           sound: CUSTOM_NOTIFICATION_SOUND,
           title,
         },

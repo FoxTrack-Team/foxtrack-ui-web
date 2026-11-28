@@ -82,22 +82,20 @@ Phase 1 is the foundation and should be considered complete only after the accep
 
 ---
 
-## 3. Roadmap at a Glance
+## 3. Roadmap at a Glance (Benchmarked against HabitNow, Focus To-Do & TickTick)
 
-Phases are ordered by product value and technical dependency, not fixed calendar dates. Complete and validate each phase before starting the next.
+Phases are ordered by product value, user impact, and technical dependency, combining the strongest patterns from **HabitNow** (habits, streaks, categories), **Focus To-Do** (Pomodoro & focus analytics), and **TickTick** (smart views, subtasks, recurrence, Eisenhower matrix).
 
-| Phase  | Name                          | Main Outcome                                | Priority               |
-| :----- | :---------------------------- | :------------------------------------------ | :--------------------- |
-| **1**  | Core Offline Todo             | Reliable basic task manager                 | Completed / Finalizing |
-| **2**  | Organization & Task Details   | Lists, details, subtasks, tags, search      | Next Milestone         |
-| **3**  | Daily Planning & Smart Views  | My Day, Upcoming, smart views               | High                   |
-| **4**  | Recurrence & Calendar         | Repeated tasks and calendar view            | High                   |
-| **5**  | Android Native Experience     | Local notifications and home-screen widgets | High                   |
-| **6**  | Backup & Data Portability     | JSON export, import, restore                | High                   |
-| **7**  | Focus & Productivity Tools    | Pomodoro, focus mode, matrix                | Medium                 |
-| **8**  | Insights & Personalization    | Statistics, templates, themes               | Medium                 |
-| **9**  | Advanced Capture & Automation | Natural language dates, lightweight rules   | Later                  |
-| **10** | Optional Expansion            | Habits, collaboration, cloud sync           | Future / Evaluative    |
+| Phase | Name                                                      | Main Outcome                                                                                                                | Priority           | Status        |
+| :---- | :-------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- | :----------------- | :------------ |
+| **1** | Core Offline Foundation, Habits & Apple HIG               | Tasks (date + time), Habits, Categories, Jalali/Gregorian Calendar, Local Notifications (`foxtrack_chime.wav`), Full Backup | Foundation         | **Completed** |
+| **2** | Task Depth & Organization _(TickTick / HabitNow)_         | Subtasks / Checklists, Projects (Lists), Tags, Global Search & Archive                                                      | **Next Milestone** | Planned       |
+| **3** | Focus & Pomodoro _(Focus To-Do)_                          | Integrated Pomodoro timer linked to tasks, Focus Mode, ambient sounds & focus session history                               | **High**           | Planned       |
+| **4** | Habit & Productivity Analytics _(HabitNow / Focus To-Do)_ | `/more/analytics/`: Streaks, completion rate heatmaps, focus time charts & weekly/monthly insights                          | **High**           | Planned       |
+| **5** | Smart Planning & Recurrence _(TickTick)_                  | Recurring tasks, My Day / Next 7 Days smart views, Calendar View & manual drag-and-drop ordering                            | **High**           | Planned       |
+| **6** | Android Native Power Features                             | Home-screen widgets (Today / Habits), App Shortcuts & quick-capture tile                                                    | **Medium**         | Planned       |
+| **7** | Decision & Workflow Tools _(TickTick)_                    | Eisenhower Matrix (4 quadrants), Task Templates & Quick Add natural-language parsing                                        | **Medium**         | Later         |
+| **8** | Cloud Sync & AI _(Optional Future)_                       | Optional encrypted sync, multi-device backup & smart scheduling assistant                                                   | **Future**         | Evaluative    |
 
 ---
 
