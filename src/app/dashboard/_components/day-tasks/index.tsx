@@ -54,7 +54,7 @@ export function DayTasks({ tasks, overdueCount, isTodaySelected }: DayTasksProps
       {/* Overdue alert if today is selected */}
       {isTodaySelected && overdueCount > 0 && (
         <Link
-          className="group flex items-center justify-between gap-2.5 rounded-2xl bg-rose-500/[0.08] px-3.5 py-2.5 text-rose-800 text-xs transition-colors hover:bg-rose-500/[0.12] active:bg-rose-500/[0.16] dark:bg-rose-500/[0.12] dark:text-rose-300 dark:hover:bg-rose-500/[0.18]"
+          className="group flex min-h-11 items-center justify-between gap-2.5 rounded-2xl bg-rose-500/[0.08] px-3.5 py-2.5 text-rose-800 text-xs transition-colors hover:bg-rose-500/[0.12] active:bg-rose-500/[0.16] dark:bg-rose-500/[0.12] dark:text-rose-300 dark:hover:bg-rose-500/[0.18]"
           href="/tasks"
         >
           <div className="flex min-w-0 items-center gap-2.5">
@@ -80,7 +80,7 @@ export function DayTasks({ tasks, overdueCount, isTodaySelected }: DayTasksProps
           <h2 className="font-semibold text-neutral-800 text-xs tracking-tight sm:text-sm dark:text-neutral-200">
             {t.bottomNav.tasks}
           </h2>
-          <span className="rounded-md bg-neutral-100 px-1.5 py-0.5 font-medium text-[11px] text-neutral-500 tabular-nums dark:bg-neutral-800 dark:text-neutral-400">
+          <span className="rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-[11px] text-neutral-500 tabular-nums dark:bg-neutral-800 dark:text-neutral-400">
             {completedCount}/{tasks.length}
           </span>
         </div>

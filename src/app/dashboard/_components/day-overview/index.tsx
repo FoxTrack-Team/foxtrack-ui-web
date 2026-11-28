@@ -114,7 +114,7 @@ export function DayOverview({
           <div className="flex items-center justify-between gap-2">
             <span className="font-bold text-neutral-900 text-sm tracking-tight dark:text-neutral-100">
               {isAllDone ? (
-                <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                <span className="inline-flex items-center gap-1 leading-tight text-emerald-600 dark:text-emerald-400">
                   <IconCheck size={15} stroke={2.5} />
                   <span>{t.dashboard.allDone}</span>
                 </span>
