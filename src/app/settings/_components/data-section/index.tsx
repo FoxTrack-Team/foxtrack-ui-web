@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 
 import { Category } from "@/features/categories/types";
 import { Habit, HabitLog } from "@/features/habits/types";
+import { CoinLog, Reward } from "@/features/rewards/types";
 import { Task } from "@/features/tasks/types";
 
 import { cn } from "@/lib/utils";
@@ -37,18 +38,22 @@ export function DataSection() {
 
   async function handleExport() {
     try {
-      const [habits, habitLogs, categories, settings] = await Promise.all([
+      const [habits, habitLogs, categories, settings, rewards, coinLogs] = await Promise.all([
         db.habits.toArray(),
         db.habitLogs.toArray(),
         db.categories.toArray(),
         db.settings.toArray(),
+        db.rewards.toArray(),
+        db.coinLogs.toArray(),
       ]);
       const backup = {
         app: "FoxTrack",
         categories,
+        coinLogs,
         exportedAt: new Date().toISOString(),
         habitLogs,
         habits,
+        rewards,
         settings,
         tasks,
         version: process.env.NEXT_PUBLIC_APP_VERSION || "1.0.7",
@@ -92,13 +97,16 @@ export function DataSection() {
         const settingsToImport: AppSetting[] = Array.isArray(parsed.settings)
           ? parsed.settings
           : [];
+        const rewardsToImport: Reward[] = Array.isArray(parsed.rewards) ? parsed.rewards : [];
+        const coinLogsToImport: CoinLog[] = Array.isArray(parsed.coinLogs) ? parsed.coinLogs : [];
 
         if (
           tasksToImport.length === 0 &&
           habitsToImport.length === 0 &&
           habitLogsToImport.length === 0 &&
           categoriesToImport.length === 0 &&
-          settingsToImport.length === 0
+          settingsToImport.length === 0 &&
+          rewardsToImport.length === 0
         ) {
           setStatus({ message: t.settings.data.importError, type: "error" });
           return;
@@ -115,10 +123,16 @@ export function DataSection() {
         const validSettings = settingsToImport.filter(
           (item) => item && typeof item.key === "string" && typeof item.value === "string",
         );
+        const validRewards = rewardsToImport.filter(
+          (item) => item && typeof item.id === "string" && typeof item.title === "string",
+        );
+        const validCoinLogs = coinLogsToImport.filter(
+          (item) => item && typeof item.id === "string" && typeof item.amount === "number",
+        );
 
         await db.transaction(
           "rw",
-          [db.tasks, db.habits, db.habitLogs, db.categories, db.settings],
+          [db.tasks, db.habits, db.habitLogs, db.categories, db.settings, db.rewards, db.coinLogs],
           async () => {
             for (const item of validTasks) {
               await db.tasks.put(item);
@@ -141,6 +155,12 @@ export function DataSection() {
                   /* ignore */
                 }
               }
+            }
+            for (const reward of validRewards) {
+              await db.rewards.put(reward);
+            }
+            for (const log of validCoinLogs) {
+              await db.coinLogs.put(log);
             }
           },
         );

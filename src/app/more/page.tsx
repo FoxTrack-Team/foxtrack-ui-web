@@ -8,6 +8,7 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconFolder,
+  IconTrophy,
 } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 
@@ -22,10 +23,22 @@ export default function MorePage() {
 
   const categories = useLiveQuery(() => db.categories.toArray(), []) ?? [];
   const totalCategories = categories.length;
+  const coinsSetting = useLiveQuery(() => db.settings.get("gamification_coins"), []);
+  const coinsCount = Number(coinsSetting?.value ?? 0) || 0;
 
   const ForwardChevron = isRtl ? IconChevronLeft : IconChevronRight;
 
   const sections = [
+    {
+      badge: `${coinsCount}`,
+      description: t.more.rewardsDesc,
+      href: "/more/rewards",
+      icon: IconTrophy,
+      iconContainerClass:
+        "bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400 ring-1 ring-orange-500/15",
+      id: "rewards",
+      title: t.more.rewardsTitle,
+    },
     {
       badge: `${totalCategories} ${t.categories.categoryCount}`,
       description: t.categories.subtitle,
@@ -71,7 +84,8 @@ export default function MorePage() {
       <div className="divide-y divide-neutral-100 overflow-hidden rounded-2xl bg-white shadow-2xs dark:divide-neutral-800/60 dark:bg-neutral-900/80">
         {sections.map((section) => {
           const IconComp = section.icon;
-          const isUpcoming = section.href !== "/more/categories";
+          const isUpcoming =
+            section.href !== "/more/categories" && section.href !== "/more/rewards";
           return (
             <Link
               className="group flex min-h-[56px] w-full items-center justify-between gap-2 px-3.5 py-3 text-start transition-colors hover:bg-neutral-50/80 active:bg-neutral-100/80 dark:hover:bg-neutral-800/30 dark:active:bg-neutral-800/60"

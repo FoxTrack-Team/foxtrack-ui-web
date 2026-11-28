@@ -18,20 +18,18 @@ interface DayOverviewProps {
 }
 
 export function DayOverview({
-  dateKey = "",
-  habitsCompleted = 0,
-  habitsTotal = 0,
   tasks,
+  habitsTotal = 0,
+  habitsCompleted = 0,
+  dateKey = "",
 }: DayOverviewProps) {
   const { t } = useTranslation();
 
-  const taskTotal = tasks.length;
-  const taskCompleted = tasks.filter((item) => item.completed).length;
-  const total = taskTotal + habitsTotal;
-  const completed = taskCompleted + habitsCompleted;
+  const tasksTotal = tasks.length;
+  const tasksCompleted = tasks.filter((item) => item.completed).length;
+  const total = tasksTotal + habitsTotal;
+  const completed = tasksCompleted + habitsCompleted;
   const pending = total - completed;
-  const highPriority = tasks.filter((item) => !item.completed && item.priority === "high").length;
-  const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
   const isAllDone = total > 0 && pending === 0;
 
   const prevRef = useRef<{ completed: number; dateKey: string } | null>(null);
@@ -45,112 +43,107 @@ export function DayOverview({
     }
   }, [completed, dateKey]);
 
-  // SVG Circular progress values
-  const radius = 17;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  const tasksPct = tasksTotal > 0 ? Math.round((tasksCompleted / tasksTotal) * 100) : 100;
+  const habitsPct = habitsTotal > 0 ? Math.round((habitsCompleted / habitsTotal) * 100) : 100;
+
+  const rOuter = 30;
+  const rInner = 19;
+  const cOuter = 2 * Math.PI * rOuter;
+  const cInner = 2 * Math.PI * rInner;
 
   return (
-    <div className="rounded-2xl bg-white p-3.5 shadow-2xs sm:p-4 dark:bg-neutral-900/80">
-      <div className="flex items-center gap-3.5">
-        {/* Mobile-Friendly Circular Progress Ring */}
+    <div className="rounded-2xl bg-white p-4 shadow-2xs dark:bg-neutral-900/90">
+      <div className="flex items-center gap-4">
+        {/* Apple Fitness Concentric Activity Rings (Tasks & Habits) */}
         <div
           aria-valuemax={100}
           aria-valuemin={0}
-          aria-valuenow={percentage}
+          aria-valuenow={total > 0 ? Math.round((completed / total) * 100) : 0}
           key={pulseKey}
           role="progressbar"
           className={cn(
-            "relative flex h-11 w-11 shrink-0 items-center justify-center",
+            "relative flex h-18 w-18 shrink-0 items-center justify-center",
             pulseKey > 0 && "animate-celebration-ring",
           )}
         >
-          <svg className="h-11 w-11 -rotate-90 transform" viewBox="0 0 42 42">
+          <svg className="h-18 w-18 -rotate-90 transform" viewBox="0 0 76 76">
             <circle
-              className="stroke-neutral-100 dark:stroke-neutral-800"
-              cx="21"
-              cy="21"
+              className="stroke-orange-500/15"
+              cx="38"
+              cy="38"
               fill="transparent"
-              r={radius}
-              strokeWidth="3.5"
+              r={rOuter}
+              strokeWidth="7"
             />
-            {total > 0 && (
-              <circle
-                cx="21"
-                cy="21"
-                fill="transparent"
-                r={radius}
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
-                strokeLinecap="round"
-                strokeWidth="3.5"
-                className={cn(
-                  "transition-all duration-500 ease-out",
-                  isAllDone ? "stroke-emerald-500" : "stroke-orange-500",
-                )}
-              />
-            )}
-          </svg>
+            <circle
+              className="stroke-orange-500 transition-all duration-500 ease-out"
+              cx="38"
+              cy="38"
+              fill="transparent"
+              r={rOuter}
+              strokeDasharray={cOuter}
+              strokeDashoffset={cOuter - (tasksPct / 100) * cOuter}
+              strokeLinecap="round"
+              strokeWidth="7"
+            />
 
-          <div className="absolute inset-0 flex items-center justify-center font-bold text-[11px] tabular-nums">
-            {isAllDone ? (
-              <IconCheck className="text-emerald-500" size={16} stroke={3} />
-            ) : total === 0 ? (
-              <span className="text-neutral-500 dark:text-neutral-500">0%</span>
-            ) : (
-              <span className="text-neutral-800 dark:text-neutral-200">{percentage}%</span>
-            )}
-          </div>
+            <circle
+              className="stroke-emerald-500/15"
+              cx="38"
+              cy="38"
+              fill="transparent"
+              r={rInner}
+              strokeWidth="7"
+            />
+            <circle
+              className="stroke-emerald-500 transition-all duration-500 ease-out"
+              cx="38"
+              cy="38"
+              fill="transparent"
+              r={rInner}
+              strokeDasharray={cInner}
+              strokeDashoffset={cInner - (habitsPct / 100) * cInner}
+              strokeLinecap="round"
+              strokeWidth="7"
+            />
+          </svg>
         </div>
 
-        {/* Content & Details */}
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="truncate font-semibold text-neutral-900 text-xs tabular-nums sm:text-sm dark:text-neutral-100">
-              {habitsTotal === 0
-                ? total === 0
-                  ? `0 / 0 ${t.dashboard.tasksCount}`
-                  : `${completed} / ${total} ${total === 1 ? t.dashboard.taskSingular : t.dashboard.tasksCount}`
-                : `${completed} / ${total} ${t.dashboard.progress}`}
+        {/* Apple Fitness Metrics Breakdown */}
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-bold text-neutral-900 text-sm tracking-tight dark:text-neutral-100">
+              {isAllDone ? (
+                <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                  <IconCheck size={15} stroke={2.5} />
+                  <span>{t.dashboard.allDone}</span>
+                </span>
+              ) : (
+                `${completed}/${total}`
+              )}
             </span>
-            {habitsTotal > 0 && (
-              <span className="text-[11px] text-neutral-500 tabular-nums dark:text-neutral-400">
-                {t.bottomNav.tasks}: {taskCompleted}/{taskTotal} · {t.bottomNav.habits}:{" "}
-                {habitsCompleted}/{habitsTotal}
-              </span>
-            )}
           </div>
 
-          {/* Compact Fluid Metrics Badges */}
-          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tabular-nums">
-            <span className="inline-flex items-center gap-1 text-neutral-600 dark:text-neutral-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              <span>
-                {t.dashboard.completedCount}:{" "}
-                <strong className="font-semibold text-neutral-900 dark:text-neutral-200">
-                  {completed}
-                </strong>
+          <div className="space-y-1 text-xs tabular-nums">
+            <div className="flex items-center justify-between gap-2">
+              <span className="inline-flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400">
+                <span className="h-2 w-2 rounded-full bg-orange-500" />
+                <span>{t.bottomNav.tasks}</span>
               </span>
-            </span>
+              <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+                {tasksCompleted}/{tasksTotal}
+              </span>
+            </div>
 
-            <span className="inline-flex items-center gap-1 text-neutral-600 dark:text-neutral-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-              <span>
-                {t.dashboard.pendingCount}:{" "}
-                <strong className="font-semibold text-neutral-900 dark:text-neutral-200">
-                  {pending}
-                </strong>
+            <div className="flex items-center justify-between gap-2">
+              <span className="inline-flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                <span>{t.habits.title}</span>
               </span>
-            </span>
-
-            {highPriority > 0 && (
-              <span className="inline-flex items-center gap-1 font-medium text-rose-600 dark:text-rose-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
-                <span>
-                  {highPriority} {t.dashboard.highPriority}
-                </span>
+              <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+                {habitsCompleted}/{habitsTotal}
               </span>
-            )}
+            </div>
           </div>
         </div>
       </div>

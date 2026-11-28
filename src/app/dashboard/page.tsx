@@ -17,6 +17,7 @@ import { DayHabits } from "./_components/day-habits";
 import { DayNavigator } from "./_components/day-navigator";
 import { DayOverview } from "./_components/day-overview";
 import { DayTasks } from "./_components/day-tasks";
+import { RewardsSummaryCard } from "./_components/rewards-summary-card";
 
 export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
@@ -103,6 +104,7 @@ export default function DashboardPage() {
         habitsTotal={dayHabits.length}
         tasks={dayTasks}
       />
+      <RewardsSummaryCard />
       <DayTasks isTodaySelected={isTodaySelected} overdueCount={overdueCount} tasks={dayTasks} />
       <DayHabits
         categories={categories}

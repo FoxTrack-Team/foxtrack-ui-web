@@ -31,8 +31,7 @@ describe("DayOverview", () => {
     render(<DayOverview tasks={mockTasks} />);
 
     // Total 2, 1 completed (50%)
-    expect(screen.getByText(/1 \/ 2/)).toBeInTheDocument();
-    expect(screen.getByText(/50%/)).toBeInTheDocument();
+    expect(screen.getAllByText("1/2").length).toBeGreaterThanOrEqual(1);
 
     // Check progressbar value
     const progressbar = screen.getByRole("progressbar");
@@ -53,7 +52,7 @@ describe("DayOverview", () => {
     ];
 
     render(<DayOverview tasks={allDoneTasks} />);
-    expect(screen.getByText(/1 \/ 1/)).toBeInTheDocument();
+    expect(screen.getByText("1/1")).toBeInTheDocument();
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "100");
   });
 
@@ -61,8 +60,7 @@ describe("DayOverview", () => {
     render(<DayOverview habitsCompleted={1} habitsTotal={2} tasks={mockTasks} />);
 
     // 1 task completed + 1 habit completed = 2 / 4 (50%)
-    expect(screen.getByText(/2 \/ 4/)).toBeInTheDocument();
-    expect(screen.getByText(/50%/)).toBeInTheDocument();
+    expect(screen.getByText("2/4")).toBeInTheDocument();
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "50");
   });
 });

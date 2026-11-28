@@ -1,3 +1,6 @@
+import { calculateHabitStreak, sortHabitsBySchedule } from "@/features/habits/utils/time-utils";
+import { awardHabitCompletion } from "@/features/rewards/services/gamification";
+
 import { cancelHabitReminder, scheduleHabitReminder } from "@/lib/notifications";
 
 import { db as defaultDb, FoxTrackDatabase } from "@/db/database";
@@ -12,7 +15,6 @@ import {
   UpdateHabitInput,
   UpdateHabitInputSchema,
 } from "../types";
-import { sortHabitsBySchedule } from "../utils/time-utils";
 
 function generateId(): string {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
@@ -137,6 +139,15 @@ export class DexieHabitRepository {
 
     HabitLogSchema.parse(nextLog);
     await this.database.habitLogs.put(nextLog);
+
+    const [habit, logs] = await Promise.all([
+      this.database.habits.get(habitId),
+      this.database.habitLogs.where("habitId").equals(habitId).toArray(),
+    ]);
+    const completedKeys = new Set(logs.filter((l) => l.completed).map((l) => l.dateKey));
+    const streak = habit ? calculateHabitStreak(habit, completedKeys) : 0;
+    void awardHabitCompletion(habitId, dateKey, nextLog.completed, streak);
+
     return nextLog;
   }
 }

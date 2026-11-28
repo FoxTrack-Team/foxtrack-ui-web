@@ -167,6 +167,8 @@ export const faDictionary: Dictionary = {
   more: {
     featuresSubtitle: "ابزارها و بخش‌های در دست توسعه",
     featuresTitle: "سایر امکانات",
+    rewardsDesc: "فاکس‌کوین، استریک و پاداش‌های شخصی",
+    rewardsTitle: "پاداش و انگیزه",
     subtitle: "مدیریت دسته‌بندی‌ها و ابزارهای جانبی فاکس‌ترک",
     title: "امکانات و ابزارها",
     upcomingAnalyticsDesc: "نمودارهای بهره‌وری و تحلیل هفتگی تسک‌ها",

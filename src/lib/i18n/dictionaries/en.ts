@@ -167,6 +167,8 @@ export const enDictionary: Dictionary = {
   more: {
     featuresSubtitle: "Upcoming modules and tools in development",
     featuresTitle: "Other Features",
+    rewardsDesc: "FoxCoins, streaks & personal rewards",
+    rewardsTitle: "Rewards & Streaks",
     subtitle: "Manage categories and extended FoxTrack tools",
     title: "Features & Tools",
     upcomingAnalyticsDesc: "Productivity insights and weekly completion graphs",

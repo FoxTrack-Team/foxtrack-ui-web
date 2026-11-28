@@ -28,6 +28,7 @@ import {
   getDurationMinutes,
   isCurrentTimeBlock,
 } from "@/features/habits/utils/time-utils";
+import { getStreakMultiplier } from "@/features/rewards/services/gamification";
 
 import { useDirection } from "@/hooks/use-direction";
 
@@ -47,7 +48,7 @@ export function HabitItem({
   completedDateKeys,
   dateKey,
   habit,
-  isTodayView,
+  isTodayView = true,
   mode = "daily",
 }: HabitItemProps) {
   const router = useRouter();
@@ -65,6 +66,7 @@ export function HabitItem({
   const durationMinutes = getDurationMinutes(habit.startTime, habit.endTime);
   const isNow = isDaily && isTodayView && isCurrentTimeBlock(habit.startTime, habit.endTime);
   const streak = calculateHabitStreak(habit, completedDateKeys);
+  const streakMultiplier = getStreakMultiplier(streak);
   const colorDetails = category ? getCategoryColor(category.color) : null;
   const hasTopRow = Boolean(habit.startTime || isNow);
   const showNotesInTopRow = hasDescription && hasTopRow;
@@ -113,6 +115,7 @@ export function HabitItem({
   }
 
   async function handleToggle() {
+    if (isDaily && !isTodayView) return;
     await habitRepository.toggleLog(habit.id, dateKey);
   }
 
@@ -178,6 +181,8 @@ export function HabitItem({
               <Checkbox
                 aria-label={isCompleted ? t.habits.markUndone : t.habits.markDone}
                 checked={isCompleted}
+                className={cn(isDaily && !isTodayView && "cursor-not-allowed opacity-40")}
+                disabled={isDaily && !isTodayView}
                 onCheckedChange={handleToggle}
               />
             </div>
@@ -266,6 +271,7 @@ export function HabitItem({
                     <span>
                       {streak}
                       {t.habits.streakDays}
+                      {streakMultiplier > 1 ? ` · ${streakMultiplier}x` : ""}
                     </span>
                   </span>
                 )}

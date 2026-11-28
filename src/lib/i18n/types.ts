@@ -172,6 +172,8 @@ export interface Dictionary {
   more: {
     featuresSubtitle: string;
     featuresTitle: string;
+    rewardsDesc: string;
+    rewardsTitle: string;
     subtitle: string;
     title: string;
     upcomingAnalyticsDesc: string;

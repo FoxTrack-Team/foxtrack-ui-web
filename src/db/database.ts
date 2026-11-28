@@ -2,6 +2,7 @@ import Dexie, { type EntityTable } from "dexie";
 
 import { Category } from "@/features/categories/types";
 import { Habit, HabitLog } from "@/features/habits/types";
+import { CoinLog, Reward } from "@/features/rewards/types";
 import { Task } from "@/features/tasks/types";
 
 export interface AppSetting {
@@ -15,6 +16,8 @@ export class FoxTrackDatabase extends Dexie {
   categories!: EntityTable<Category, "id">;
   habits!: EntityTable<Habit, "id">;
   habitLogs!: EntityTable<HabitLog, "id">;
+  rewards!: EntityTable<Reward, "id">;
+  coinLogs!: EntityTable<CoinLog, "id">;
 
   constructor(dbName = "FoxTrackDB") {
     super(dbName);
@@ -168,6 +171,18 @@ export class FoxTrackDatabase extends Dexie {
       categories: "id, name, color, icon, order, createdAt, updatedAt, isDefault",
       habitLogs: "id, habitId, dateKey, [habitId+dateKey], completed, updatedAt",
       habits: "id, categoryId, frequencyType, archived, startTime, order, createdAt, updatedAt",
+      settings: "key",
+      tags: "id, name, color, createdAt, updatedAt",
+      tasks: "id, completed, priority, dueDate, createdAt, updatedAt, *tagIds, categoryId",
+    });
+
+    // Version 10: Add rewards and coinLogs tables for habit/task gamification
+    this.version(10).stores({
+      categories: "id, name, color, icon, order, createdAt, updatedAt, isDefault",
+      coinLogs: "id, dateKey, reason, entityId, createdAt",
+      habitLogs: "id, habitId, dateKey, [habitId+dateKey], completed, updatedAt",
+      habits: "id, categoryId, frequencyType, archived, startTime, order, createdAt, updatedAt",
+      rewards: "id, title, cost, redeemedCount, createdAt, updatedAt",
       settings: "key",
       tags: "id, name, color, createdAt, updatedAt",
       tasks: "id, completed, priority, dueDate, createdAt, updatedAt, *tagIds, categoryId",

@@ -1,3 +1,5 @@
+import { awardTaskCompletion } from "@/features/rewards/services/gamification";
+
 import { cancelTaskReminder, scheduleTaskReminder } from "@/lib/notifications";
 
 import { db as defaultDb, FoxTrackDatabase } from "@/db/database";
@@ -112,7 +114,9 @@ export class DexieTaskRepository implements TaskRepository {
       throw new Error(`Task with id ${id} not found`);
     }
 
-    return await this.update(id, { completed: !existing.completed });
+    const updated = await this.update(id, { completed: !existing.completed });
+    void awardTaskCompletion(id, updated.completed);
+    return updated;
   }
 
   async getFiltered(filter: TaskFilter): Promise<Task[]> {
