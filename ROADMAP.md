@@ -70,8 +70,13 @@ Phase 1 is the foundation and should be considered complete only after the accep
 - [x] Keyboard and touch interactions are usable.
 - [x] Light and dark themes are complete.
 - [x] In-app GitHub update checker detects newer releases.
-- [x] Production web build and Android package pipeline are established.
+- [x] Production web build and Android package pipeline are established (with persistent release signing).
 - [x] README documents setup, build, test, and release procedures.
+- [x] Full backup (Export/Import) covering tasks, habits, habit logs, categories, and settings.
+- [x] Calendar system settings (Gregorian / Jalali, custom start of week & weekend days) with Gregorian canonical storage.
+- [x] Optional due time & custom per-task / per-habit reminder controls.
+- [x] Local notifications on Android with custom notification sound (`foxtrack_chime.wav`) and dedicated channel.
+- [x] Strict Apple HIG UI/UX polish across Light and Dark modes.
 
 **Do not restart or rewrite Phase 1 merely to begin later phases.** Extend the existing implementation incrementally.
 
