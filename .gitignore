@@ -25,10 +25,13 @@ coverage/
 *.tsbuildinfo
 next-env.d.ts
 
-# Android build outputs
+# Android build outputs & signing
 dist-apk/
 *.apk
 *.aab
+*.keystore
+*.jks
+android/keystore.properties
 android/app/build/
 android/build/
 android/.gradle/

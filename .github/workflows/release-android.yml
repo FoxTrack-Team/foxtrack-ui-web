@@ -59,11 +59,25 @@ jobs:
         run: pnpm exec cap sync android
 
       - name: Build Android APK via Gradle
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           echo "sdk.dir=$ANDROID_HOME" > android/local.properties
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > app/release.keystore
+            export ANDROID_KEYSTORE_PATH="$(pwd)/app/release.keystore"
+            ./gradlew assembleRelease --no-daemon
+            echo "APK_PATH=android/app/build/outputs/apk/release/app-release.apk" >> "$GITHUB_ENV"
+          else
+            echo "::warning::ANDROID_KEYSTORE_BASE64 secret not set; falling back to debug APK."
+            ./gradlew assembleDebug --no-daemon
+            echo "APK_PATH=android/app/build/outputs/apk/debug/app-debug.apk" >> "$GITHUB_ENV"
+          fi
 
       - name: Prepare APK Artifacts
         run: |
@@ -72,8 +86,8 @@ jobs:
           if [ -z "$TAG_NAME" ] || [ "$TAG_NAME" = "main" ]; then
             TAG_NAME="dev"
           fi
-          cp android/app/build/outputs/apk/debug/app-debug.apk "dist-apk/foxtrack-${TAG_NAME}.apk"
-          cp android/app/build/outputs/apk/debug/app-debug.apk "dist-apk/foxtrack-latest.apk"
+          cp "$APK_PATH" "dist-apk/foxtrack-${TAG_NAME}.apk"
+          cp "$APK_PATH" "dist-apk/foxtrack-latest.apk"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
