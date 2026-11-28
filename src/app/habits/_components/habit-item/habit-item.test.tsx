@@ -45,7 +45,7 @@ describe("HabitItem", () => {
           completedDateKeys={new Set()}
           dateKey="2026-11-28"
           habit={habit}
-          isTodayView={false}
+          isTodayView={true}
         />
       </SettingsProvider>,
     );
@@ -86,7 +86,7 @@ describe("HabitItem", () => {
           completedDateKeys={new Set()}
           dateKey="2026-11-28"
           habit={habit}
-          isTodayView={false}
+          isTodayView={true}
           mode="manage"
         />
       </SettingsProvider>,

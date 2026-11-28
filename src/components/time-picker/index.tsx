@@ -51,8 +51,10 @@ export function TimePicker({
   const [draftHour, setDraftHour] = useState(initial.hour);
   const [draftMinute, setDraftMinute] = useState(initial.minute);
 
-  const selectedHourRef = useRef<HTMLButtonElement>(null);
-  const selectedMinuteRef = useRef<HTMLButtonElement>(null);
+  const hourListRef = useRef<HTMLDivElement>(null);
+  const minuteListRef = useRef<HTMLDivElement>(null);
+
+  const ITEM_HEIGHT = 44;
 
   function handleOpen() {
     if (disabled) return;
@@ -65,11 +67,16 @@ export function TimePicker({
   useEffect(() => {
     if (!isOpen) return;
     const raf = requestAnimationFrame(() => {
-      selectedHourRef.current?.scrollIntoView?.({ block: "center" });
-      selectedMinuteRef.current?.scrollIntoView?.({ block: "center" });
+      if (hourListRef.current) {
+        hourListRef.current.scrollTop = draftHour * ITEM_HEIGHT;
+      }
+      if (minuteListRef.current) {
+        const minIdx = MINUTES.indexOf(draftMinute);
+        minuteListRef.current.scrollTop = Math.max(0, minIdx) * ITEM_HEIGHT;
+      }
     });
     return () => cancelAnimationFrame(raf);
-  }, [isOpen]);
+  }, [isOpen, draftHour, draftMinute]);
 
   function handleConfirm() {
     onChange(`${pad2(draftHour)}:${pad2(draftMinute)}`);
@@ -137,31 +144,50 @@ export function TimePicker({
             {pad2(draftHour)}:{pad2(draftMinute)}
           </div>
 
-          {/* Dual-Column Scrollable Wheel */}
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2" dir="ltr">
+          {/* Apple-style Wheel Picker Columns */}
+          <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-2" dir="ltr">
+            {/* Shared Center Selection Highlight Bar */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 top-[110px] h-11 rounded-xl bg-neutral-200/65 dark:bg-neutral-700/55"
+            />
+
             <div className="flex flex-col items-center">
-              <span className="mb-1 font-medium text-[11px] text-neutral-500 dark:text-neutral-400">
+              <span className="mb-1.5 font-medium text-[11px] text-neutral-500 dark:text-neutral-400">
                 {t.timePicker.hour}
               </span>
               <div
                 aria-label={t.timePicker.hour}
-                className="no-scrollbar h-48 w-full snap-y snap-mandatory space-y-1 overflow-y-auto rounded-2xl bg-neutral-50/90 p-1.5 dark:bg-neutral-800/50"
+                className="no-scrollbar relative h-[220px] w-full snap-y snap-mandatory overflow-y-auto py-[88px]"
+                ref={hourListRef}
+                onScroll={(e) => {
+                  const idx = Math.round(e.currentTarget.scrollTop / ITEM_HEIGHT);
+                  const clamped = Math.max(0, Math.min(HOURS.length - 1, idx));
+                  if (HOURS[clamped] !== draftHour) {
+                    setDraftHour(HOURS[clamped]);
+                  }
+                }}
               >
-                {HOURS.map((h) => {
+                {HOURS.map((h, idx) => {
                   const isSelected = h === draftHour;
                   return (
                     <button
                       aria-pressed={isSelected}
                       key={h}
-                      ref={isSelected ? selectedHourRef : null}
                       type="button"
                       className={cn(
-                        "flex min-h-10 w-full snap-center items-center justify-center rounded-xl font-medium text-sm tabular-nums transition-colors",
+                        "flex h-11 w-full snap-center items-center justify-center font-medium text-base tabular-nums transition-all",
                         isSelected
-                          ? "bg-orange-500 font-semibold text-white shadow-2xs"
-                          : "text-neutral-700 hover:bg-neutral-200/60 dark:text-neutral-300 dark:hover:bg-neutral-700/60",
+                          ? "scale-105 font-bold text-orange-600 dark:text-orange-400"
+                          : "text-neutral-400 hover:text-neutral-700 dark:text-neutral-500 dark:hover:text-neutral-300",
                       )}
-                      onClick={() => setDraftHour(h)}
+                      onClick={() => {
+                        setDraftHour(h);
+                        hourListRef.current?.scrollTo?.({
+                          behavior: "smooth",
+                          top: idx * ITEM_HEIGHT,
+                        });
+                      }}
                     >
                       {pad2(h)}
                     </button>
@@ -173,28 +199,41 @@ export function TimePicker({
             <span className="pt-5 font-bold text-lg text-neutral-400 dark:text-neutral-500">:</span>
 
             <div className="flex flex-col items-center">
-              <span className="mb-1 font-medium text-[11px] text-neutral-500 dark:text-neutral-400">
+              <span className="mb-1.5 font-medium text-[11px] text-neutral-500 dark:text-neutral-400">
                 {t.timePicker.minute}
               </span>
               <div
                 aria-label={t.timePicker.minute}
-                className="no-scrollbar h-48 w-full snap-y snap-mandatory space-y-1 overflow-y-auto rounded-2xl bg-neutral-50/90 p-1.5 dark:bg-neutral-800/50"
+                className="no-scrollbar relative h-[220px] w-full snap-y snap-mandatory overflow-y-auto py-[88px]"
+                ref={minuteListRef}
+                onScroll={(e) => {
+                  const idx = Math.round(e.currentTarget.scrollTop / ITEM_HEIGHT);
+                  const clamped = Math.max(0, Math.min(MINUTES.length - 1, idx));
+                  if (MINUTES[clamped] !== draftMinute) {
+                    setDraftMinute(MINUTES[clamped]);
+                  }
+                }}
               >
-                {MINUTES.map((m) => {
+                {MINUTES.map((m, idx) => {
                   const isSelected = m === draftMinute;
                   return (
                     <button
                       aria-pressed={isSelected}
                       key={m}
-                      ref={isSelected ? selectedMinuteRef : null}
                       type="button"
                       className={cn(
-                        "flex min-h-10 w-full snap-center items-center justify-center rounded-xl font-medium text-sm tabular-nums transition-colors",
+                        "flex h-11 w-full snap-center items-center justify-center font-medium text-base tabular-nums transition-all",
                         isSelected
-                          ? "bg-orange-500 font-semibold text-white shadow-2xs"
-                          : "text-neutral-700 hover:bg-neutral-200/60 dark:text-neutral-300 dark:hover:bg-neutral-700/60",
+                          ? "scale-105 font-bold text-orange-600 dark:text-orange-400"
+                          : "text-neutral-400 hover:text-neutral-700 dark:text-neutral-500 dark:hover:text-neutral-300",
                       )}
-                      onClick={() => setDraftMinute(m)}
+                      onClick={() => {
+                        setDraftMinute(m);
+                        minuteListRef.current?.scrollTo?.({
+                          behavior: "smooth",
+                          top: idx * ITEM_HEIGHT,
+                        });
+                      }}
                     >
                       {pad2(m)}
                     </button>
