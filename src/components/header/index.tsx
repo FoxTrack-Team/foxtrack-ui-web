@@ -35,7 +35,7 @@ export function Header() {
       {!isSettingsPage && (
         <Link
           aria-label={t.bottomNav.settings}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 active:scale-95 active:bg-neutral-200/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 dark:active:bg-neutral-800"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 active:scale-95 active:bg-neutral-200/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 dark:active:bg-neutral-800"
           href="/settings"
         >
           <IconSettings aria-hidden="true" className="h-5 w-5" stroke={1.8} />
