@@ -11,6 +11,8 @@ _Tasks · Daily Habits · Gamified Rewards — crafted with Apple Human Interfac
 ![Dexie](https://img.shields.io/badge/Dexie.js-IndexedDB-orange?style=flat-square)
 ![Vitest](https://img.shields.io/badge/Vitest-Tested-6E9F18?style=flat-square&logo=vitest&logoColor=white)
 
+**[📥 Download Latest Android APK](https://github.com/FoxTrack-Team/foxtrack-ui-web/releases/latest)**
+
 </div>
 
 ---
