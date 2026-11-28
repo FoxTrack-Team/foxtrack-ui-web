@@ -27,6 +27,8 @@ App Router · TS strict · Tailwind CSS · pnpm · Dexie.js (IndexedDB) · Capac
 - Icons: always and strictly use `@tabler/icons-react` (never `lucide-react`).
 - Colocated tests: `<name>.test.tsx` next to `index.tsx`.
 - Database backward-compatibility: migrations must strictly preserve user data using Dexie versioning (`db.version(n).stores(...).upgrade(...)`). Never drop or overwrite existing tables or fields without migration; offline user data must persist across app updates.
+- **Full-backup rule (Export/Import)**: whenever a new table or entity is added to `FoxTrackDatabase` (`src/db/database.ts`), it **must** also be included in both Export and Import in `src/app/settings/_components/data-section/index.tsx` so user backups always contain all app data.
+- **Strict Apple HIG UI/UX rule**: every new or modified UI component, page, layout, interaction, animation, navigation flow, and feedback pattern **must** strictly follow Apple Human Interface Guidelines (iOS/iPadOS design language) across every detail — layout, spacing, typography, touch targets, gestures, transitions, colors, and ergonomics — with zero exceptions.
 
 ## Don't
 

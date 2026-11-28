@@ -188,10 +188,10 @@ export const enDictionary: Dictionary = {
     data: {
       description: "Backup, restore & storage",
       exportBackup: "Export Backup",
-      exportBackupDesc: "Download tasks as JSON file",
+      exportBackupDesc: "Download full backup (tasks, habits, categories, settings)",
       exportSuccess: "Backup downloaded successfully",
       importBackup: "Restore Backup",
-      importBackupDesc: "Restore tasks from JSON file",
+      importBackupDesc: "Restore full backup from JSON file",
       importError: "Failed to read backup file. Please ensure it is a valid FoxTrack JSON file.",
       importSuccess: "Tasks restored successfully",
       resetConfirmButton: "Delete Everything",

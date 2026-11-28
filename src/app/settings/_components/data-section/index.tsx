@@ -16,12 +16,13 @@ import { useTranslation } from "@/providers/settings-provider";
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
 
+import { Category } from "@/features/categories/types";
 import { Habit, HabitLog } from "@/features/habits/types";
 import { Task } from "@/features/tasks/types";
 
 import { cn } from "@/lib/utils";
 
-import { db } from "@/db/database";
+import { AppSetting, db } from "@/db/database";
 
 export function DataSection() {
   const { t } = useTranslation();
@@ -30,18 +31,25 @@ export function DataSection() {
   const [status, setStatus] = useState<{ message: string; type: "error" | "success" } | null>(null);
 
   const tasks = useLiveQuery(() => db.tasks.toArray(), []) ?? [];
+  const habits = useLiveQuery(() => db.habits.toArray(), []) ?? [];
+  const categories = useLiveQuery(() => db.categories.toArray(), []) ?? [];
   const totalCount = tasks.length;
-  const activeCount = tasks.filter((item) => !item.completed).length;
-  const completedCount = tasks.filter((item) => item.completed).length;
 
   async function handleExport() {
     try {
-      const [habits, habitLogs] = await Promise.all([db.habits.toArray(), db.habitLogs.toArray()]);
+      const [habits, habitLogs, categories, settings] = await Promise.all([
+        db.habits.toArray(),
+        db.habitLogs.toArray(),
+        db.categories.toArray(),
+        db.settings.toArray(),
+      ]);
       const backup = {
         app: "FoxTrack",
+        categories,
         exportedAt: new Date().toISOString(),
         habitLogs,
         habits,
+        settings,
         tasks,
         version: process.env.NEXT_PUBLIC_APP_VERSION || "1.0.7",
       };
@@ -78,11 +86,19 @@ export function DataSection() {
         const habitLogsToImport: HabitLog[] = Array.isArray(parsed.habitLogs)
           ? parsed.habitLogs
           : [];
+        const categoriesToImport: Category[] = Array.isArray(parsed.categories)
+          ? parsed.categories
+          : [];
+        const settingsToImport: AppSetting[] = Array.isArray(parsed.settings)
+          ? parsed.settings
+          : [];
 
         if (
           tasksToImport.length === 0 &&
           habitsToImport.length === 0 &&
-          habitLogsToImport.length === 0
+          habitLogsToImport.length === 0 &&
+          categoriesToImport.length === 0 &&
+          settingsToImport.length === 0
         ) {
           setStatus({ message: t.settings.data.importError, type: "error" });
           return;
@@ -93,18 +109,34 @@ export function DataSection() {
         const validHabitLogs = habitLogsToImport.filter(
           (item) => item && typeof item.habitId === "string" && typeof item.dateKey === "string",
         );
+        const validCategories = categoriesToImport.filter(
+          (item) => item && typeof item.id === "string" && typeof item.name === "string",
+        );
+        const validSettings = settingsToImport.filter(
+          (item) => item && typeof item.key === "string" && typeof item.value === "string",
+        );
 
-        await db.transaction("rw", [db.tasks, db.habits, db.habitLogs], async () => {
-          for (const item of validTasks) {
-            await db.tasks.put(item);
-          }
-          for (const habit of validHabits) {
-            await db.habits.put(habit);
-          }
-          for (const log of validHabitLogs) {
-            await db.habitLogs.put(log);
-          }
-        });
+        await db.transaction(
+          "rw",
+          [db.tasks, db.habits, db.habitLogs, db.categories, db.settings],
+          async () => {
+            for (const item of validTasks) {
+              await db.tasks.put(item);
+            }
+            for (const habit of validHabits) {
+              await db.habits.put(habit);
+            }
+            for (const log of validHabitLogs) {
+              await db.habitLogs.put(log);
+            }
+            for (const category of validCategories) {
+              await db.categories.put(category);
+            }
+            for (const setting of validSettings) {
+              await db.settings.put(setting);
+            }
+          },
+        );
 
         setStatus({
           message: t.settings.data.importSuccess.replace(
@@ -142,37 +174,41 @@ export function DataSection() {
   return (
     <div className="space-y-4">
       {/* Title & Description directly on canvas */}
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="font-bold text-base text-neutral-900 tracking-tight dark:text-neutral-100">
-            {t.settings.data.title}
-          </h1>
-          <p className="mt-0.5 text-neutral-500 text-xs dark:text-neutral-400">
-            {t.settings.data.description}
-          </p>
-        </div>
-
-        <span className="shrink-0 rounded-md bg-neutral-100/90 px-2 py-0.5 font-medium text-[11px] text-neutral-500 tabular-nums dark:bg-neutral-800/90 dark:text-neutral-400">
-          {totalCount} {totalCount === 1 ? t.dashboard.taskSingular : t.dashboard.tasksCount}
-        </span>
+      <div>
+        <h1 className="font-bold text-base text-neutral-900 tracking-tight dark:text-neutral-100">
+          {t.settings.data.title}
+        </h1>
+        <p className="mt-0.5 text-neutral-500 text-xs dark:text-neutral-400">
+          {t.settings.data.description}
+        </p>
       </div>
 
       {/* Real-time stats */}
-      <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-neutral-100/70 p-3 text-xs tabular-nums dark:bg-neutral-800/40">
-        <span className="font-medium text-neutral-600 text-xs dark:text-neutral-300">
-          {t.settings.data.statsTotal}:
-        </span>
-        <span className="rounded-md bg-white px-2 py-0.5 font-semibold text-neutral-900 text-xs shadow-2xs dark:bg-neutral-700 dark:text-neutral-100">
-          {totalCount}
-        </span>
-        <span className="text-neutral-300 dark:text-neutral-700">•</span>
-        <span className="text-neutral-600 dark:text-neutral-400">
-          {activeCount} {t.settings.data.statsActive}
-        </span>
-        <span className="text-neutral-300 dark:text-neutral-700">•</span>
-        <span className="text-neutral-600 dark:text-neutral-400">
-          {completedCount} {t.settings.data.statsCompleted}
-        </span>
+      <div className="grid grid-cols-3 gap-2 tabular-nums">
+        <div className="flex flex-col items-center justify-center rounded-2xl bg-white px-2 py-2.5 text-center shadow-2xs dark:bg-neutral-900/80">
+          <span className="font-bold text-base text-neutral-900 dark:text-neutral-100">
+            {totalCount}
+          </span>
+          <span className="mt-0.5 font-medium text-[11px] text-neutral-500 dark:text-neutral-400">
+            {t.bottomNav.tasks}
+          </span>
+        </div>
+        <div className="flex flex-col items-center justify-center rounded-2xl bg-white px-2 py-2.5 text-center shadow-2xs dark:bg-neutral-900/80">
+          <span className="font-bold text-base text-neutral-900 dark:text-neutral-100">
+            {habits.length}
+          </span>
+          <span className="mt-0.5 font-medium text-[11px] text-neutral-500 dark:text-neutral-400">
+            {t.habits.title}
+          </span>
+        </div>
+        <div className="flex flex-col items-center justify-center rounded-2xl bg-white px-2 py-2.5 text-center shadow-2xs dark:bg-neutral-900/80">
+          <span className="font-bold text-base text-neutral-900 dark:text-neutral-100">
+            {categories.length}
+          </span>
+          <span className="mt-0.5 font-medium text-[11px] text-neutral-500 dark:text-neutral-400">
+            {t.categories.title}
+          </span>
+        </div>
       </div>
 
       {/* Feedback message (success or inline error replacing native alert) */}
@@ -209,7 +245,7 @@ export function DataSection() {
               </p>
             </div>
             <Button
-              className="min-h-10 w-full gap-1.5 rounded-xl sm:min-h-9 sm:w-auto sm:rounded-lg"
+              className="min-h-11 w-full gap-1.5 rounded-xl sm:min-h-9 sm:w-auto sm:rounded-lg"
               size="sm"
               type="button"
               variant="outline"
@@ -231,7 +267,7 @@ export function DataSection() {
               </p>
             </div>
             <Button
-              className="min-h-10 w-full gap-1.5 rounded-xl sm:min-h-9 sm:w-auto sm:rounded-lg"
+              className="min-h-11 w-full gap-1.5 rounded-xl sm:min-h-9 sm:w-auto sm:rounded-lg"
               size="sm"
               type="button"
               variant="outline"
@@ -252,7 +288,7 @@ export function DataSection() {
       </section>
 
       {/* Danger Zone Card */}
-      <section className="rounded-xl border border-red-200/70 bg-red-50/40 p-3.5 shadow-2xs dark:border-red-900/40 dark:bg-red-950/15">
+      <section className="rounded-2xl bg-red-50/45 p-3.5 shadow-2xs ring-1 ring-red-500/15 dark:bg-red-950/15 dark:ring-red-500/20">
         <div className="flex flex-col items-stretch justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-3">
           <div className="min-w-0 flex-1">
             <p className="font-medium text-red-600 text-sm sm:text-xs dark:text-red-400">
@@ -263,7 +299,7 @@ export function DataSection() {
             </p>
           </div>
           <Button
-            className="min-h-10 w-full gap-1.5 rounded-xl border border-red-200/90 bg-white text-red-600 shadow-2xs hover:bg-red-50 hover:text-red-700 sm:min-h-9 sm:w-auto sm:rounded-lg dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-950/60"
+            className="min-h-11 w-full gap-1.5 rounded-xl bg-white text-red-600 shadow-2xs ring-1 ring-red-500/20 hover:bg-red-50 hover:text-red-700 sm:min-h-9 sm:w-auto sm:rounded-lg dark:bg-red-950/30 dark:text-red-400 dark:ring-red-500/25 dark:hover:bg-red-950/60"
             size="sm"
             type="button"
             variant="ghost"
@@ -294,16 +330,16 @@ export function DataSection() {
 
           <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
             <Button
-              className="h-10 w-full rounded-xl sm:h-9 sm:w-auto"
+              className="min-h-11 w-full rounded-xl bg-neutral-200/70 text-neutral-700 hover:bg-neutral-200 sm:min-h-9 sm:w-auto dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
               size="sm"
               type="button"
-              variant="outline"
+              variant="ghost"
               onClick={() => setIsResetModalOpen(false)}
             >
               {t.common.cancel}
             </Button>
             <Button
-              className="h-10 w-full rounded-xl bg-red-600 text-white hover:bg-red-700 sm:h-9 sm:w-auto dark:bg-red-600 dark:hover:bg-red-700"
+              className="min-h-11 w-full rounded-xl bg-red-600 text-white hover:bg-red-700 sm:min-h-9 sm:w-auto dark:bg-red-600 dark:hover:bg-red-700"
               size="sm"
               type="button"
               onClick={handleConfirmReset}

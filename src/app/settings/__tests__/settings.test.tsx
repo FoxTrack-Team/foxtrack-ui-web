@@ -93,7 +93,9 @@ describe("Settings Routes & Subpages", () => {
       );
 
       expect(screen.getByRole("link", { name: /Settings/i })).toHaveAttribute("href", "/settings");
-      expect(screen.getByText("Total Tasks:")).toBeInTheDocument();
+      expect(screen.getByText("Tasks")).toBeInTheDocument();
+      expect(screen.getByText("Habits")).toBeInTheDocument();
+      expect(screen.getByText("Categories")).toBeInTheDocument();
     });
   });
 

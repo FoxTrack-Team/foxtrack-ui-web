@@ -188,10 +188,10 @@ export const faDictionary: Dictionary = {
     data: {
       description: "پشتیبان‌گیری و حافظه آفلاین",
       exportBackup: "پشتیبان‌گیری (خروجی)",
-      exportBackupDesc: "دانلود تمام تسک‌ها در فایل JSON",
+      exportBackupDesc: "دانلود نسخه پشتیبان کامل (تسک‌ها، عادت‌ها، دسته‌بندی‌ها و تنظیمات)",
       exportSuccess: "فایل پشتیبان با موفقیت دانلود شد",
       importBackup: "بازیابی پشتیبان",
-      importBackupDesc: "بازگردانی تسک‌ها از فایل JSON",
+      importBackupDesc: "بازگردانی نسخه پشتیبان کامل از فایل JSON",
       importError:
         "خواندن فایل ناموفق بود. لطفاً مطمئن شوید فایل انتخابی یک فایل پشتیبان معتبر فاکس‌ترک است.",
       importSuccess: "تسک‌ها با موفقیت بازیابی شدند",

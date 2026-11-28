@@ -105,7 +105,7 @@ export function AboutSection() {
           </div>
 
           <Button
-            className="h-10 w-full gap-1.5 rounded-xl sm:h-9 sm:w-auto sm:rounded-lg"
+            className="min-h-11 w-full gap-1.5 rounded-xl sm:min-h-9 sm:w-auto sm:rounded-lg"
             disabled={isChecking}
             size="sm"
             type="button"
@@ -118,23 +118,28 @@ export function AboutSection() {
         </div>
 
         {updateResult && (
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-neutral-100 border-t pt-2.5 text-xs dark:border-neutral-800/60">
+          <div className="mt-3 border-neutral-100 border-t pt-3 text-xs dark:border-neutral-800/60">
             {updateResult.newer ? (
-              <>
-                <span className="inline-flex items-center gap-1.5 font-medium text-xs text-orange-600 dark:text-orange-400">
-                  <IconSparkles size={14} stroke={2} />
+              <div className="flex flex-col gap-2.5 rounded-xl bg-orange-500/[0.08] p-3 ring-1 ring-orange-500/15 sm:flex-row sm:items-center sm:justify-between dark:bg-orange-500/12 dark:ring-orange-500/20">
+                <span className="inline-flex items-center gap-1.5 font-semibold text-orange-600 text-xs dark:text-orange-400">
+                  <IconSparkles className="shrink-0" size={15} stroke={2} />
                   <span>
                     {t.about.updateAvailable}: {updateResult.latestTag}
                   </span>
                 </span>
-                <Button asChild className="rounded-xl sm:rounded-lg" size="sm" variant="default">
+                <Button
+                  asChild
+                  className="min-h-11 w-full rounded-xl sm:min-h-9 sm:w-auto sm:rounded-lg"
+                  size="sm"
+                  variant="default"
+                >
                   <a href={updateResult.releaseUrl} rel="noopener noreferrer" target="_blank">
                     {t.update.downloadButton}
                   </a>
                 </Button>
-              </>
+              </div>
             ) : (
-              <span className="inline-flex items-center gap-1.5 text-emerald-600 text-xs dark:text-emerald-400">
+              <span className="inline-flex items-center gap-1.5 font-medium text-emerald-600 text-xs dark:text-emerald-400">
                 <IconCheck size={14} stroke={2.5} />
                 <span>{t.about.upToDate}</span>
               </span>
@@ -144,7 +149,7 @@ export function AboutSection() {
       </section>
 
       {/* Grouped App Info & Links Card */}
-      <section className="divide-y divide-neutral-100 overflow-hidden rounded-xl border border-neutral-200/80 bg-white shadow-2xs dark:divide-neutral-800/60 dark:border-neutral-800/80 dark:bg-neutral-900/60">
+      <section className="divide-y divide-neutral-100 overflow-hidden rounded-2xl bg-white shadow-2xs dark:divide-neutral-800/60 dark:bg-neutral-900/80">
         {/* Version */}
         <div className="flex min-h-[48px] items-center justify-between px-3.5 py-2.5">
           <div className="flex items-center gap-2.5">
