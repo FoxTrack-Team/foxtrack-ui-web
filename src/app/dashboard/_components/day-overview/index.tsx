@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+
 import { IconCheck } from "@tabler/icons-react";
 
 import { useTranslation } from "@/providers/settings-provider";
@@ -9,12 +11,18 @@ import { Task } from "@/features/tasks/types";
 import { cn } from "@/lib/utils";
 
 interface DayOverviewProps {
+  dateKey?: string;
   habitsCompleted?: number;
   habitsTotal?: number;
   tasks: Task[];
 }
 
-export function DayOverview({ habitsCompleted = 0, habitsTotal = 0, tasks }: DayOverviewProps) {
+export function DayOverview({
+  dateKey = "",
+  habitsCompleted = 0,
+  habitsTotal = 0,
+  tasks,
+}: DayOverviewProps) {
   const { t } = useTranslation();
 
   const taskTotal = tasks.length;
@@ -25,6 +33,17 @@ export function DayOverview({ habitsCompleted = 0, habitsTotal = 0, tasks }: Day
   const highPriority = tasks.filter((item) => !item.completed && item.priority === "high").length;
   const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
   const isAllDone = total > 0 && pending === 0;
+
+  const prevRef = useRef<{ completed: number; dateKey: string } | null>(null);
+  const [pulseKey, setPulseKey] = useState(0);
+
+  useEffect(() => {
+    const prev = prevRef.current;
+    prevRef.current = { completed, dateKey };
+    if (prev && prev.dateKey === dateKey && completed > prev.completed) {
+      setPulseKey((k) => k + 1);
+    }
+  }, [completed, dateKey]);
 
   // SVG Circular progress values
   const radius = 17;
@@ -39,8 +58,12 @@ export function DayOverview({ habitsCompleted = 0, habitsTotal = 0, tasks }: Day
           aria-valuemax={100}
           aria-valuemin={0}
           aria-valuenow={percentage}
-          className="relative flex h-11 w-11 shrink-0 items-center justify-center"
+          key={pulseKey}
           role="progressbar"
+          className={cn(
+            "relative flex h-11 w-11 shrink-0 items-center justify-center",
+            pulseKey > 0 && "animate-celebration-ring",
+          )}
         >
           <svg className="h-11 w-11 -rotate-90 transform" viewBox="0 0 42 42">
             <circle

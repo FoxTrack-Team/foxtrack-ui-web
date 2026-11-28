@@ -63,7 +63,9 @@ export interface Dictionary {
     addTaskDesc: string;
     addTaskForDay: string;
     allDone: string;
+    allDoneCelebrate: string;
     completedCount: string;
+    greatProgress: string;
     highPriority: string;
     nextDay: string;
     noTasksForDay: string;

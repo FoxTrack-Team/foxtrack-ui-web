@@ -11,6 +11,7 @@ import { isTaskOverdue, toDayInterval, toHtmlDateValue } from "@/lib/date-utils"
 
 import { db } from "@/db/database";
 
+import { CompletionCelebration } from "./_components/completion-celebration";
 import { DashboardAddFab } from "./_components/dashboard-add-fab";
 import { DayHabits } from "./_components/day-habits";
 import { DayNavigator } from "./_components/day-navigator";
@@ -82,15 +83,22 @@ export default function DashboardPage() {
   }, [allTasks]);
 
   const isTodaySelected = isToday(selectedDate);
+  const taskCompletedCount = dayTasks.filter((item) => item.completed).length;
 
   return (
     <div className="space-y-4">
+      <CompletionCelebration
+        completed={taskCompletedCount + habitsCompleted}
+        dateKey={dateKey}
+        total={dayTasks.length + dayHabits.length}
+      />
       <DayNavigator
         selectedDate={selectedDate}
         taskDatesSet={taskDatesSet}
         onSelectDate={setSelectedDate}
       />
       <DayOverview
+        dateKey={dateKey}
         habitsCompleted={habitsCompleted}
         habitsTotal={dayHabits.length}
         tasks={dayTasks}

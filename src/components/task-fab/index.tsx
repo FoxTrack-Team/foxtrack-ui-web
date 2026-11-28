@@ -1,8 +1,10 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 
 import { IconPlus } from "@tabler/icons-react";
+import { createPortal } from "react-dom";
 
 import { useTranslation } from "@/providers/settings-provider";
 
@@ -16,9 +18,18 @@ interface TaskFabProps {
   onOpenChange?: (open: boolean) => void;
 }
 
+function emptySubscribe() {
+  return () => {};
+}
+
 export function TaskFab({ ariaLabel, defaultDueDate = null, onClick }: TaskFabProps = {}) {
   const router = useRouter();
   const { t } = useTranslation();
+  const isClient = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 
   function handleClick() {
     if (onClick) {
@@ -32,7 +43,11 @@ export function TaskFab({ ariaLabel, defaultDueDate = null, onClick }: TaskFabPr
     }
   }
 
-  return (
+  if (!isClient || typeof document === "undefined") {
+    return null;
+  }
+
+  return createPortal(
     <div className="pointer-events-none fixed inset-x-0 bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-xl px-5 sm:bottom-24 sm:px-6">
       <div className="flex justify-end">
         <button
@@ -49,6 +64,7 @@ export function TaskFab({ ariaLabel, defaultDueDate = null, onClick }: TaskFabPr
           <IconPlus size={26} stroke={2.5} />
         </button>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

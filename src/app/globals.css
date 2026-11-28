@@ -147,6 +147,47 @@
   }
 }
 
+@keyframes celebration-pill-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(2px) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes celebration-ring-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.14);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes confetti-fly {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(0.5) rotate(0deg);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx, 0px), var(--ty, -40px)) scale(1) rotate(var(--rot, 180deg));
+  }
+}
+
 @layer utilities {
   .animate-sheet-slide-up {
     animation: sheet-slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -172,6 +213,20 @@
 
   .animate-dialog-out {
     animation: dialog-zoom-out 0.18s ease-in forwards;
+  }
+
+  .animate-celebration-pill {
+    animation: celebration-pill-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    will-change: transform, opacity;
+  }
+
+  .animate-celebration-ring {
+    animation: celebration-ring-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .animate-confetti-fly {
+    animation: confetti-fly 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    will-change: transform, opacity;
   }
 
   .animate-page-enter {
