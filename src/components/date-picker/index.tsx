@@ -9,31 +9,28 @@ import {
   IconChevronRight,
   IconX,
 } from "@tabler/icons-react";
-import {
-  addDays,
-  addMonths,
-  addYears,
-  eachDayOfInterval,
-  endOfMonth,
-  endOfWeek,
-  isSameDay,
-  isSameMonth,
-  isToday,
-  setMonth,
-  startOfMonth,
-  startOfWeek,
-  subMonths,
-  subYears,
-} from "date-fns";
+import { addDays, isSameDay, isToday } from "date-fns";
 
-import { useTranslation } from "@/providers/settings-provider";
+import { useSettings } from "@/providers/settings-provider";
 
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
 
 import { useDirection } from "@/hooks/use-direction";
 
-import { formatFriendlyDate, formatMonthYear } from "@/lib/date-utils";
+import {
+  addCalendarMonths,
+  addCalendarYears,
+  formatCalendarDayNumber,
+  formatCalendarMonthYear,
+  getCalendarDaysGrid,
+  getCalendarMonthNames,
+  getCalendarParts,
+  getOrderedWeekdays,
+  setCalendarMonthIndex,
+  type WeekdayIndex,
+} from "@/lib/calendar-utils";
+import { formatFriendlyDate } from "@/lib/date-utils";
 import { cn } from "@/lib/utils";
 
 interface DatePickerProps {
@@ -67,11 +64,11 @@ export function DatePicker({
   const selectedDate = value ? new Date(value) : null;
   const [currentMonth, setCurrentMonth] = useState<Date>(() => selectedDate ?? new Date());
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
-  const { language, t } = useTranslation();
+  const { calendarType, language, t, weekendDays, weekStartsOn } = useSettings();
   const { isRtl } = useDirection();
   const PrevIcon = isRtl ? IconChevronRight : IconChevronLeft;
   const NextIcon = isRtl ? IconChevronLeft : IconChevronRight;
-  const weekdays = language === "fa" ? WEEKDAYS_FA : WEEKDAYS_EN;
+  const weekdays = getOrderedWeekdays(weekStartsOn, language);
 
   function handleOpen() {
     if (disabled) return;
@@ -109,24 +106,16 @@ export function DatePicker({
     touchStartRef.current = null;
     if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy)) return;
     const goNext = isRtl ? dx > 0 : dx < 0;
-    setCurrentMonth((prev) => (goNext ? addMonths(prev, 1) : subMonths(prev, 1)));
+    setCurrentMonth((prev) => addCalendarMonths(prev, goNext ? 1 : -1, calendarType));
   }
 
-  const monthNames = Array.from({ length: 12 }, (_, idx) =>
-    new Intl.DateTimeFormat(language === "fa" ? "fa-IR" : "en-US", { month: "short" }).format(
-      new Date(2026, idx, 1),
-    ),
-  );
+  const monthNames = getCalendarMonthNames(calendarType, language);
+  const currentParts = getCalendarParts(currentMonth, calendarType);
   const yearLabel =
     language === "fa"
-      ? currentMonth.getFullYear().toLocaleString("fa-IR", { useGrouping: false })
-      : String(currentMonth.getFullYear());
-
-  const monthStart = startOfMonth(currentMonth);
-  const monthEnd = endOfMonth(monthStart);
-  const calendarStart = startOfWeek(monthStart);
-  const calendarEnd = endOfWeek(monthEnd);
-  const daysInView = eachDayOfInterval({ end: calendarEnd, start: calendarStart });
+      ? currentParts.year.toLocaleString("fa-IR", { useGrouping: false })
+      : String(currentParts.year);
+  const daysInView = getCalendarDaysGrid(currentMonth, calendarType, weekStartsOn);
 
   return (
     <>
@@ -221,7 +210,11 @@ export function DatePicker({
             type="button"
             onClick={() => setIsMonthYearView((prev) => !prev)}
           >
-            <span>{isMonthYearView ? yearLabel : formatMonthYear(currentMonth, language)}</span>
+            <span>
+              {isMonthYearView
+                ? yearLabel
+                : formatCalendarMonthYear(currentMonth, calendarType, language)}
+            </span>
             <IconChevronDown
               size={15}
               stroke={2.2}
@@ -240,7 +233,9 @@ export function DatePicker({
               variant="ghost"
               onClick={() =>
                 setCurrentMonth((prev) =>
-                  isMonthYearView ? subYears(prev, 1) : subMonths(prev, 1),
+                  isMonthYearView
+                    ? addCalendarYears(prev, -1, calendarType)
+                    : addCalendarMonths(prev, -1, calendarType),
                 )
               }
             >
@@ -254,7 +249,9 @@ export function DatePicker({
               variant="ghost"
               onClick={() =>
                 setCurrentMonth((prev) =>
-                  isMonthYearView ? addYears(prev, 1) : addMonths(prev, 1),
+                  isMonthYearView
+                    ? addCalendarYears(prev, 1, calendarType)
+                    : addCalendarMonths(prev, 1, calendarType),
                 )
               }
             >
@@ -267,7 +264,7 @@ export function DatePicker({
         {isMonthYearView ? (
           <div className="fade-in zoom-in-95 mt-3 grid animate-in grid-cols-3 gap-2 py-2 duration-150">
             {monthNames.map((name, idx) => {
-              const isSelectedMonth = currentMonth.getMonth() === idx;
+              const isSelectedMonth = currentParts.monthIndex === idx;
               return (
                 <button
                   key={name}
@@ -279,7 +276,7 @@ export function DatePicker({
                       : "bg-neutral-100/75 text-neutral-700 hover:bg-neutral-200/70 dark:bg-neutral-800/75 dark:text-neutral-200 dark:hover:bg-neutral-700/75",
                   )}
                   onClick={() => {
-                    setCurrentMonth((prev) => setMonth(prev, idx));
+                    setCurrentMonth((prev) => setCalendarMonthIndex(prev, idx, calendarType));
                     setIsMonthYearView(false);
                   }}
                 >
@@ -296,36 +293,42 @@ export function DatePicker({
           >
             {/* Weekday Labels */}
             <div className="grid grid-cols-7 text-center">
-              {weekdays.map((day) => (
-                <span
-                  className="py-1 font-medium text-[11px] text-neutral-500 dark:text-neutral-400"
-                  key={day}
-                >
-                  {day}
-                </span>
-              ))}
+              {weekdays.map((day) => {
+                const isWeekendCol = weekendDays.includes(day.index);
+                return (
+                  <span
+                    key={day.index}
+                    className={cn(
+                      "py-1 font-medium text-[11px]",
+                      isWeekendCol
+                        ? "text-rose-500 dark:text-rose-400"
+                        : "text-neutral-500 dark:text-neutral-400",
+                    )}
+                  >
+                    {day.shortLabel}
+                  </span>
+                );
+              })}
             </div>
 
             {/* Days Grid */}
             <div
               className="fade-in mt-1 grid animate-in grid-cols-7 gap-1 duration-150"
-              key={`${currentMonth.getFullYear()}-${currentMonth.getMonth()}`}
+              key={`${calendarType}-${currentParts.year}-${currentParts.monthIndex}`}
             >
-              {daysInView.map((day) => {
-                const isSelected = selectedDate && isSameDay(day, selectedDate);
-                const isCurrentDay = isToday(day);
-                const isCurrentMonth = isSameMonth(day, currentMonth);
-
-                if (!isCurrentMonth) {
-                  return <div aria-hidden="true" className="h-10 w-10" key={day.toISOString()} />;
+              {daysInView.map((cell) => {
+                if (!cell.isCurrentMonth) {
+                  return <div aria-hidden="true" className="h-10 w-10" key={cell.key} />;
                 }
 
-                const dayLabel =
-                  language === "fa" ? day.getDate().toLocaleString("fa-IR") : String(day.getDate());
+                const isSelected = selectedDate && isSameDay(cell.date, selectedDate);
+                const isCurrentDay = isToday(cell.date);
+                const isWeekend = weekendDays.includes(cell.date.getDay() as WeekdayIndex);
+                const dayLabel = formatCalendarDayNumber(cell.dayNumber, language);
 
                 return (
                   <button
-                    key={day.toISOString()}
+                    key={cell.key}
                     type="button"
                     className={cn(
                       "relative mx-auto flex h-10 w-10 items-center justify-center rounded-full text-xs tabular-nums transition-all after:absolute after:-inset-0.5 after:content-[''] active:scale-95 sm:text-sm",
@@ -333,9 +336,11 @@ export function DatePicker({
                         ? "bg-orange-500 font-semibold text-white shadow-xs"
                         : isCurrentDay
                           ? "bg-orange-500/10 font-semibold text-orange-600 dark:bg-orange-500/15 dark:text-orange-400"
-                          : "text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800",
+                          : isWeekend
+                            ? "text-rose-500 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/30"
+                            : "text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800",
                     )}
-                    onClick={() => handleSelectDate(day)}
+                    onClick={() => handleSelectDate(cell.date)}
                   >
                     {dayLabel}
                   </button>

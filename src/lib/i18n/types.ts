@@ -179,6 +179,16 @@ export interface Dictionary {
     upcomingSoon: string;
   };
   settings: {
+    calendar: {
+      calendarType: string;
+      description: string;
+      gregorian: string;
+      jalali: string;
+      storageNote: string;
+      title: string;
+      weekendDays: string;
+      weekStartsOn: string;
+    };
     appearance: {
       description: string;
       directionNote: string;

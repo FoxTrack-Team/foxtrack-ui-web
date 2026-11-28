@@ -174,6 +174,17 @@ export const faDictionary: Dictionary = {
     upcomingSoon: "به زودی",
   },
   settings: {
+    calendar: {
+      calendarType: "نوع تقویم",
+      description: "نوع تقویم، شروع هفته و روزهای تعطیل",
+      gregorian: "میلادی",
+      jalali: "شمسی (جلالی)",
+      storageNote:
+        "تاریخ‌ها همیشه به‌صورت استاندارد میلادی ذخیره می‌شوند؛ این تنظیمات فقط نحوه نمایش را تغییر می‌دهند.",
+      title: "تقویم",
+      weekendDays: "روزهای تعطیل هفته",
+      weekStartsOn: "شروع هفته",
+    },
     appearance: {
       description: "تم تیره و انتخاب زبان",
       directionNote: "جهت متن با تغییر زبان هماهنگ می‌شود.",

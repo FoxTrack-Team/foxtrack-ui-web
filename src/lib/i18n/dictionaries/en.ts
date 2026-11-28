@@ -174,6 +174,17 @@ export const enDictionary: Dictionary = {
     upcomingSoon: "Soon",
   },
   settings: {
+    calendar: {
+      calendarType: "Calendar Type",
+      description: "Calendar system, start of week & weekends",
+      gregorian: "Gregorian",
+      jalali: "Jalali (Solar)",
+      storageNote:
+        "Dates are always stored in standard Gregorian format; these settings only affect display.",
+      title: "Calendar",
+      weekendDays: "Weekend Days",
+      weekStartsOn: "Start of Week",
+    },
     appearance: {
       description: "Theme, dark mode & language",
       directionNote: "Text direction adapts to language.",

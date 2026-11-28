@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import {
+  IconCalendar,
   IconChevronLeft,
   IconChevronRight,
   IconDatabase,
@@ -20,7 +21,7 @@ import { cn } from "@/lib/utils";
 import { db } from "@/db/database";
 
 export default function SettingsPage() {
-  const { isRtl, language, t, theme } = useSettings();
+  const { calendarType, isRtl, language, t, theme } = useSettings();
 
   const tasks = useLiveQuery(() => db.tasks.toArray(), []) ?? [];
   const totalTasks = tasks.length;
@@ -47,6 +48,16 @@ export default function SettingsPage() {
         "bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400 ring-1 ring-orange-500/15",
       id: "appearance",
       title: t.settings.appearance.title,
+    },
+    {
+      badge: calendarType === "jalali" ? t.settings.calendar.jalali : t.settings.calendar.gregorian,
+      description: t.settings.calendar.description,
+      href: "/settings/calendar",
+      icon: IconCalendar,
+      iconContainerClass:
+        "bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400 ring-1 ring-rose-500/15",
+      id: "calendar",
+      title: t.settings.calendar.title,
     },
     {
       badge: `${totalTasks} ${totalTasks === 1 ? t.dashboard.taskSingular : t.dashboard.tasksCount}`,

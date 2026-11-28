@@ -12,6 +12,7 @@ import {
 
 import { categoryRepository } from "@/features/categories/services/dexie-category-repository";
 
+import type { CalendarType, WeekdayIndex } from "@/lib/calendar-utils";
 import {
   DEFAULT_LANGUAGE,
   Dictionary,
@@ -26,20 +27,29 @@ import { db } from "@/db/database";
 export type AppTheme = "system" | "light" | "dark";
 
 export interface SettingsContextValue {
+  calendarType: CalendarType;
   direction: TextDirection;
   isRtl: boolean;
   language: SupportedLanguage;
   resolvedTheme: "light" | "dark";
+  setCalendarType: (calendarType: CalendarType) => void;
   setLanguage: (lang: SupportedLanguage) => void;
   setTheme: (theme: AppTheme) => void;
+  setWeekendDays: (days: WeekdayIndex[]) => void;
+  setWeekStartsOn: (day: WeekdayIndex) => void;
   t: Dictionary;
   theme: AppTheme;
+  weekendDays: WeekdayIndex[];
+  weekStartsOn: WeekdayIndex;
 }
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
 const STORAGE_THEME_KEY = "foxtrack-theme";
 const STORAGE_LANG_KEY = "foxtrack-language";
+const STORAGE_CALENDAR_TYPE_KEY = "foxtrack-calendar-type";
+const STORAGE_WEEK_STARTS_ON_KEY = "foxtrack-week-starts-on";
+const STORAGE_WEEKEND_DAYS_KEY = "foxtrack-weekend-days";
 export const SETTINGS_CHANGE_EVENT = "foxtrack:settings";
 
 const settingsListeners = new Set<() => void>();
@@ -58,7 +68,14 @@ function subscribeSettingsStore(callback: () => void) {
     };
   }
   function onStorage(e: StorageEvent) {
-    if (e.key === STORAGE_THEME_KEY || e.key === STORAGE_LANG_KEY || e.key === null) {
+    if (
+      e.key === STORAGE_THEME_KEY ||
+      e.key === STORAGE_LANG_KEY ||
+      e.key === STORAGE_CALENDAR_TYPE_KEY ||
+      e.key === STORAGE_WEEK_STARTS_ON_KEY ||
+      e.key === STORAGE_WEEKEND_DAYS_KEY ||
+      e.key === null
+    ) {
       callback();
     }
   }
@@ -77,6 +94,67 @@ function getServerThemeSnapshot(): AppTheme {
 
 function getServerLanguageSnapshot(): SupportedLanguage {
   return DEFAULT_LANGUAGE;
+}
+
+function getServerCalendarTypeSnapshot(): CalendarType {
+  return "gregorian";
+}
+
+function getServerWeekStartsOnSnapshot(): WeekdayIndex {
+  return 0;
+}
+
+function getServerWeekendDaysRawSnapshot(): string {
+  return "[0,6]";
+}
+
+function readInitialCalendarType(): CalendarType {
+  if (typeof window === "undefined") return "gregorian";
+  try {
+    const raw = localStorage.getItem(STORAGE_CALENDAR_TYPE_KEY);
+    if (raw === "gregorian" || raw === "jalali") return raw;
+  } catch {
+    /* ignore */
+  }
+  return "gregorian";
+}
+
+function readInitialWeekStartsOn(): WeekdayIndex {
+  if (typeof window === "undefined") return 0;
+  try {
+    const raw = Number(localStorage.getItem(STORAGE_WEEK_STARTS_ON_KEY));
+    if (Number.isInteger(raw) && raw >= 0 && raw <= 6) {
+      return raw as WeekdayIndex;
+    }
+  } catch {
+    /* ignore */
+  }
+  return 0;
+}
+
+function readInitialWeekendDaysRaw(): string {
+  if (typeof window === "undefined") return "[0,6]";
+  try {
+    const raw = localStorage.getItem(STORAGE_WEEKEND_DAYS_KEY);
+    if (raw) return raw;
+  } catch {
+    /* ignore */
+  }
+  return "[0,6]";
+}
+
+function parseWeekendDays(raw: string): WeekdayIndex[] {
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.filter(
+        (d): d is WeekdayIndex => typeof d === "number" && Number.isInteger(d) && d >= 0 && d <= 6,
+      );
+    }
+  } catch {
+    /* ignore */
+  }
+  return [0, 6];
 }
 
 function subscribeHydration() {
@@ -165,6 +243,22 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     readInitialLanguage,
     getServerLanguageSnapshot,
   );
+  const calendarType = useSyncExternalStore(
+    subscribeSettingsStore,
+    readInitialCalendarType,
+    getServerCalendarTypeSnapshot,
+  );
+  const weekStartsOn = useSyncExternalStore(
+    subscribeSettingsStore,
+    readInitialWeekStartsOn,
+    getServerWeekStartsOnSnapshot,
+  );
+  const weekendDaysRaw = useSyncExternalStore(
+    subscribeSettingsStore,
+    readInitialWeekendDaysRaw,
+    getServerWeekendDaysRawSnapshot,
+  );
+  const weekendDays = useMemo(() => parseWeekendDays(weekendDaysRaw), [weekendDaysRaw]);
   const isSystemDark = useSyncExternalStore(
     subscribeSystemTheme,
     getSystemSnapshot,
@@ -267,22 +361,89 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     window.dispatchEvent(new Event(SETTINGS_CHANGE_EVENT));
   }, []);
 
+  const setCalendarType = useCallback((nextType: CalendarType) => {
+    const defaultWeekStart: WeekdayIndex = nextType === "jalali" ? 6 : 0;
+    const defaultWeekends: WeekdayIndex[] = nextType === "jalali" ? [5] : [0, 6];
+    const serializedWeekends = JSON.stringify(defaultWeekends);
+
+    try {
+      localStorage.setItem(STORAGE_CALENDAR_TYPE_KEY, nextType);
+      localStorage.setItem(STORAGE_WEEK_STARTS_ON_KEY, String(defaultWeekStart));
+      localStorage.setItem(STORAGE_WEEKEND_DAYS_KEY, serializedWeekends);
+    } catch {
+      /* ignore */
+    }
+    emitSettingsStoreChange();
+    db.settings
+      .bulkPut([
+        { key: "calendarType", value: nextType },
+        { key: "weekStartsOn", value: String(defaultWeekStart) },
+        { key: "weekendDays", value: serializedWeekends },
+      ])
+      .catch(() => {});
+    window.dispatchEvent(new Event(SETTINGS_CHANGE_EVENT));
+  }, []);
+
+  const setWeekStartsOn = useCallback((nextDay: WeekdayIndex) => {
+    try {
+      localStorage.setItem(STORAGE_WEEK_STARTS_ON_KEY, String(nextDay));
+    } catch {
+      /* ignore */
+    }
+    emitSettingsStoreChange();
+    db.settings.put({ key: "weekStartsOn", value: String(nextDay) }).catch(() => {});
+    window.dispatchEvent(new Event(SETTINGS_CHANGE_EVENT));
+  }, []);
+
+  const setWeekendDays = useCallback((nextDays: WeekdayIndex[]) => {
+    const serialized = JSON.stringify(nextDays);
+    try {
+      localStorage.setItem(STORAGE_WEEKEND_DAYS_KEY, serialized);
+    } catch {
+      /* ignore */
+    }
+    emitSettingsStoreChange();
+    db.settings.put({ key: "weekendDays", value: serialized }).catch(() => {});
+    window.dispatchEvent(new Event(SETTINGS_CHANGE_EVENT));
+  }, []);
+
   const direction = useMemo(() => getDirection(language), [language]);
   const isRtl = direction === "rtl";
   const t = useMemo(() => getDictionary(language), [language]);
 
   const value = useMemo<SettingsContextValue>(
     () => ({
+      calendarType,
       direction,
       isRtl,
       language,
       resolvedTheme,
+      setCalendarType,
       setLanguage,
       setTheme,
+      setWeekendDays,
+      setWeekStartsOn,
       t,
       theme,
+      weekendDays,
+      weekStartsOn,
     }),
-    [direction, isRtl, language, resolvedTheme, setLanguage, setTheme, t, theme],
+    [
+      calendarType,
+      direction,
+      isRtl,
+      language,
+      resolvedTheme,
+      setCalendarType,
+      setLanguage,
+      setTheme,
+      setWeekendDays,
+      setWeekStartsOn,
+      t,
+      theme,
+      weekendDays,
+      weekStartsOn,
+    ],
   );
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
@@ -295,10 +456,12 @@ export function useSettings(): SettingsContextValue {
     const isDark =
       typeof document !== "undefined" && document.documentElement.classList.contains("dark");
     return {
+      calendarType: "gregorian",
       direction: "ltr",
       isRtl: false,
       language: "en",
       resolvedTheme: isDark ? "dark" : "light",
+      setCalendarType: () => {},
       setLanguage: () => {},
       setTheme: (next) => {
         if (typeof window !== "undefined") {
@@ -314,8 +477,12 @@ export function useSettings(): SettingsContextValue {
           }
         }
       },
+      setWeekendDays: () => {},
+      setWeekStartsOn: () => {},
       t: getDictionary("en"),
       theme: "system",
+      weekendDays: [0, 6],
+      weekStartsOn: 0,
     };
   }
   return ctx;
