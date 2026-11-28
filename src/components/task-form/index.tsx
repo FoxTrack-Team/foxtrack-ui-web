@@ -9,6 +9,7 @@ import { useTranslation } from "@/providers/settings-provider";
 import { CategoryPicker } from "@/components/category-picker";
 import { DatePicker } from "@/components/date-picker";
 import { Modal } from "@/components/modal";
+import { TimePicker } from "@/components/time-picker";
 import { Button } from "@/components/ui/button";
 
 import { TaskPriority } from "@/features/tasks/types";
@@ -20,6 +21,7 @@ export interface TaskFormValues {
   completed?: boolean;
   description?: string;
   dueDate: number | null;
+  dueTime?: string | null;
   priority: TaskPriority;
   title: string;
 }
@@ -50,6 +52,7 @@ export function TaskForm({
   const [completed, setCompleted] = useState(initialValues?.completed ?? false);
   const [priority, setPriority] = useState<TaskPriority>(initialValues?.priority ?? "medium");
   const [dueDate, setDueDate] = useState<number | null>(initialValues?.dueDate ?? null);
+  const [dueTime, setDueTime] = useState<string>(initialValues?.dueTime ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -71,6 +74,7 @@ export function TaskForm({
         ...(isEdit ? { completed } : {}),
         description: description.trim() || undefined,
         dueDate,
+        dueTime: dueTime.trim() || null,
         priority,
         title: trimmed,
       });
@@ -195,15 +199,32 @@ export function TaskForm({
           </div>
         </div>
 
-        <div>
-          <label className="mb-1.5 block font-medium text-neutral-700 text-xs dark:text-neutral-300">
-            {t.datePicker.title}
-          </label>
-          <DatePicker
-            className="h-11 w-full justify-start px-3.5 text-sm sm:h-10 sm:text-xs"
-            value={dueDate}
-            onChange={setDueDate}
-          />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label className="mb-1.5 block font-medium text-neutral-700 text-xs dark:text-neutral-300">
+              {t.datePicker.title}
+            </label>
+            <DatePicker
+              className="h-11 w-full justify-start px-3.5 text-sm sm:h-10 sm:text-xs"
+              value={dueDate}
+              onChange={(nextDate) => {
+                setDueDate(nextDate);
+                if (!nextDate) setDueTime("");
+              }}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block font-medium text-neutral-700 text-xs dark:text-neutral-300">
+              {t.timePicker.selectTime}
+            </label>
+            <TimePicker
+              ariaLabel={t.timePicker.selectTime}
+              placeholder={t.timePicker.selectTime}
+              value={dueTime}
+              onChange={setDueTime}
+            />
+          </div>
         </div>
       </div>
 

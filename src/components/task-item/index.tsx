@@ -255,6 +255,7 @@ export function TaskItem({ task }: TaskItemProps) {
                     <IconCalendar size={12} stroke={2} />
                   )}
                   <span>{formatFriendlyDate(task.dueDate, language)}</span>
+                  {task.dueTime && <span className="tabular-nums">· {task.dueTime}</span>}
                   {isOverdue && <span className="font-semibold">({t.tasks.overdue})</span>}
                 </span>
               )}
