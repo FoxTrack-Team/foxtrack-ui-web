@@ -31,9 +31,9 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 240 20% 96%; /* iOS systemGroupedBackground (#F2F2F7) */
     --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
+    --card: 0 0% 100%; /* Pure white elevated cards on grouped background */
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
@@ -45,8 +45,8 @@
     --muted-foreground: 240 3.8% 46.1%;
     --accent: 24.6 95% 95%;
     --accent-foreground: 24.6 95% 35%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 3 100% 59.4%; /* iOS systemRed Light (#FF3B30) */
+    --destructive-foreground: 0 0% 100%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
     --ring: 24.6 95% 53.1%;
@@ -54,25 +54,25 @@
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 0 0% 0%; /* iOS systemBackground */
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 240 3.7% 11.4%; /* iOS secondarySystemBackground (#1C1C1E) */
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 240 3.7% 17.3%; /* iOS tertiarySystemBackground (#2C2C2E) */
     --popover-foreground: 0 0% 98%;
-    --primary: 24.6 95% 53.1%;
+    --primary: 24.6 95% 55%;
     --primary-foreground: 0 0% 100%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted-foreground: 240 4.8% 64.9%;
     --accent: 24.6 95% 15%;
     --accent-foreground: 24.6 95% 65%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 24.6 95% 53.1%;
+    --destructive: 3 100% 61.4%; /* iOS systemRed Dark (#FF453A) */
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 3.7% 18%;
+    --input: 240 3.7% 18%;
+    --ring: 24.6 95% 55%;
   }
 
   * {
